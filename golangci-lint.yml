@@ -1,0 +1,17 @@
+run:
+  timeout: 3m
+
+linters:
+  disable-all: true
+  enable:
+    - lll
+    - govet
+    - gofmt
+    - stylecheck
+
+linters-settings:
+  lll:
+    line-length: 100
+    tab-width: 4
+  gofmt:
+    simplify: false
