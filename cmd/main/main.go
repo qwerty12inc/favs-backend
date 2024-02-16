@@ -1,11 +1,15 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
+	"time"
 )
 
 type ServiceConfig struct {
@@ -44,5 +48,25 @@ func run() error {
 		return c.String(http.StatusOK, "Api is up and running!")
 	})
 
-	return e.Start(":" + serviceCfg.Port)
+	ctx, stop := signal.NotifyContext(context.Background(),
+		os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
+	defer stop()
+	// Start server
+	go func() {
+		if err := e.Start(":" + serviceCfg.Port); err != nil && err != http.ErrServerClosed {
+			e.Logger.Fatal("shutting down the server")
+		}
+	}()
+
+	// Wait for interrupt signal to gracefully shutdown the server with a timeout of 10 seconds.
+	<-ctx.Done()
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	if err := e.Shutdown(ctx); err != nil {
+		e.Logger.Fatal(err)
+	}
+
+	e.Logger.Info("Server exiting...")
+
+	return nil
 }
