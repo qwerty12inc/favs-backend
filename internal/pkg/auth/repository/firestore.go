@@ -32,7 +32,10 @@ func (r *FirestoreRepository) GetUserByEmail(ctx context.Context, email string) 
 		return models.User{}, models.Status{Code: models.NotFound, Message: err.Error()}
 	}
 	var user models.User
-	doc.DataTo(&user)
+	err = doc.DataTo(&user)
+	if err != nil {
+		return models.User{}, models.Status{Code: models.InternalError, Message: err.Error()}
+	}
 	return user, models.Status{Code: models.OK}
 }
 
@@ -42,7 +45,10 @@ func (r *FirestoreRepository) GetUserByID(ctx context.Context, id int) (models.U
 		return models.User{}, models.Status{Code: models.NotFound, Message: err.Error()}
 	}
 	var user models.User
-	doc.DataTo(&user)
+	err = doc.DataTo(&user)
+	if err != nil {
+		return models.User{}, models.Status{Code: models.InternalError, Message: err.Error()}
+	}
 	return user, models.Status{Code: models.OK}
 }
 

@@ -7,11 +7,11 @@ import (
 )
 
 type User struct {
-	ID        int       `json:"id"`
-	Email     string    `json:"email"`
-	Password  Password  `json:"password"`
-	Activated bool      `json:"activated"`
-	CreatedAt time.Time `json:"created_at"`
+	ID        int       `json:"id" firestore:"id"`
+	Email     string    `json:"email" firestore:"email"`
+	Password  Password  `json:"password" firestore:"password"`
+	Activated bool      `json:"activated" firestore:"activated"`
+	CreatedAt time.Time `json:"created_at" firestore:"created_at"`
 }
 
 type Password struct {
