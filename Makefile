@@ -58,4 +58,4 @@ mocks: internal/pkg/auth/interfaces.go
 .PHONY: docs
 docs:
 	@echo "Generating docs"
-	@swag init -g main.go -d cmd/favsapi/,internal,pkg
+	@swag init -g main.go -d cmd/main/,internal

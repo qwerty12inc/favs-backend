@@ -13,6 +13,7 @@ services:
       SMTP_USER: ${SMTP_USER}
       SMTP_PASSWORD: ${SMTP_PASSWORD}
       SMTP_SENDER: ${SMTP_SENDER}
+      BASE_ADDR: ${BASE_ADDR}
     volumes:
       - /home/ubuntu:/src
     command: ./favsapi

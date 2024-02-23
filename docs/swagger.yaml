@@ -1,0 +1,185 @@
+definitions:
+  models.LoginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  models.Password:
+    properties:
+      plaintext:
+        type: string
+    type: object
+  models.SignUpRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  models.UpdateUserRequest:
+    properties:
+      email:
+        type: string
+      id:
+        type: integer
+      new_password:
+        type: string
+      old_password:
+        type: string
+    type: object
+  models.User:
+    properties:
+      activated:
+        type: boolean
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      password:
+        $ref: '#/definitions/models.Password'
+    type: object
+info:
+  contact: {}
+paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Login user
+      parameters:
+      - description: User data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      summary: Login
+      tags:
+      - auth
+  /auth/logout/{token}:
+    post:
+      consumes:
+      - application/json
+      description: Logout user
+      parameters:
+      - description: Token
+        in: path
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      summary: Logout
+      tags:
+      - auth
+  /auth/signup:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user
+      parameters:
+      - description: User data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.SignUpRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      summary: Sign up
+      tags:
+      - auth
+  /user:
+    put:
+      consumes:
+      - application/json
+      description: Update user data
+      parameters:
+      - description: User data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      summary: Update user
+      tags:
+      - user
+  /user/{id}:
+    get:
+      description: Get user data by ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      summary: Get user by ID
+      tags:
+      - user
+  /user/me:
+    get:
+      description: Get user data
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      summary: Get user
+      tags:
+      - user
+swagger: "2.0"

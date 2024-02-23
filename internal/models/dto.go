@@ -11,9 +11,10 @@ type LoginRequest struct {
 }
 
 type UpdateUserRequest struct {
-	NewPassword string `json:"new_password"`
-	OldPassword string `json:"old_password"`
-	Email       string `json:"email"`
+	ID          int    `json:"id,omitempty"`
+	NewPassword string `json:"new_password,omitempty"`
+	OldPassword string `json:"old_password,omitempty"`
+	Email       string `json:"email,omitempty"`
 }
 
 type ActivateUserRequest struct {

@@ -5,6 +5,7 @@ import (
 	"gitlab.com/v.rianov/favs-backend/internal/models"
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/auth"
 	"math/rand"
+	"os"
 )
 
 type Usecase struct {
@@ -36,6 +37,12 @@ func randSeq(n int) string {
 	return string(b)
 }
 
+func generateActivationLink(baseAddr, email, code string) string {
+	return baseAddr + "/api/v1/activation?email=" + email + "&code=" + code
+}
+
+const baseAddrEnv = "BASE_ADDR"
+
 func (u *Usecase) SignUp(ctx context.Context, request models.SignUpRequest) (string, models.Status) {
 	_, status := u.repo.GetUserByEmail(ctx, request.Email)
 	if status.Code == models.OK {
@@ -62,8 +69,11 @@ func (u *Usecase) SignUp(ctx context.Context, request models.SignUpRequest) (str
 		return "", status
 	}
 
+	baseAddr := os.Getenv(baseAddrEnv)
+	link := generateActivationLink(baseAddr, request.Email, code)
+
 	status = u.smtpProvider.Send(ctx, request.Email,
-		"user_welcome.tmpl", map[string]string{"code": code})
+		"user_welcome.tmpl", map[string]string{"link": link})
 	if status.Code != models.OK {
 		return "", status
 	}
@@ -91,7 +101,7 @@ func (u *Usecase) Login(ctx context.Context, request models.LoginRequest) (strin
 }
 
 func (u *Usecase) UpdateUser(ctx context.Context, request models.UpdateUserRequest) (models.User, models.Status) {
-	user, status := u.repo.GetUserByEmail(ctx, request.Email)
+	user, status := u.repo.GetUserByID(ctx, request.ID)
 	if status.Code != models.OK {
 		return models.User{}, status
 	}
@@ -163,4 +173,11 @@ func (u *Usecase) GetUserByID(ctx context.Context, id int) (models.User, models.
 		return models.User{}, status
 	}
 	return user, status
+}
+
+func init() {
+	baseAddr := os.Getenv(baseAddrEnv)
+	if baseAddr == "" {
+		panic("BASE_ADDR environment variable is not set")
+	}
 }
