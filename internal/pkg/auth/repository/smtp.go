@@ -27,13 +27,13 @@ type Mailer struct {
 	sender string
 }
 
-func New(host string, port int, username, password, sender string) Mailer {
+func NewMailer(host string, port int, username, password, sender string) *Mailer {
 	// Initialize a new mail.Dialer instance with the given SMTP server settings. We
 	// also configure this to use a 5-second timeout whenever we send an email.
 	dialer := mail.NewDialer(host, port, username, password)
 	dialer.Timeout = 5 * time.Second
 	// Return a Mailer instance containing the dialer and sender information.
-	return Mailer{
+	return &Mailer{
 		dialer: dialer,
 		sender: sender,
 	}

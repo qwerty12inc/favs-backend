@@ -20,6 +20,7 @@ type Repository interface {
 	GetUserByEmail(ctx context.Context, email string) (models.User, models.Status)
 	GetUserByID(ctx context.Context, id int) (models.User, models.Status)
 	UpdateUser(ctx context.Context, user models.User) (models.User, models.Status)
+	DeleteUser(ctx context.Context, id string) models.Status
 }
 
 type SMTPProvider interface {

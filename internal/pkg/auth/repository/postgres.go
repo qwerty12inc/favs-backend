@@ -11,6 +11,7 @@ const (
 	SelectUserByEmail = `SELECT id, email, password, is_active, created_at FROM users WHERE email = $1`
 	SelectUserByID    = `SELECT id, email, password, is_active, created_at FROM users WHERE id = $1`
 	UpdateUser        = `UPDATE users SET email = $1, password = $2, is_active = $3 WHERE id = $4`
+	DeleteUser        = `DELETE FROM users WHERE id = $1`
 )
 
 type Repository struct {
@@ -70,4 +71,12 @@ func (r *Repository) UpdateUser(ctx context.Context, user models.User) (models.U
 		return models.User{}, models.Status{Code: models.InternalError, Message: err.Error()}
 	}
 	return user, models.Status{Code: models.OK}
+}
+
+func (r *Repository) DeleteUser(ctx context.Context, id string) models.Status {
+	_, err := r.db.ExecContext(ctx, DeleteUser, id)
+	if err != nil {
+		return models.Status{Code: models.InternalError, Message: err.Error()}
+	}
+	return models.Status{Code: models.OK}
 }
