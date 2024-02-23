@@ -3,11 +3,21 @@ package main
 import (
 	"cloud.google.com/go/firestore"
 	"context"
+	"errors"
 	"github.com/redis/go-redis/v9"
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/auth/repository"
 	"os"
 	"strconv"
 )
+
+func checkEnvVar(names ...string) error {
+	for _, name := range names {
+		if os.Getenv(name) == "" {
+			return errors.New(name + " is not set")
+		}
+	}
+	return nil
+}
 
 const fireStoreProjectIDEnv = "FIRESTORE_PROJECT_ID"
 
@@ -25,6 +35,11 @@ const (
 )
 
 func setupSMTP() (*repository.Mailer, error) {
+	err := checkEnvVar(smtpHostEnv, smtpPortEnv, smtpUserEnv, smtpPasswordEnv, smtpSenderEnv)
+	if err != nil {
+		return nil, err
+	}
+
 	host := os.Getenv(smtpHostEnv)
 	portStr := os.Getenv(smtpPortEnv)
 	user := os.Getenv(smtpUserEnv)
@@ -42,6 +57,10 @@ func setupSMTP() (*repository.Mailer, error) {
 const signingKeyEnv = "SIGNING_KEY"
 
 func setupTokenProvider() (*repository.TokenProvider, error) {
+	err := checkEnvVar(signingKeyEnv)
+	if err != nil {
+		return nil, err
+	}
 	return repository.NewTokenProvider(os.Getenv(signingKeyEnv)), nil
 }
 
@@ -52,6 +71,11 @@ const (
 )
 
 func setupActivationCodesRepository() (*repository.ActivatoinCodesRepository, error) {
+	err := checkEnvVar(redisAddrEnv, redisPassEnv, redisUserEnv)
+	if err != nil {
+		return nil, err
+	}
+
 	client := redis.NewClient(&redis.Options{
 		Addr:     os.Getenv(redisAddrEnv),
 		Password: os.Getenv(redisPassEnv),
