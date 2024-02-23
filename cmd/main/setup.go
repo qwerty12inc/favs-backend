@@ -67,11 +67,10 @@ func setupTokenProvider() (*repository.TokenProvider, error) {
 const (
 	redisAddrEnv = "REDIS_ADDR"
 	redisPassEnv = "REDIS_PASS"
-	redisUserEnv = "REDIS_USER"
 )
 
 func setupActivationCodesRepository() (*repository.ActivatoinCodesRepository, error) {
-	err := checkEnvVar(redisAddrEnv, redisPassEnv, redisUserEnv)
+	err := checkEnvVar(redisAddrEnv, redisPassEnv)
 	if err != nil {
 		return nil, err
 	}
@@ -79,7 +78,6 @@ func setupActivationCodesRepository() (*repository.ActivatoinCodesRepository, er
 	client := redis.NewClient(&redis.Options{
 		Addr:     os.Getenv(redisAddrEnv),
 		Password: os.Getenv(redisPassEnv),
-		Username: os.Getenv(redisUserEnv),
 	})
 	return repository.NewActivationCodesRepository(client), nil
 }
