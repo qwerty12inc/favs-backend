@@ -6,7 +6,7 @@ services:
     environment:
       SIGNING_KEY: ${SIGNING_KEY}
       REDIS_ADDR: "db-codes:6379"
-      REDIS_PASS: "${REDIS_PASSWORD}"
+      REDIS_PASS: "${REDIS_PASS}"
       FIRESTORE_PROJECT_ID: ${FIRESTORE_PROJECT_ID}
       SMTP_HOST: ${SMTP_HOST}
       SMTP_PORT: ${SMTP_PORT}
@@ -27,4 +27,4 @@ services:
     restart: always
     ports:
       - 6379:6379
-    command: redis-server --save 20 1 --loglevel warning --requirepass ${REDIS_PASSWORD}
+    command: redis-server --save 20 1 --loglevel warning --requirepass ${REDIS_PASS}
