@@ -69,12 +69,11 @@ deploy:
         - ssh-keyscan -H $DEPLOY_SERVER >> ~/.ssh/known_hosts
         - scp -i ~/.ssh/id_rsa docker-compose.yml $DEPLOY_USER@$DEPLOY_SERVER:/home/$DEPLOY_USER
         - ssh -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_SERVER "sudo docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY"
-        - ssh -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_SERVER "sudo docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG && sudo docker-compose -f docker-compose.yml up -d"
+        - ssh -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_SERVER "sudo docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG && BASE_ADDR=$BASE_ADDR SIGNING_KEY=$SIGNING_KEY REDIS_ADDR=$REDIS_ADDR REDIS_PASS=$REDIS_PASS FIRESTORE_PROJECT_ID=$FIRESTORE_PROJECT_ID SMTP_HOST=$SMTP_HOST SMTP_PORT=$SMTP_PORT SMTP_USER=$SMTP_USER SMTP_PASSWORD=$SMTP_PASSWORD SMTP_SENDER=$SMTP_SENDER sudo docker-compose -f docker-compose.yml up -d"
         - ssh -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_SERVER "sudo docker-compose -f docker-compose.yml down"
-        - ssh -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_SERVER "sudo docker-compose -f docker-compose.yml up -d"
+        - ssh -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_SERVER "sudo docker-compose -f docker-compose.yml $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG && BASE_ADDR=$BASE_ADDR SIGNING_KEY=$SIGNING_KEY REDIS_ADDR=$REDIS_ADDR REDIS_PASS=$REDIS_PASS FIRESTORE_PROJECT_ID=$FIRESTORE_PROJECT_ID SMTP_HOST=$SMTP_HOST SMTP_PORT=$SMTP_PORT SMTP_USER=$SMTP_USER SMTP_PASSWORD=$SMTP_PASSWORD SMTP_SENDER=$SMTP_SENDER up -d"
         - ssh -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_SERVER "sudo docker-compose -f docker-compose.yml ps"
         - ssh -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_SERVER "sudo docker-compose -f docker-compose.yml logs"
-        - ssh -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_SERVER "sudo docker-compose -f docker-compose.yml exec favsapi ./favsapi"
     rules:
         - if: $CI_COMMIT_TAG
         - if: $CI_COMMIT_BRANCH
