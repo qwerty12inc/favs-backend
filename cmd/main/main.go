@@ -9,6 +9,7 @@ import (
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/auth/delivery"
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/auth/repository"
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/auth/usecase"
+	"log"
 	"net/http"
 	"os"
 	"os/signal"
@@ -52,6 +53,7 @@ func run() error {
 	defer cancel()
 
 	client, err := setupFirestore(ctx)
+	log.Println("Firestore client created", err)
 	if err != nil {
 		return err
 	}
