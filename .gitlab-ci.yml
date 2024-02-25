@@ -68,6 +68,16 @@ deploy:
         - chmod 600 ~/.ssh/id_rsa
         - ssh-keyscan -H $DEPLOY_SERVER >> ~/.ssh/known_hosts
         - scp -i ~/.ssh/id_rsa docker-compose.yml $DEPLOY_USER@$DEPLOY_SERVER:/home/$DEPLOY_USER
+        - ssh -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_SERVER "echo 'BASE_ADDR=$BASE_ADDR' >> .env"
+        - ssh -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_SERVER "echo 'SIGNING_KEY=$SIGNING_KEY' >> .env"
+        - ssh -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_SERVER "echo 'REDIS_ADDR=$REDIS_ADDR' >> .env"
+        - ssh -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_SERVER "echo 'REDIS_PASS=$REDIS_PASS
+        - ssh -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_SERVER "echo 'FIRESTORE_PROJECT_ID=$FIRESTORE_PROJECT_ID' >> .env"
+        - ssh -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_SERVER "echo 'SMTP_HOST=$SMTP_HOST' >> .env"
+        - ssh -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_SERVER "echo 'SMTP_PORT=$SMTP_PORT' >> .env"
+        - ssh -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_SERVER "echo 'SMTP_USER=$SMTP_USER' >> .env"
+        - ssh -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_SERVER "echo 'SMTP_PASSWORD=$SMTP_PASSWORD' >> .env"
+        - ssh -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_SERVER "echo 'SMTP_SENDER=$SMTP_SENDER' >> .env"
         - ssh -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_SERVER "sudo docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY"
         - ssh -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_SERVER "sudo docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG"
         - ssh -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_SERVER "BASE_ADDR=$BASE_ADDR SIGNING_KEY=$SIGNING_KEY REDIS_ADDR=$REDIS_ADDR REDIS_PASS=$REDIS_PASS FIRESTORE_PROJECT_ID=$FIRESTORE_PROJECT_ID SMTP_HOST=$SMTP_HOST SMTP_PORT=$SMTP_PORT SMTP_USER=$SMTP_USER SMTP_PASSWORD=$SMTP_PASSWORD SMTP_SENDER=$SMTP_SENDER sudo docker-compose -f docker-compose.yml up -d"
