@@ -6,6 +6,7 @@ import (
 	"errors"
 	"github.com/redis/go-redis/v9"
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/auth/repository"
+	"google.golang.org/api/option"
 	"os"
 	"strconv"
 )
@@ -22,7 +23,8 @@ func checkEnvVar(names ...string) error {
 const fireStoreProjectIDEnv = "FIRESTORE_PROJECT_ID"
 
 func setupFirestore(ctx context.Context) (*firestore.Client, error) {
-	client, err := firestore.NewClient(ctx, os.Getenv(fireStoreProjectIDEnv))
+	client, err := firestore.NewClient(ctx, os.Getenv(fireStoreProjectIDEnv),
+		option.WithCredentialsFile("/src/service-account.json"))
 	return client, err
 }
 

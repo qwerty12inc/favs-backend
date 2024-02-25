@@ -15,7 +15,7 @@ services:
       SMTP_SENDER: ${SMTP_SENDER}
       BASE_ADDR: ${BASE_ADDR}
     volumes:
-      - /home/ubuntu:/src
+      - /home/slavaryanov:/src
     command: ./favsapi
     ports:
       - 8080:8080
