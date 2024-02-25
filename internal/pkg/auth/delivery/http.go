@@ -37,7 +37,9 @@ func (h *Handler) SignUp(c echo.Context) error {
 	if status.Code != models.OK {
 		return c.JSON(400, status)
 	}
-	return c.JSON(200, token)
+
+	c.Response().Header().Set("Authorization", "Bearer "+token)
+	return c.JSON(200, "OK")
 }
 
 // Login godoc
