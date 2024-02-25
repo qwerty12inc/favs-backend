@@ -71,7 +71,7 @@ deploy:
         - ssh -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_SERVER "echo 'BASE_ADDR=$BASE_ADDR' >> .env"
         - ssh -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_SERVER "echo 'SIGNING_KEY=$SIGNING_KEY' >> .env"
         - ssh -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_SERVER "echo 'REDIS_ADDR=$REDIS_ADDR' >> .env"
-        - ssh -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_SERVER "echo 'REDIS_PASS=$REDIS_PASS >> .env"
+        - ssh -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_SERVER "echo 'REDIS_PASS=$REDIS_PASS' >> .env"
         - ssh -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_SERVER "echo 'FIRESTORE_PROJECT_ID=$FIRESTORE_PROJECT_ID' >> .env"
         - ssh -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_SERVER "echo 'SMTP_HOST=$SMTP_HOST' >> .env"
         - ssh -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_SERVER "echo 'SMTP_PORT=$SMTP_PORT' >> .env"
