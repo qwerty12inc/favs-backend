@@ -4,6 +4,7 @@ import (
 	"context"
 	"gitlab.com/v.rianov/favs-backend/internal/models"
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/auth"
+	"log"
 	"math/rand"
 	"os"
 )
@@ -57,23 +58,32 @@ func (u *Usecase) SignUp(ctx context.Context, request models.SignUpRequest) (str
 		Email:    request.Email,
 		Password: pswd,
 	})
+	if status.Code != models.OK {
+		log.Println("failed to save user", status)
+		return "", status
+	}
+	log.Println("user saved", user)
 
 	token, status := u.tokenProvider.GenerateToken(ctx, user, false)
 	if status.Code != models.OK {
 		return "", status
 	}
+	log.Println("token generated", token)
 
 	code := randSeq(12)
 	status = u.codeRepo.SaveActivationCode(ctx, request.Email, code)
 	if status.Code != models.OK {
 		return "", status
 	}
+	log.Println("activation code saved", code)
 
 	baseAddr := os.Getenv(baseAddrEnv)
 	link := generateActivationLink(baseAddr, request.Email, code)
+	log.Println("activation link generated", link)
 
 	status = u.smtpProvider.Send(ctx, request.Email,
 		"user_welcome.tmpl", map[string]string{"link": link})
+	log.Println("email sent", status)
 	if status.Code != models.OK {
 		return "", status
 	}
