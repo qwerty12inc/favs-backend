@@ -93,7 +93,7 @@ func run() error {
 		Repository:    repo,
 	}
 
-	userGroup := apiV1Group.Group("/user", authMiddleware.Auth)
+	userGroup := apiV1Group.Group("/users", authMiddleware.Auth)
 	{
 		userGroup.GET("/me", handler.GetMe)
 		userGroup.GET("/activation", handler.ActivateUser)

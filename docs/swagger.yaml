@@ -23,7 +23,7 @@ definitions:
       email:
         type: string
       id:
-        type: integer
+        type: string
       new_password:
         type: string
       old_password:
@@ -38,7 +38,7 @@ definitions:
       email:
         type: string
       id:
-        type: integer
+        type: string
       password:
         $ref: '#/definitions/models.Password'
     type: object
@@ -116,7 +116,7 @@ paths:
       summary: Sign up
       tags:
       - auth
-  /user:
+  /users:
     put:
       consumes:
       - application/json
@@ -139,10 +139,14 @@ paths:
           description: Bad Request
           schema:
             type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
       summary: Update user
       tags:
       - user
-  /user/{id}:
+  /users/{id}:
     get:
       description: Get user data by ID
       parameters:
@@ -162,10 +166,39 @@ paths:
           description: Bad Request
           schema:
             type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
       summary: Get user by ID
       tags:
       - user
-  /user/me:
+  /users/activation:
+    get:
+      description: Activate user
+      parameters:
+      - description: Activation code
+        in: path
+        name: code
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+      summary: Activate user
+      tags:
+      - user
+  /users/me:
     get:
       description: Get user data
       produces:
@@ -177,6 +210,10 @@ paths:
             $ref: '#/definitions/models.User'
         "400":
           description: Bad Request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
           schema:
             type: string
       summary: Get user

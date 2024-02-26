@@ -124,7 +124,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/user": {
+        "/users": {
             "put": {
                 "description": "Update user data",
                 "consumes": [
@@ -160,11 +160,55 @@ const docTemplate = `{
                         "schema": {
                             "type": "string"
                         }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 }
             }
         },
-        "/user/me": {
+        "/users/activation": {
+            "get": {
+                "description": "Activate user",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Activate user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Activation code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/me": {
             "get": {
                 "description": "Get user data",
                 "produces": [
@@ -186,11 +230,17 @@ const docTemplate = `{
                         "schema": {
                             "type": "string"
                         }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 }
             }
         },
-        "/user/{id}": {
+        "/users/{id}": {
             "get": {
                 "description": "Get user data by ID",
                 "produces": [
@@ -218,6 +268,12 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "type": "string"
                         }
@@ -264,7 +320,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "id": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "new_password": {
                     "type": "string"
@@ -287,7 +343,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "id": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "password": {
                     "$ref": "#/definitions/models.Password"

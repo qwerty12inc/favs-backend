@@ -74,7 +74,8 @@ func (h *Handler) Login(c echo.Context) error {
 // @Param user body models.UpdateUserRequest true "User data"
 // @Success 200 {object} models.User
 // @Failure 400 {string} string
-// @Router /user [put]
+// @Failure 401 {string} string
+// @Router /users [put]
 func (h *Handler) UpdateUser(c echo.Context) error {
 	request := models.UpdateUserRequest{}
 	if err := c.Bind(&request); err != nil {
@@ -100,7 +101,8 @@ func (h *Handler) UpdateUser(c echo.Context) error {
 // @Produce json
 // @Success 200 {object} models.User
 // @Failure 400 {string} string
-// @Router /user/me [get]
+// @Failure 401 {string} string
+// @Router /users/me [get]
 func (h *Handler) GetMe(c echo.Context) error {
 	user, ok := c.Get("user").(models.User)
 	if !ok {
@@ -128,6 +130,16 @@ func (h *Handler) Logout(c echo.Context) error {
 	return c.JSON(200, "OK")
 }
 
+// ActivateUser godoc
+// @Summary Activate user
+// @Description Activate user
+// @Tags user
+// @Produce json
+// @Param code path string true "Activation code"
+// @Success 200
+// @Failure 400 {string} string
+// @Failure 401 {string} string
+// @Router /users/activation [get]
 func (h *Handler) ActivateUser(c echo.Context) error {
 	request := models.ActivateUserRequest{}
 	code := c.QueryParam("code")
@@ -157,7 +169,8 @@ func (h *Handler) ActivateUser(c echo.Context) error {
 // @Param id path int true "User ID"
 // @Success 200 {object} models.User
 // @Failure 400 {string} string
-// @Router /user/{id} [get]
+// @Failure 401 {string} string
+// @Router /users/{id} [get]
 func (h *Handler) GetUserByID(c echo.Context) error {
 	idStr := c.Param("id")
 	id, err := uuid.Parse(idStr)
