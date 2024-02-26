@@ -24,7 +24,7 @@ const fireStoreProjectIDEnv = "FIRESTORE_PROJECT_ID"
 
 func setupFirestore(ctx context.Context) (*firestore.Client, error) {
 	client, err := firestore.NewClient(ctx, os.Getenv(fireStoreProjectIDEnv),
-		option.WithCredentialsFile("/src/service-account.json"))
+		option.WithCredentialsFile("/src/service-account1.json"))
 	return client, err
 }
 
