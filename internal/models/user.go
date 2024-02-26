@@ -2,12 +2,13 @@ package models
 
 import (
 	"errors"
+	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 	"time"
 )
 
 type User struct {
-	ID        int       `json:"id" firestore:"id"`
+	ID        uuid.UUID `json:"id" firestore:"id"`
 	Email     string    `json:"email" firestore:"email"`
 	Password  Password  `json:"password" firestore:"password"`
 	Activated bool      `json:"activated" firestore:"activated"`
@@ -15,8 +16,8 @@ type User struct {
 }
 
 type Password struct {
-	Plaintext *string `json:"plaintext"`
-	Hash      []byte  `json:"-"`
+	Plaintext *string `json:"plaintext" firestore:"-""`
+	Hash      []byte  `json:"-" firestore:"hash"`
 }
 
 // The Set method calculates the bcrypt Hash of a Plaintext password, and stores both // the Hash and the Plaintext versions in the struct.

@@ -14,6 +14,7 @@ services:
       SMTP_PASSWORD: ${SMTP_PASSWORD}
       SMTP_SENDER: ${SMTP_SENDER}
       BASE_ADDR: ${BASE_ADDR}
+      SERVICE_ACCOUNT_PATH: /src/service-account.json
     volumes:
       - /home/slavaryanov:/src
     command: ./favsapi

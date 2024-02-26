@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/google/uuid"
 	"gitlab.com/v.rianov/favs-backend/internal/models"
 )
 
@@ -48,7 +49,7 @@ func (tp *TokenProvider) ValidateToken(ctx context.Context, tokenStr string) (mo
 
 	user := models.User{}
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		user.ID = claims["UserID"].(int)
+		user.ID = claims["UserID"].(uuid.UUID)
 	} else {
 		return models.User{}, models.Status{Code: models.Unauthorized, Message: err.Error()}
 	}

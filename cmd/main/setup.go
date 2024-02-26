@@ -4,6 +4,7 @@ import (
 	"cloud.google.com/go/firestore"
 	"context"
 	"errors"
+	firebase "firebase.google.com/go"
 	"github.com/redis/go-redis/v9"
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/auth/repository"
 	"google.golang.org/api/option"
@@ -20,12 +21,20 @@ func checkEnvVar(names ...string) error {
 	return nil
 }
 
-const fireStoreProjectIDEnv = "FIRESTORE_PROJECT_ID"
+const serviceAccountPathEnv = "SERVICE_ACCOUNT_PATH"
 
 func setupFirestore(ctx context.Context) (*firestore.Client, error) {
-	client, err := firestore.NewClient(ctx, os.Getenv(fireStoreProjectIDEnv),
-		option.WithCredentialsFile("/src/service-account1.json"))
-	return client, err
+	sa := option.WithCredentialsFile(os.Getenv(serviceAccountPathEnv))
+	app, err := firebase.NewApp(ctx, nil, sa)
+	if err != nil {
+		return nil, err
+	}
+
+	client, err := app.Firestore(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return client, nil
 }
 
 const (

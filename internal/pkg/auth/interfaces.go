@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"github.com/google/uuid"
 	"gitlab.com/v.rianov/favs-backend/internal/models"
 )
 
@@ -12,13 +13,13 @@ type Usecase interface {
 	CheckUser(ctx context.Context, token string) (models.User, models.Status)
 	Logout(ctx context.Context, token string) (string, models.Status)
 	ActivateUser(ctx context.Context, request models.ActivateUserRequest) models.Status
-	GetUserByID(ctx context.Context, id int) (models.User, models.Status)
+	GetUserByID(ctx context.Context, id uuid.UUID) (models.User, models.Status)
 }
 
 type Repository interface {
 	SaveUser(ctx context.Context, user models.User) (models.User, models.Status)
 	GetUserByEmail(ctx context.Context, email string) (models.User, models.Status)
-	GetUserByID(ctx context.Context, id int) (models.User, models.Status)
+	GetUserByID(ctx context.Context, id uuid.UUID) (models.User, models.Status)
 	UpdateUser(ctx context.Context, user models.User) (models.User, models.Status)
 	DeleteUser(ctx context.Context, id string) models.Status
 }

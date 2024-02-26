@@ -1,10 +1,10 @@
 package delivery
 
 import (
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"gitlab.com/v.rianov/favs-backend/internal/models"
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/auth"
-	"strconv"
 )
 
 type Handler struct {
@@ -160,7 +160,7 @@ func (h *Handler) ActivateUser(c echo.Context) error {
 // @Router /user/{id} [get]
 func (h *Handler) GetUserByID(c echo.Context) error {
 	idStr := c.Param("id")
-	id, err := strconv.Atoi(idStr)
+	id, err := uuid.Parse(idStr)
 	if err != nil {
 		return c.JSON(400, models.Status{Code: models.BadRequest, Message: err.Error()})
 	}

@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"github.com/google/uuid"
 	"gitlab.com/v.rianov/favs-backend/internal/models"
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/auth"
 	"log"
@@ -39,7 +40,7 @@ func randSeq(n int) string {
 }
 
 func generateActivationLink(baseAddr, email, code string) string {
-	return baseAddr + "/api/v1/activation?email=" + email + "&code=" + code
+	return baseAddr + "/api/v1/user/activation?email=" + email + "&code=" + code
 }
 
 const baseAddrEnv = "BASE_ADDR"
@@ -55,6 +56,7 @@ func (u *Usecase) SignUp(ctx context.Context, request models.SignUpRequest) (str
 		return "", models.Status{Code: models.InternalError, Message: "Failed to hash password"}
 	}
 	user, status := u.repo.SaveUser(ctx, models.User{
+		ID:       uuid.New(),
 		Email:    request.Email,
 		Password: pswd,
 	})
@@ -157,11 +159,13 @@ func (u *Usecase) Logout(ctx context.Context, token string) (string, models.Stat
 
 func (u *Usecase) ActivateUser(ctx context.Context, request models.ActivateUserRequest) models.Status {
 	user, status := u.repo.GetUserByEmail(ctx, request.Email)
+	log.Println("user", user, status)
 	if status.Code != models.OK {
 		return status
 	}
 
 	storedCode, status := u.codeRepo.GetActivationCode(ctx, request.Email)
+	log.Println("stored code", storedCode, status)
 	if status.Code != models.OK {
 		return status
 	}
@@ -177,7 +181,7 @@ func (u *Usecase) ActivateUser(ctx context.Context, request models.ActivateUserR
 	return models.Status{Code: models.OK, Message: "User activated"}
 }
 
-func (u *Usecase) GetUserByID(ctx context.Context, id int) (models.User, models.Status) {
+func (u *Usecase) GetUserByID(ctx context.Context, id uuid.UUID) (models.User, models.Status) {
 	user, status := u.repo.GetUserByID(ctx, id)
 	if status.Code != models.OK {
 		return models.User{}, status

@@ -90,7 +90,7 @@ func run() error {
 	userGroup := apiV1Group.Group("/user")
 	{
 		userGroup.GET("/me", handler.GetMe)
-		userGroup.POST("/activation", handler.ActivateUser)
+		userGroup.GET("/activation", handler.ActivateUser)
 		userGroup.GET("/user/:id", handler.GetUserByID)
 		userGroup.PUT("/user", handler.UpdateUser)
 	}
