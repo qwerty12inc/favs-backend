@@ -79,12 +79,8 @@ func (u *Usecase) SignUp(ctx context.Context, request models.SignUpRequest) (str
 	}
 	log.Println("activation code saved", code)
 
-	baseAddr := os.Getenv(baseAddrEnv)
-	link := generateActivationLink(baseAddr, request.Email, code)
-	log.Println("activation link generated", link)
-
 	status = u.smtpProvider.Send(ctx, request.Email,
-		"user_welcome.tmpl", map[string]string{"link": link})
+		"user_welcome.tmpl", map[string]string{"code": code})
 	log.Println("email sent", status)
 	if status.Code != models.OK {
 		return "", status
@@ -158,13 +154,7 @@ func (u *Usecase) Logout(ctx context.Context, token string) (string, models.Stat
 }
 
 func (u *Usecase) ActivateUser(ctx context.Context, request models.ActivateUserRequest) models.Status {
-	user, status := u.repo.GetUserByEmail(ctx, request.Email)
-	log.Println("user", user, status)
-	if status.Code != models.OK {
-		return status
-	}
-
-	storedCode, status := u.codeRepo.GetActivationCode(ctx, request.Email)
+	storedCode, status := u.codeRepo.GetActivationCode(ctx, request.User.Email)
 	log.Println("stored code", storedCode, status)
 	if status.Code != models.OK {
 		return status
@@ -173,8 +163,8 @@ func (u *Usecase) ActivateUser(ctx context.Context, request models.ActivateUserR
 		return models.Status{Code: models.InvalidToken, Message: "Invalid activation code"}
 	}
 
-	user.Activated = true
-	_, status = u.repo.UpdateUser(ctx, user)
+	request.User.Activated = true
+	_, status = u.repo.UpdateUser(ctx, request.User)
 	if status.Code != models.OK {
 		return status
 	}

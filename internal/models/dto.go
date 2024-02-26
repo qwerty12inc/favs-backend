@@ -20,6 +20,6 @@ type UpdateUserRequest struct {
 }
 
 type ActivateUserRequest struct {
-	Email string `json:"email"`
-	Code  string `json:"code"`
+	Code string `json:"code"`
+	User User   `json:"user"`
 }

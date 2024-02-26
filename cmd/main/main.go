@@ -7,6 +7,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/auth/delivery"
+	middleware2 "gitlab.com/v.rianov/favs-backend/internal/pkg/auth/middleware"
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/auth/repository"
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/auth/usecase"
 	"log"
@@ -87,7 +88,12 @@ func run() error {
 		authGroup.POST("/logout", handler.Logout)
 	}
 
-	userGroup := apiV1Group.Group("/user")
+	authMiddleware := middleware2.AuthMiddlewareHandler{
+		TokenProvider: tokenProvider,
+		Repository:    repo,
+	}
+
+	userGroup := apiV1Group.Group("/user", authMiddleware.Auth)
 	{
 		userGroup.GET("/me", handler.GetMe)
 		userGroup.GET("/activation", handler.ActivateUser)

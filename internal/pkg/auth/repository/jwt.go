@@ -24,8 +24,14 @@ func NewTokenProvider(signingKey string) *TokenProvider {
 func (tp *TokenProvider) GenerateToken(ctx context.Context,
 	user models.User, expiry bool) (string, models.Status) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"UserID": user.ID,
+		"UserID": user.ID.String(),
 	})
+
+	if expiry {
+		token.Claims.(jwt.MapClaims)["exp"] = 0
+	} else {
+		token.Claims.(jwt.MapClaims)["exp"] = 100000000000
+	}
 
 	// Sign and get the complete encoded token as a string using the secret
 	tokenString, err := token.SignedString([]byte(tp.SigningKey))
@@ -49,7 +55,12 @@ func (tp *TokenProvider) ValidateToken(ctx context.Context, tokenStr string) (mo
 
 	user := models.User{}
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		user.ID = claims["UserID"].(uuid.UUID)
+		userID := claims["UserID"].(string)
+		id, err := uuid.Parse(userID)
+		if err != nil {
+			return models.User{}, models.Status{Code: models.Unauthorized, Message: err.Error()}
+		}
+		user.ID = id
 	} else {
 		return models.User{}, models.Status{Code: models.Unauthorized, Message: err.Error()}
 	}

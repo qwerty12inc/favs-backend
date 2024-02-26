@@ -136,11 +136,11 @@ func (h *Handler) ActivateUser(c echo.Context) error {
 	}
 	request.Code = code
 
-	email := c.QueryParam("email")
-	if email == "" {
-		return c.JSON(400, models.Status{Code: models.BadRequest, Message: "Email is empty"})
+	user, ok := c.Get("user").(models.User)
+	if !ok {
+		return c.JSON(400, models.Status{Code: models.BadRequest, Message: "User not found"})
 	}
-	request.Email = email
+	request.User = user
 
 	status := h.usecase.ActivateUser(c.Request().Context(), request)
 	if status.Code != models.OK {

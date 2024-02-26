@@ -24,6 +24,10 @@ func checkEnvVar(names ...string) error {
 const serviceAccountPathEnv = "SERVICE_ACCOUNT_PATH"
 
 func setupFirestore(ctx context.Context) (*firestore.Client, error) {
+	err := checkEnvVar(serviceAccountPathEnv)
+	if err != nil {
+		return nil, err
+	}
 	sa := option.WithCredentialsFile(os.Getenv(serviceAccountPathEnv))
 	app, err := firebase.NewApp(ctx, nil, sa)
 	if err != nil {
