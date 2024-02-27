@@ -38,6 +38,17 @@ func NewServiceConfig() ServiceConfig {
 	}
 }
 
+// @title           Favs API
+// @version         0.1.0
+// @description     This is a documentation for favs API endpoints.
+
+// @contact.name   API Maintainer
+// @contact.email v.rianov@kabanov.agency
+
+// @host 34.159.168.142
+// @BasePath  /api/v1
+
+// @securityDefinitions.basic  ApiKeyAuth
 func main() {
 	err := run()
 	if err != nil {

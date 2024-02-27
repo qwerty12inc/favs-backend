@@ -1,3 +1,4 @@
+basePath: /api/v1
 definitions:
   models.LoginRequest:
     properties:
@@ -42,8 +43,14 @@ definitions:
       password:
         $ref: '#/definitions/models.Password'
     type: object
+host: 34.159.168.142
 info:
-  contact: {}
+  contact:
+    email: v.rianov@kabanov.agency
+    name: API Maintainer
+  description: This is a documentation for favs API endpoints.
+  title: Favs API
+  version: 0.1.0
 paths:
   /auth/login:
     post:
@@ -258,4 +265,7 @@ paths:
       summary: Get user
       tags:
       - user
+securityDefinitions:
+  ApiKeyAuth:
+    type: basic
 swagger: "2.0"

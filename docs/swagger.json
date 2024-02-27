@@ -1,8 +1,16 @@
 {
     "swagger": "2.0",
     "info": {
-        "contact": {}
+        "description": "This is a documentation for favs API endpoints.",
+        "title": "Favs API",
+        "contact": {
+            "name": "API Maintainer",
+            "email": "v.rianov@kabanov.agency"
+        },
+        "version": "0.1.0"
     },
+    "host": "34.159.168.142",
+    "basePath": "/api/v1",
     "paths": {
         "/auth/login": {
             "post": {
@@ -405,6 +413,11 @@
                     "$ref": "#/definitions/models.Password"
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "basic"
         }
     }
 }
