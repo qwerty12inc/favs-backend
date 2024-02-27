@@ -39,9 +39,10 @@ func randSeq(n int) string {
 	return string(b)
 }
 
-func generateActivationLink(baseAddr, email, code string) string {
-	return baseAddr + "/api/v1/user/activation?email=" + email + "&code=" + code
-}
+//
+//func generateActivationLink(baseAddr, email, code string) string {
+//	return baseAddr + "/api/v1/user/activation?email=" + email + "&code=" + code
+//}
 
 const baseAddrEnv = "BASE_ADDR"
 
