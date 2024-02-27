@@ -222,7 +222,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Activation code",
                         "name": "code",
-                        "in": "path",
+                        "in": "query",
                         "required": true
                     },
                     {

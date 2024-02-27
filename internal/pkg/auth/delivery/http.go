@@ -159,7 +159,7 @@ func (h *Handler) Logout(c echo.Context) error {
 // @Description Activate user
 // @Tags user
 // @Produce json
-// @Param code path string true "Activation code"
+// @Param code query string true "Activation code"
 //
 //	@Param			Authorization	header		string	true	"Authentication header"
 //
