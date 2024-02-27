@@ -41,7 +41,13 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK"
+                        "description": "OK",
+                        "headers": {
+                            "Authorization": {
+                                "type": "string",
+                                "description": "Bearer \u003ctoken\u003e"
+                            }
+                        }
                     },
                     "400": {
                         "description": "Bad Request",
@@ -52,8 +58,13 @@ const docTemplate = `{
                 }
             }
         },
-        "/auth/logout/{token}": {
+        "/auth/logout": {
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Logout user",
                 "consumes": [
                     "application/json"
@@ -68,9 +79,9 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Token",
-                        "name": "token",
-                        "in": "path",
+                        "description": "Authentication header",
+                        "name": "Authorization",
+                        "in": "header",
                         "required": true
                     }
                 ],
@@ -113,7 +124,13 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK"
+                        "description": "OK",
+                        "headers": {
+                            "Authorization": {
+                                "type": "string",
+                                "description": "Bearer \u003ctoken\u003e"
+                            }
+                        }
                     },
                     "400": {
                         "description": "Bad Request",
@@ -126,6 +143,11 @@ const docTemplate = `{
         },
         "/users": {
             "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Update user data",
                 "consumes": [
                     "application/json"
@@ -146,6 +168,13 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/models.UpdateUserRequest"
                         }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Authentication header",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -172,6 +201,11 @@ const docTemplate = `{
         },
         "/users/activation": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Activate user",
                 "produces": [
                     "application/json"
@@ -186,6 +220,13 @@ const docTemplate = `{
                         "description": "Activation code",
                         "name": "code",
                         "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Authentication header",
+                        "name": "Authorization",
+                        "in": "header",
                         "required": true
                     }
                 ],
@@ -210,6 +251,11 @@ const docTemplate = `{
         },
         "/users/me": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Get user data",
                 "produces": [
                     "application/json"
@@ -218,6 +264,15 @@ const docTemplate = `{
                     "user"
                 ],
                 "summary": "Get user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authentication header",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -242,6 +297,11 @@ const docTemplate = `{
         },
         "/users/{id}": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Get user data by ID",
                 "produces": [
                     "application/json"
@@ -256,6 +316,13 @@ const docTemplate = `{
                         "description": "User ID",
                         "name": "id",
                         "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Authentication header",
+                        "name": "Authorization",
+                        "in": "header",
                         "required": true
                     }
                 ],

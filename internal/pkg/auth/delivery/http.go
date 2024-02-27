@@ -25,6 +25,7 @@ func NewHandler(usecase auth.Usecase) *Handler {
 // @Produce json
 // @Param user body models.SignUpRequest true "User data"
 // @Success 200
+// @Header       200              {string}  Authorization "Bearer <token>"
 // @Failure 400 {string} string
 // @Router /auth/signup [post]
 func (h *Handler) SignUp(c echo.Context) error {
@@ -50,6 +51,7 @@ func (h *Handler) SignUp(c echo.Context) error {
 // @Produce json
 // @Param user body models.LoginRequest true "User data"
 // @Success 200
+// @Header       200              {string}  Authorization "Bearer <token>"
 // @Failure 400 {string} string
 // @Router /auth/login [post]
 func (h *Handler) Login(c echo.Context) error {
@@ -73,9 +75,15 @@ func (h *Handler) Login(c echo.Context) error {
 // @Accept json
 // @Produce json
 // @Param user body models.UpdateUserRequest true "User data"
+//
+//	@Param			Authorization	header		string	true	"Authentication header"
+//
 // @Success 200 {object} models.User
 // @Failure 400 {string} string
 // @Failure 401 {string} string
+//
+//	@Security		ApiKeyAuth
+//
 // @Router /users [put]
 func (h *Handler) UpdateUser(c echo.Context) error {
 	request := models.UpdateUserRequest{}
@@ -100,9 +108,15 @@ func (h *Handler) UpdateUser(c echo.Context) error {
 // @Description Get user data
 // @Tags user
 // @Produce json
+//
+//	@Param			Authorization	header		string	true	"Authentication header"
+//
 // @Success 200 {object} models.User
 // @Failure 400 {string} string
 // @Failure 401 {string} string
+//
+//	@Security		ApiKeyAuth
+//
 // @Router /users/me [get]
 func (h *Handler) GetMe(c echo.Context) error {
 	user, ok := c.Get("user").(models.User)
@@ -118,8 +132,14 @@ func (h *Handler) GetMe(c echo.Context) error {
 // @Tags auth
 // @Accept json
 // @Produce json
+//
+//	@Param			Authorization	header		string	true	"Authentication header"
+//
 // @Success 200
 // @Failure 400 {string} string
+//
+//	@Security		ApiKeyAuth
+//
 // @Router /auth/logout [post]
 func (h *Handler) Logout(c echo.Context) error {
 	token, ok := c.Get("token").(string)
@@ -140,9 +160,15 @@ func (h *Handler) Logout(c echo.Context) error {
 // @Tags user
 // @Produce json
 // @Param code path string true "Activation code"
+//
+//	@Param			Authorization	header		string	true	"Authentication header"
+//
 // @Success 200
 // @Failure 400 {string} string
 // @Failure 401 {string} string
+//
+//	@Security		ApiKeyAuth
+//
 // @Router /users/activation [get]
 func (h *Handler) ActivateUser(c echo.Context) error {
 	request := models.ActivateUserRequest{}
@@ -171,9 +197,15 @@ func (h *Handler) ActivateUser(c echo.Context) error {
 // @Tags user
 // @Produce json
 // @Param id path int true "User ID"
+//
+//	@Param			Authorization	header		string	true	"Authentication header"
+//
 // @Success 200 {object} models.User
 // @Failure 400 {string} string
 // @Failure 401 {string} string
+//
+//	@Security		ApiKeyAuth
+//
 // @Router /users/{id} [get]
 func (h *Handler) GetUserByID(c echo.Context) error {
 	idStr := c.Param("id")
