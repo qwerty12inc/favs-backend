@@ -6,10 +6,14 @@ import (
 	"fmt"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	echoSwagger "github.com/swaggo/echo-swagger"
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/auth/delivery"
 	middleware2 "gitlab.com/v.rianov/favs-backend/internal/pkg/auth/middleware"
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/auth/repository"
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/auth/usecase"
+
+	_ "gitlab.com/v.rianov/favs-backend/docs"
+
 	"log"
 	"net/http"
 	"os"
@@ -80,6 +84,8 @@ func run() error {
 	handler := delivery.NewHandler(usecase)
 
 	apiV1Group := e.Group("/api/v1")
+
+	apiV1Group.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	authGroup := apiV1Group.Group("/auth")
 	{
