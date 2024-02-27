@@ -62,7 +62,8 @@ func (h *Handler) Login(c echo.Context) error {
 	if status.Code != models.OK {
 		return c.JSON(400, status)
 	}
-	return c.JSON(200, token)
+	c.Response().Header().Set("Authorization", "Bearer "+token)
+	return c.JSON(200, "OK")
 }
 
 // UpdateUser godoc
@@ -117,16 +118,19 @@ func (h *Handler) GetMe(c echo.Context) error {
 // @Tags auth
 // @Accept json
 // @Produce json
-// @Param token path string true "Token"
 // @Success 200
 // @Failure 400 {string} string
-// @Router /auth/logout/{token} [post]
+// @Router /auth/logout [post]
 func (h *Handler) Logout(c echo.Context) error {
-	token := c.Param("token")
-	_, status := h.usecase.Logout(c.Request().Context(), token)
+	token, ok := c.Get("token").(string)
+	if !ok {
+		return c.JSON(400, models.Status{Code: models.BadRequest, Message: "User not found"})
+	}
+	newToken, status := h.usecase.Logout(c.Request().Context(), token)
 	if status.Code != models.OK {
 		return c.JSON(400, status)
 	}
+	c.Response().Header().Set("Authorization", "Bearer "+newToken)
 	return c.JSON(200, "OK")
 }
 

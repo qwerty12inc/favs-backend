@@ -32,6 +32,7 @@ func (h AuthMiddlewareHandler) Auth(next echo.HandlerFunc) echo.HandlerFunc {
 			return c.JSON(401, "Unauthorized")
 		}
 		c.Set("user", user)
+		c.Set("token", token)
 		return next(c)
 	}
 }
