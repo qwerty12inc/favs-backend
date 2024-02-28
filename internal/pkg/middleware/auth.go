@@ -1,16 +1,21 @@
 package middleware
 
 import (
+	"firebase.google.com/go/auth"
 	"github.com/labstack/echo/v4"
 	"gitlab.com/v.rianov/favs-backend/internal/models"
-	"gitlab.com/v.rianov/favs-backend/internal/pkg/auth"
 	"log"
 	"strings"
 )
 
 type AuthMiddlewareHandler struct {
-	TokenProvider auth.TokenProvider
-	Repository    auth.Repository
+	cl *auth.Client
+}
+
+func NewAuthMiddlewareHandler(cl *auth.Client) AuthMiddlewareHandler {
+	return AuthMiddlewareHandler{
+		cl: cl,
+	}
 }
 
 func (h AuthMiddlewareHandler) Auth(next echo.HandlerFunc) echo.HandlerFunc {
@@ -21,16 +26,22 @@ func (h AuthMiddlewareHandler) Auth(next echo.HandlerFunc) echo.HandlerFunc {
 		if token == "" {
 			return c.JSON(401, "Unauthorized")
 		}
-		user, status := h.TokenProvider.ValidateToken(c.Request().Context(), token)
-		log.Println("User: ", user, "Status: ", status)
-		if status.Code != models.OK {
+
+		t, err := h.cl.VerifyIDToken(c.Request().Context(), token)
+		if err != nil {
 			return c.JSON(401, "Unauthorized")
 		}
-		log.Println("User: ", user)
-		user, status = h.Repository.GetUserByID(c.Request().Context(), user.ID)
-		if status.Code != models.OK {
+
+		firebaseUserInfo, err := h.cl.GetUser(c.Request().Context(), t.UID)
+		if err != nil {
 			return c.JSON(401, "Unauthorized")
 		}
+
+		user := models.User{
+			UID:   firebaseUserInfo.UID,
+			Email: firebaseUserInfo.Email,
+		}
+
 		c.Set("user", user)
 		c.Set("token", token)
 		return next(c)

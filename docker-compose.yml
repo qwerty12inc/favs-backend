@@ -4,16 +4,7 @@ services:
   favsapi:
     image: "registry.gitlab.com/v.rianov/favs-backend:develop"
     environment:
-      SIGNING_KEY: ${SIGNING_KEY}
-      REDIS_ADDR: "db-codes:6379"
-      REDIS_PASS: "${REDIS_PASS}"
       FIRESTORE_PROJECT_ID: ${FIRESTORE_PROJECT_ID}
-      SMTP_HOST: ${SMTP_HOST}
-      SMTP_PORT: ${SMTP_PORT}
-      SMTP_USER: ${SMTP_USER}
-      SMTP_PASSWORD: ${SMTP_PASSWORD}
-      SMTP_SENDER: ${SMTP_SENDER}
-      BASE_ADDR: ${BASE_ADDR}
       SERVICE_ACCOUNT_PATH: /src/service-account.json
     volumes:
       - /home/slavaryanov:/src
@@ -22,10 +13,3 @@ services:
       - 8080:8080
     depends_on:
       - db-codes
-
-  db-codes:
-    image: redis
-    restart: always
-    ports:
-      - 6379:6379
-    command: redis-server --save 20 1 --loglevel warning --requirepass ${REDIS_PASS}

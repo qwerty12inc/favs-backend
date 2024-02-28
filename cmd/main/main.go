@@ -7,10 +7,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	echoSwagger "github.com/swaggo/echo-swagger"
-	"gitlab.com/v.rianov/favs-backend/internal/pkg/auth/delivery"
-	middleware2 "gitlab.com/v.rianov/favs-backend/internal/pkg/auth/middleware"
-	"gitlab.com/v.rianov/favs-backend/internal/pkg/auth/repository"
-	"gitlab.com/v.rianov/favs-backend/internal/pkg/auth/usecase"
+	middleware2 "gitlab.com/v.rianov/favs-backend/internal/pkg/middleware"
 
 	_ "gitlab.com/v.rianov/favs-backend/docs"
 
@@ -75,48 +72,18 @@ func run() error {
 	}
 	defer client.Close()
 
-	smtpProvider, err := setupSMTP()
+	authClient, err := setupFirebaseAuth(ctx)
+	log.Println("Firebase auth client created", err)
 	if err != nil {
 		return err
 	}
 
-	tokenProvider, err := setupTokenProvider()
-	if err != nil {
-		return err
-	}
-
-	activationCodesRepository, err := setupActivationCodesRepository()
-	if err != nil {
-		return err
-	}
-
-	repo := repository.NewFirestoreRepository(client)
-	usecase := usecase.NewUsecase(repo, smtpProvider, tokenProvider, activationCodesRepository)
-	handler := delivery.NewHandler(usecase)
+	authMiddleware := middleware2.NewAuthMiddlewareHandler(authClient)
+	_ = authMiddleware
 
 	apiV1Group := e.Group("/api/v1")
 
 	apiV1Group.GET("/swagger/*", echoSwagger.WrapHandler)
-
-	authGroup := apiV1Group.Group("/auth")
-	{
-		authGroup.POST("/signup", handler.SignUp)
-		authGroup.POST("/login", handler.Login)
-		authGroup.POST("/logout", handler.Logout)
-	}
-
-	authMiddleware := middleware2.AuthMiddlewareHandler{
-		TokenProvider: tokenProvider,
-		Repository:    repo,
-	}
-
-	userGroup := apiV1Group.Group("/users", authMiddleware.Auth)
-	{
-		userGroup.GET("/me", handler.GetMe)
-		userGroup.GET("/activation", handler.ActivateUser)
-		userGroup.GET("/user/:id", handler.GetUserByID)
-		userGroup.PUT("/user", handler.UpdateUser)
-	}
 
 	e.GET("/health/status", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Api is up and running!")
