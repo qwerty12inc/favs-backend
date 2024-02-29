@@ -1,47 +1,60 @@
 basePath: /api/v1
 definitions:
-  models.LoginRequest:
+  models.CreatePlaceRequest:
     properties:
-      email:
+      address:
         type: string
-      password:
+      city:
+        type: string
+      closed_at:
+        type: string
+      description:
+        type: string
+      labels:
+        items:
+          type: string
+        type: array
+      location:
+        type: string
+      name:
+        type: string
+      open_at:
+        type: string
+      phone:
+        type: string
+      type:
+        type: string
+      website:
         type: string
     type: object
-  models.Password:
+  models.UpdatePlaceRequest:
     properties:
-      plaintext:
+      address:
         type: string
-    type: object
-  models.SignUpRequest:
-    properties:
-      email:
+      city:
         type: string
-      password:
+      closed_at:
         type: string
-    type: object
-  models.UpdateUserRequest:
-    properties:
-      email:
+      description:
         type: string
       id:
         type: string
-      new_password:
+      labels:
+        items:
+          type: string
+        type: array
+      location:
         type: string
-      old_password:
+      name:
         type: string
-    type: object
-  models.User:
-    properties:
-      activated:
-        type: boolean
-      created_at:
+      open_at:
         type: string
-      email:
+      phone:
         type: string
-      id:
+      type:
         type: string
-      password:
-        $ref: '#/definitions/models.Password'
+      website:
+        type: string
     type: object
 host: 34.159.168.142
 info:
@@ -52,40 +65,66 @@ info:
   title: Favs API
   version: 0.1.0
 paths:
-  /auth/login:
-    post:
+  /places:
+    get:
       consumes:
       - application/json
-      description: Login user
+      description: Get places
       parameters:
-      - description: User data
-        in: body
-        name: user
+      - description: Authentication header
+        in: header
+        name: Authorization
         required: true
-        schema:
-          $ref: '#/definitions/models.LoginRequest'
+        type: string
+      - description: Latitude
+        in: query
+        name: latitude
+        required: true
+        type: number
+      - description: Longitude
+        in: query
+        name: longitude
+        required: true
+        type: number
+      - description: Latitude delta
+        in: query
+        name: latitudeDelta
+        required: true
+        type: number
+      - description: Longitude delta
+        in: query
+        name: longitudeDelta
+        required: true
+        type: number
+      - collectionFormat: csv
+        description: Labels
+        in: query
+        items:
+          type: string
+        name: labels
+        required: true
+        type: array
       produces:
       - application/json
       responses:
         "200":
-          description: OK
-          headers:
-            Authorization:
-              description: Bearer <token>
-              type: string
-        "400":
-          description: Bad Request
-          schema:
-            type: string
-      summary: Login
+          description: Places
+        "500":
+          description: Internal server error
+      summary: Get places
       tags:
-      - auth
-  /auth/logout:
+      - places
     post:
       consumes:
       - application/json
-      description: Logout user
+      description: Create place
       parameters:
+      - description: Place
+        in: body
+        name: place
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreatePlaceRequest'
       - description: Authentication header
         in: header
         name: Authorization
@@ -94,123 +133,79 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Place created
         "400":
-          description: Bad Request
-          schema:
-            type: string
-      security:
-      - ApiKeyAuth: []
-      summary: Logout
+          description: Bad request
+        "500":
+          description: Internal server error
+      summary: Create place
       tags:
-      - auth
-  /auth/signup:
-    post:
-      consumes:
-      - application/json
-      description: Create a new user
-      parameters:
-      - description: User data
-        in: body
-        name: user
-        required: true
-        schema:
-          $ref: '#/definitions/models.SignUpRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          headers:
-            Authorization:
-              description: Bearer <token>
-              type: string
-        "400":
-          description: Bad Request
-          schema:
-            type: string
-      summary: Sign up
-      tags:
-      - auth
-  /users:
+      - places
     put:
       consumes:
       - application/json
-      description: Update user data
+      description: Update place
       parameters:
-      - description: User data
-        in: body
-        name: user
-        required: true
-        schema:
-          $ref: '#/definitions/models.UpdateUserRequest'
       - description: Authentication header
         in: header
         name: Authorization
         required: true
         type: string
+      - description: Place
+        in: body
+        name: place
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdatePlaceRequest'
       produces:
       - application/json
       responses:
         "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.User'
+          description: Place updated
         "400":
-          description: Bad Request
-          schema:
-            type: string
-        "401":
-          description: Unauthorized
-          schema:
-            type: string
-      security:
-      - ApiKeyAuth: []
-      summary: Update user
+          description: Bad request
+        "500":
+          description: Internal server error
+      summary: Update place
       tags:
-      - user
-  /users/{id}:
-    get:
-      description: Get user data by ID
+      - places
+  /places/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete place
       parameters:
-      - description: User ID
+      - description: Authentication header
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Place ID
         in: path
         name: id
         required: true
-        type: integer
-      - description: Authentication header
-        in: header
-        name: Authorization
-        required: true
         type: string
       produces:
       - application/json
       responses:
         "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.User'
-        "400":
-          description: Bad Request
-          schema:
-            type: string
-        "401":
-          description: Unauthorized
-          schema:
-            type: string
-      security:
-      - ApiKeyAuth: []
-      summary: Get user by ID
+          description: Place deleted
+        "404":
+          description: Place not found
+        "500":
+          description: Internal server error
+      summary: Delete place
       tags:
-      - user
-  /users/activation:
+      - places
     get:
-      description: Activate user
+      consumes:
+      - application/json
+      description: Get place
       parameters:
-      - description: Activation code
-        in: query
-        name: code
+      - description: Place ID
+        in: path
+        name: id
         required: true
         type: string
       - description: Authentication header
@@ -222,49 +217,14 @@ paths:
       - application/json
       responses:
         "200":
-          description: OK
-        "400":
-          description: Bad Request
-          schema:
-            type: string
-        "401":
-          description: Unauthorized
-          schema:
-            type: string
-      security:
-      - ApiKeyAuth: []
-      summary: Activate user
+          description: Place
+        "404":
+          description: Place not found
+        "500":
+          description: Internal server error
+      summary: Get place
       tags:
-      - user
-  /users/me:
-    get:
-      description: Get user data
-      parameters:
-      - description: Authentication header
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.User'
-        "400":
-          description: Bad Request
-          schema:
-            type: string
-        "401":
-          description: Unauthorized
-          schema:
-            type: string
-      security:
-      - ApiKeyAuth: []
-      summary: Get user
-      tags:
-      - user
+      - places
 securityDefinitions:
   ApiKeyAuth:
     type: basic
