@@ -7,7 +7,11 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	echoSwagger "github.com/swaggo/echo-swagger"
+	"gitlab.com/v.rianov/favs-backend/internal/pkg/maps"
 	middleware2 "gitlab.com/v.rianov/favs-backend/internal/pkg/middleware"
+	"gitlab.com/v.rianov/favs-backend/internal/pkg/places/delivery"
+	"gitlab.com/v.rianov/favs-backend/internal/pkg/places/repository"
+	"gitlab.com/v.rianov/favs-backend/internal/pkg/places/usecase"
 
 	_ "gitlab.com/v.rianov/favs-backend/docs"
 
@@ -84,6 +88,19 @@ func run() error {
 	apiV1Group := e.Group("/api/v1")
 
 	apiV1Group.GET("/swagger/*", echoSwagger.WrapHandler)
+
+	// Place handlers
+	placeRepo := repository.NewRepository(client)
+	placeUsecase := usecase.NewUsecase(placeRepo, maps.LocationLinkResolverImpl{})
+	placeHandler := delivery.NewHandler(placeUsecase)
+	placeGroup := apiV1Group.Group("/places", authMiddleware.Auth)
+	{
+		placeGroup.POST("", placeHandler.CreatePlace)
+		placeGroup.GET("/:id", placeHandler.GetPlace)
+		placeGroup.GET("", placeHandler.GetPlaces)
+		placeGroup.PUT("", placeHandler.UpdatePlace)
+		placeGroup.DELETE("/:id", placeHandler.DeletePlace)
+	}
 
 	e.GET("/health/status", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Api is up and running!")
