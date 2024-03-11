@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestLocationLinkResolverImpl_ResolveLink(t *testing.T) {
+func TestLocationLinkResolverImpl_parseLink(t *testing.T) {
 	type fields struct {
 	}
 	type args struct {
@@ -34,6 +34,41 @@ func TestLocationLinkResolverImpl_ResolveLink(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			l := LocationLinkResolverImpl{}
+			got, err := l.parseLink(tt.args.link)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("LocationLinkResolverImpl.ParseLink() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got.Latitude == 0 || got.Longitude == 0 {
+				t.Errorf("LocationLinkResolverImpl.ParseLink() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestLocationLinkResolverImpl_ResolveLink(t *testing.T) {
+	type fields struct {
+	}
+	type args struct {
+		link string
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		want    models.Coordinates
+		wantErr bool
+	}{
+		{
+			name: "valid link",
+			args: args{
+				link: "https://maps.app.goo.gl/aLzwGnQnPnR9jAHu9",
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			l := LocationLinkResolverImpl{}
 			got, err := l.ResolveLink(tt.args.link)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("LocationLinkResolverImpl.ResolveLink() error = %v, wantErr %v", err, tt.wantErr)
@@ -46,10 +81,10 @@ func TestLocationLinkResolverImpl_ResolveLink(t *testing.T) {
 	}
 }
 
-func TestLocationLinkResolverImpl_ResolveLink_InvalidLink(t *testing.T) {
+func TestLocationLinkResolverImpl_ParseLink_InvalidLink(t *testing.T) {
 	l := LocationLinkResolverImpl{}
-	_, err := l.ResolveLink("https://www.google.com/maps")
+	_, err := l.parseLink("https://www.google.com/maps")
 	if err == nil {
-		t.Error("LocationLinkResolverImpl.ResolveLink() = nil, want error")
+		t.Error("LocationLinkResolverImpl.ParseLink() = nil, want error")
 	}
 }

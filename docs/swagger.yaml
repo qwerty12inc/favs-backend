@@ -2,8 +2,6 @@ basePath: /api/v1
 definitions:
   models.CreatePlaceRequest:
     properties:
-      address:
-        type: string
       city:
         type: string
       closed_at:
@@ -20,10 +18,6 @@ definitions:
         type: string
       open_at:
         type: string
-      phone:
-        type: string
-      type:
-        type: string
       website:
         type: string
     type: object
@@ -32,8 +26,6 @@ definitions:
       address:
         type: string
       city:
-        type: string
-      closed_at:
         type: string
       description:
         type: string
@@ -46,8 +38,6 @@ definitions:
       location:
         type: string
       name:
-        type: string
-      open_at:
         type: string
       phone:
         type: string

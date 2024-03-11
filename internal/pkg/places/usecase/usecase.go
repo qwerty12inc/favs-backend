@@ -2,21 +2,28 @@ package usecase
 
 import (
 	"context"
+	"fmt"
+	"github.com/google/uuid"
 	"gitlab.com/v.rianov/favs-backend/internal/models"
+	"gitlab.com/v.rianov/favs-backend/internal/pkg/googlesheets"
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/maps"
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/places"
+	"log"
 )
 
 type Usecase struct {
 	repo         places.Repository
 	linkResolver maps.LocationLinkResolver
+	parser       googlesheets.SheetParser
 }
 
 func NewUsecase(repo places.Repository,
-	linkResolver maps.LocationLinkResolver) Usecase {
+	linkResolver maps.LocationLinkResolver,
+	parser googlesheets.SheetParser) Usecase {
 	return Usecase{
 		repo:         repo,
 		linkResolver: linkResolver,
+		parser:       parser,
 	}
 }
 
@@ -31,16 +38,55 @@ func (u Usecase) CreatePlace(ctx context.Context, request models.CreatePlaceRequ
 		Description: request.Description,
 		LocationURL: request.LocationURL,
 		Coordinates: coordinates,
-		OpenAt:      request.OpenAt,
-		ClosedAt:    request.ClosedAt,
 		City:        request.City,
-		Address:     request.Address,
-		Phone:       request.Phone,
-		Type:        request.Type,
 		Website:     request.Website,
 		Labels:      request.Labels,
 	}
 	return u.repo.SavePlace(ctx, place)
+}
+
+func (u Usecase) ImportPlacesFromSheet(ctx context.Context, sheetRange string,
+	city string, force bool) error {
+	places, status := u.parser.ParsePlaces(ctx, sheetRange)
+	if status.Code != models.OK {
+		return fmt.Errorf("failed to parse places from sheet: %s", status.Message)
+	}
+
+	for _, place := range places {
+		coordinates, err := u.linkResolver.ResolveLink(place.LocationURL)
+		if err != nil {
+			log.Printf("Error while resolving coordinates: %v\n", err)
+		}
+		log.Printf("Resolved coordinates: %v\n", coordinates)
+
+		placeModel := models.Place{
+			ID:          uuid.New().String(),
+			Name:        place.Name,
+			Description: place.Description,
+			LocationURL: place.LocationURL,
+			Coordinates: coordinates,
+			City:        city,
+			Website:     place.Website,
+			Instagram:   place.Instagram,
+			Labels:      place.Labels,
+		}
+
+		log.Printf("Saving place: %v\n", placeModel)
+
+		oldPlace, err := u.repo.GetPlaceByName(ctx, placeModel.Name)
+		if err == nil && oldPlace.Name == placeModel.Name && !force {
+			log.Printf("Place with name %s already exists, skipping.\n", placeModel.Name)
+			continue
+		}
+
+		err = u.repo.SavePlace(ctx, placeModel)
+		if err != nil {
+			log.Printf("Error while saving place: %v\n", err)
+			return err
+		}
+		log.Printf("Place saved.\n")
+	}
+	return nil
 }
 
 func (u Usecase) GetPlace(ctx context.Context, id string) (models.Place, error) {

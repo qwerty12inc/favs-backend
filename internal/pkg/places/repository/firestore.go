@@ -19,12 +19,29 @@ func NewRepository(cl *firestore.Client) Repository {
 }
 
 func (r Repository) SavePlace(ctx context.Context, place models.Place) error {
-	_, _, err := r.cl.Collection("places").Add(ctx, place)
+	_, err := r.cl.Collection("places").Doc(place.ID).Create(ctx, place)
 	return err
 }
 
 func (r Repository) GetPlace(ctx context.Context, id string) (models.Place, error) {
 	doc, err := r.cl.Collection("places").Doc(id).Get(ctx)
+	if err != nil {
+		return models.Place{}, err
+	}
+	var place models.Place
+	err = doc.DataTo(&place)
+	if err != nil {
+		return models.Place{}, err
+	}
+	return place, nil
+}
+
+func (r Repository) GetPlaceByName(ctx context.Context, name string) (models.Place, error) {
+	iter := r.cl.Collection("places").Where("name", "==", name).Documents(ctx)
+	doc, err := iter.Next()
+	if errors.Is(err, iterator.Done) {
+		return models.Place{}, errors.New("place not found")
+	}
 	if err != nil {
 		return models.Place{}, err
 	}

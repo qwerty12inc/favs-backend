@@ -6,19 +6,25 @@ type Place struct {
 	Description string      `firestore:"description"`
 	LocationURL string      `firestore:"location"`
 	Coordinates Coordinates `firestore:"location"`
-	OpenAt      string      `firestore:"open_at"`
-	ClosedAt    string      `firestore:"closed_at"`
 	City        string      `firestore:"city"`
-	Address     string      `firestore:"address"`
-	Phone       string      `firestore:"phone"`
-	Type        string      `firestore:"type"`
 	Website     string      `firestore:"website"`
+	Instagram   string      `firestore:"instagram"`
 	Labels      []string    `firestore:"labels"`
 }
 
 type Coordinates struct {
 	Latitude  float64 `firestore:"lat"`
 	Longitude float64 `firestore:"lng"`
+}
+
+type GoogleSheetPlace struct {
+	Name        string
+	Description string
+	LocationURL string
+	City        string
+	Website     string
+	Instagram   string
+	Labels      []string
 }
 
 type CreatePlaceRequest struct {
@@ -28,9 +34,6 @@ type CreatePlaceRequest struct {
 	OpenAt      string   `json:"open_at,omitempty"`
 	ClosedAt    string   `json:"closed_at,omitempty"`
 	City        string   `json:"city,omitempty"`
-	Address     string   `json:"address,omitempty"`
-	Phone       string   `json:"phone,omitempty"`
-	Type        string   `json:"type,omitempty"`
 	Website     string   `json:"website,omitempty"`
 	Labels      []string `json:"labels,omitempty"`
 }
@@ -40,8 +43,6 @@ type UpdatePlaceRequest struct {
 	Name        string   `json:"name,omitempty"`
 	Description string   `json:"description,omitempty"`
 	LocationURL string   `json:"location,omitempty"`
-	OpenAt      string   `json:"open_at,omitempty"`
-	ClosedAt    string   `json:"closed_at,omitempty"`
 	City        string   `json:"city,omitempty"`
 	Address     string   `json:"address,omitempty"`
 	Phone       string   `json:"phone,omitempty"`

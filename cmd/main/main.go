@@ -7,14 +7,12 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	echoSwagger "github.com/swaggo/echo-swagger"
+	_ "gitlab.com/v.rianov/favs-backend/docs"
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/maps"
 	middleware2 "gitlab.com/v.rianov/favs-backend/internal/pkg/middleware"
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/places/delivery"
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/places/repository"
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/places/usecase"
-
-	_ "gitlab.com/v.rianov/favs-backend/docs"
-
 	"log"
 	"net/http"
 	"os"
@@ -89,9 +87,14 @@ func run() error {
 
 	apiV1Group.GET("/swagger/*", echoSwagger.WrapHandler)
 
+	sheetsParser, err := setupSheetsParser(ctx)
+	if err != nil {
+		return err
+	}
+
 	// Place handlers
 	placeRepo := repository.NewRepository(client)
-	placeUsecase := usecase.NewUsecase(placeRepo, maps.LocationLinkResolverImpl{})
+	placeUsecase := usecase.NewUsecase(placeRepo, maps.LocationLinkResolverImpl{}, sheetsParser)
 	placeHandler := delivery.NewHandler(placeUsecase)
 	placeGroup := apiV1Group.Group("/places", authMiddleware.Auth)
 	{
@@ -102,6 +105,25 @@ func run() error {
 		placeGroup.DELETE("/:id", placeHandler.DeletePlace)
 	}
 
+	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				log.Println("Recovered from panic", r)
+			}
+		}()
+		for {
+			cities := []string{"Amsterdam", "Milan"}
+			for _, city := range cities {
+				err := placeUsecase.ImportPlacesFromSheet(ctx, fmt.Sprintf("%s!A2:G", city), city, false)
+				if err != nil {
+					log.Println(err)
+				}
+			}
+			time.Sleep(5 * time.Minute)
+		}
+	}()
+
+	// Health check
 	e.GET("/health/status", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Api is up and running!")
 	})

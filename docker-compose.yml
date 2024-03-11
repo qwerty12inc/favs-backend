@@ -6,6 +6,9 @@ services:
     environment:
       FIRESTORE_PROJECT_ID: ${FIRESTORE_PROJECT_ID}
       SERVICE_ACCOUNT_PATH: /src/service-account.json
+      SPREADSHEET_ID: ${SPREADSHEET_ID}
+      SHEETS_SERVICE_ACCOUNT_PATH: /src/credentials.json
+      SHEETS_TOKEN_PATH: /src/token.json
     volumes:
       - /home/slavaryanov:/src
     command: ./favsapi

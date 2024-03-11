@@ -260,9 +260,6 @@ const docTemplate = `{
         "models.CreatePlaceRequest": {
             "type": "object",
             "properties": {
-                "address": {
-                    "type": "string"
-                },
                 "city": {
                     "type": "string"
                 },
@@ -287,12 +284,6 @@ const docTemplate = `{
                 "open_at": {
                     "type": "string"
                 },
-                "phone": {
-                    "type": "string"
-                },
-                "type": {
-                    "type": "string"
-                },
                 "website": {
                     "type": "string"
                 }
@@ -305,9 +296,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "city": {
-                    "type": "string"
-                },
-                "closed_at": {
                     "type": "string"
                 },
                 "description": {
@@ -326,9 +314,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "name": {
-                    "type": "string"
-                },
-                "open_at": {
                     "type": "string"
                 },
                 "phone": {

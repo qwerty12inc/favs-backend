@@ -10,6 +10,7 @@ type Repository interface {
 	GetPlace(ctx context.Context, id string) (models.Place, error)
 	GetPlaces(ctx context.Context, request models.GetPlacesRequest) ([]models.Place, error)
 	DeletePlace(ctx context.Context, id string) error
+	GetPlaceByName(ctx context.Context, name string) (models.Place, error)
 }
 
 type Usecase interface {
@@ -18,4 +19,5 @@ type Usecase interface {
 	GetPlaces(ctx context.Context, request models.GetPlacesRequest) ([]models.Place, error)
 	UpdatePlace(ctx context.Context, request models.UpdatePlaceRequest) error
 	DeletePlace(ctx context.Context, id string) error
+	ImportPlacesFromSheet(ctx context.Context, sheetRange string, city string, force bool) error
 }
