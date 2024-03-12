@@ -13,8 +13,8 @@ type Place struct {
 }
 
 type Coordinates struct {
-	Latitude  float64 `firestore:"lat"`
-	Longitude float64 `firestore:"lng"`
+	Latitude  float64 `firestore:"latitude"`
+	Longitude float64 `firestore:"longitude"`
 }
 
 type GoogleSheetPlace struct {
