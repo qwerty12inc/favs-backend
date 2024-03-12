@@ -81,7 +81,13 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Places"
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Place"
+                            }
+                        }
                     },
                     "500": {
                         "description": "Internal server error"
@@ -204,7 +210,10 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Place"
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Place"
+                        }
                     },
                     "404": {
                         "description": "Place not found"
@@ -257,6 +266,17 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "models.Coordinates": {
+            "type": "object",
+            "properties": {
+                "latitude": {
+                    "type": "number"
+                },
+                "longitude": {
+                    "type": "number"
+                }
+            }
+        },
         "models.CreatePlaceRequest": {
             "type": "object",
             "properties": {
@@ -282,6 +302,41 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "open_at": {
+                    "type": "string"
+                },
+                "website": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Place": {
+            "type": "object",
+            "properties": {
+                "city": {
+                    "type": "string"
+                },
+                "coordinates": {
+                    "$ref": "#/definitions/models.Coordinates"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "instagram": {
+                    "type": "string"
+                },
+                "labels": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "locationURL": {
+                    "type": "string"
+                },
+                "name": {
                     "type": "string"
                 },
                 "website": {

@@ -54,7 +54,7 @@ func (h Handler) CreatePlace(c echo.Context) error {
 //
 //	@Param			Authorization	header		string	true	"Authentication header"
 //
-// @Success 200 "Place"
+// @Success 200 {object} models.Place
 // @Failure 404 "Place not found"
 // @Failure 500 "Internal server error"
 // @Router /places/{id} [get]
@@ -82,7 +82,7 @@ func (h Handler) GetPlace(c echo.Context) error {
 // @Param latitudeDelta query float64 true "Latitude delta"
 // @Param longitudeDelta query float64 true "Longitude delta"
 // @Param labels query []string true "Labels"
-// @Success 200 "Places"
+// @Success 200 {array} models.Place
 // @Failure 500 "Internal server error"
 // @Router /places [get]
 func (h Handler) GetPlaces(c echo.Context) error {

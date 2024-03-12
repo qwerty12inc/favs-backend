@@ -1,5 +1,12 @@
 basePath: /api/v1
 definitions:
+  models.Coordinates:
+    properties:
+      latitude:
+        type: number
+      longitude:
+        type: number
+    type: object
   models.CreatePlaceRequest:
     properties:
       city:
@@ -17,6 +24,29 @@ definitions:
       name:
         type: string
       open_at:
+        type: string
+      website:
+        type: string
+    type: object
+  models.Place:
+    properties:
+      city:
+        type: string
+      coordinates:
+        $ref: '#/definitions/models.Coordinates'
+      description:
+        type: string
+      id:
+        type: string
+      instagram:
+        type: string
+      labels:
+        items:
+          type: string
+        type: array
+      locationURL:
+        type: string
+      name:
         type: string
       website:
         type: string
@@ -98,7 +128,11 @@ paths:
       - application/json
       responses:
         "200":
-          description: Places
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Place'
+            type: array
         "500":
           description: Internal server error
       summary: Get places
@@ -207,7 +241,9 @@ paths:
       - application/json
       responses:
         "200":
-          description: Place
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Place'
         "404":
           description: Place not found
         "500":
