@@ -6,6 +6,7 @@ import (
 	"errors"
 	"gitlab.com/v.rianov/favs-backend/internal/models"
 	"google.golang.org/api/iterator"
+	"log"
 )
 
 type Repository struct {
@@ -19,6 +20,7 @@ func NewRepository(cl *firestore.Client) Repository {
 }
 
 func (r Repository) SavePlace(ctx context.Context, place models.Place) error {
+	log.Println("Saving place: ", place)
 	_, err := r.cl.Collection("places").Doc(place.ID).Create(ctx, place)
 	return err
 }

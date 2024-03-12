@@ -36,6 +36,7 @@ func (h AuthMiddlewareHandler) Auth(next echo.HandlerFunc) echo.HandlerFunc {
 		if err != nil {
 			return c.JSON(401, "Unauthorized")
 		}
+		log.Println("Firebase user email: ", firebaseUserInfo.UserInfo.Email)
 
 		user := models.User{
 			UID:   firebaseUserInfo.UID,

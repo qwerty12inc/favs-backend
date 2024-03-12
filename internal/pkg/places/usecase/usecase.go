@@ -58,6 +58,8 @@ func (u Usecase) ImportPlacesFromSheet(ctx context.Context, sheetRange string,
 			log.Printf("Error while resolving coordinates: %v url: %s\n", err, place.LocationURL)
 		}
 
+		log.Printf("Coordinates resolved: %v\n", coordinates)
+
 		placeModel := models.Place{
 			ID:          uuid.New().String(),
 			Name:        place.Name,
