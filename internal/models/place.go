@@ -5,7 +5,7 @@ type Place struct {
 	Name        string      `firestore:"name"`
 	Description string      `firestore:"description"`
 	LocationURL string      `firestore:"location_url"`
-	Coordinates Coordinates `firestore:"location"`
+	Coordinates Coordinates `firestore:"coordinates"`
 	City        string      `firestore:"city"`
 	Website     string      `firestore:"website"`
 	Instagram   string      `firestore:"instagram"`
