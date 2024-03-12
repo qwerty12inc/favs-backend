@@ -37,7 +37,6 @@ func (s SheetsParser) ParsePlaces(ctx context.Context, readRange string) ([]mode
 	values := resp.Values
 	places := make([]models.GoogleSheetPlace, 0, len(values))
 	for _, row := range values {
-		log.Println("Row: ", row)
 		place := models.GoogleSheetPlace{}
 		if len(row) > 0 {
 			place.Name = row[0].(string)
@@ -46,7 +45,6 @@ func (s SheetsParser) ParsePlaces(ctx context.Context, readRange string) ([]mode
 			labels := strings.Split(row[1].(string), "/")
 			for i, label := range labels {
 				labels[i] = strings.TrimSpace(label)
-				log.Println("Label: ", labels[i])
 			}
 			place.Labels = labels
 		}
