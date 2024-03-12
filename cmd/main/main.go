@@ -119,7 +119,7 @@ func run() error {
 					log.Println(err)
 				}
 			}
-			time.Sleep(5 * time.Minute)
+			time.Sleep(40 * time.Minute)
 		}
 	}()
 
