@@ -55,7 +55,7 @@ func (u Usecase) ImportPlacesFromSheet(ctx context.Context, sheetRange string,
 	for _, place := range places {
 		coordinates, err := u.linkResolver.ResolveLink(place.LocationURL)
 		if err != nil {
-			log.Printf("Error while resolving coordinates: %v\n", err)
+			log.Printf("Error while resolving coordinates: %v url: %s\n", err, place.LocationURL)
 		}
 
 		placeModel := models.Place{
