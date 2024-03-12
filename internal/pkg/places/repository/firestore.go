@@ -57,10 +57,10 @@ func (r Repository) GetPlaceByName(ctx context.Context, name string) (models.Pla
 
 func (r Repository) GetPlaces(ctx context.Context, request models.GetPlacesRequest) ([]models.Place, error) {
 	iter := r.cl.Collection("places").
-		Where("coordinates/latitude", ">", request.Center.Latitude-request.LatitudeDelta).
-		Where("coordinates/latitude", "<", request.Center.Latitude+request.LatitudeDelta).
-		Where("coordinates/longitude", ">", request.Center.Longitude-request.LongitudeDelta).
-		Where("coordinates/longitude", "<", request.Center.Longitude+request.LongitudeDelta).
+		Where("coordinates.latitude", ">", request.Center.Latitude-request.LatitudeDelta).
+		Where("coordinates.latitude", "<", request.Center.Latitude+request.LatitudeDelta).
+		Where("coordinates.longitude", ">", request.Center.Longitude-request.LongitudeDelta).
+		Where("coordinates.longitude", "<", request.Center.Longitude+request.LongitudeDelta).
 		Documents(ctx)
 
 	var places []models.Place
