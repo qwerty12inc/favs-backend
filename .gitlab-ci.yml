@@ -68,6 +68,7 @@ deploy:
         - chmod 600 ~/.ssh/id_rsa
         - ssh-keyscan -H $DEPLOY_SERVER >> ~/.ssh/known_hosts
         - scp -i ~/.ssh/id_rsa docker-compose.yml $DEPLOY_USER@$DEPLOY_SERVER:/home/$DEPLOY_USER
+        - ssh -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_SERVER "rm -rf .env"
         - ssh -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_SERVER "echo 'BASE_ADDR=$BASE_ADDR' >> .env"
         - ssh -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_SERVER "echo 'SIGNING_KEY=$SIGNING_KEY' >> .env"
         - ssh -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_SERVER "echo 'SPREADSHEET_ID=$SPREADSHEET_ID' >> .env"

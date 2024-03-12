@@ -57,7 +57,6 @@ func (u Usecase) ImportPlacesFromSheet(ctx context.Context, sheetRange string,
 		if err != nil {
 			log.Printf("Error while resolving coordinates: %v\n", err)
 		}
-		log.Printf("Resolved coordinates: %v\n", coordinates)
 
 		placeModel := models.Place{
 			ID:          uuid.New().String(),
@@ -71,13 +70,13 @@ func (u Usecase) ImportPlacesFromSheet(ctx context.Context, sheetRange string,
 			Labels:      place.Labels,
 		}
 
-		log.Printf("Saving place: %v\n", placeModel)
-
 		oldPlace, err := u.repo.GetPlaceByName(ctx, placeModel.Name)
 		if err == nil && oldPlace.Name == placeModel.Name && !force {
 			log.Printf("Place with name %s already exists, skipping.\n", placeModel.Name)
 			continue
 		}
+
+		log.Printf("Saving place: %v\n", placeModel)
 
 		err = u.repo.SavePlace(ctx, placeModel)
 		if err != nil {
