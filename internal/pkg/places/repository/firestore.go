@@ -65,6 +65,9 @@ func (r Repository) GetPlaces(ctx context.Context, request models.GetPlacesReque
 	}
 	var iter *firestore.DocumentIterator
 	if request.City == "" {
+		log.Println("Getting places in box: ", box)
+		log.Println("Min: ", geohash.Encode(box.MinLat, box.MinLng))
+		log.Println("Max: ", geohash.Encode(box.MaxLat, box.MaxLng))
 		iter = r.cl.Collection("places").OrderBy("geohash", firestore.Asc).
 			StartAt(geohash.Encode(box.MinLat, box.MinLng)).
 			EndAt(geohash.Encode(box.MaxLat, box.MaxLng)).Documents(ctx)
