@@ -100,10 +100,6 @@ func (u Usecase) GetPlace(ctx context.Context, id string) (models.Place, error) 
 
 func (u Usecase) GetPlaces(ctx context.Context, request models.GetPlacesRequest) ([]models.Place, error) {
 	request.City = strings.ToLower(request.City)
-	if request.City == "" {
-		request.City = "all"
-	}
-
 	places, err := u.repo.GetPlaces(ctx, request)
 	if err != nil {
 		return nil, err

@@ -4,6 +4,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"gitlab.com/v.rianov/favs-backend/internal/models"
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/places/usecase"
+	"log"
 	"strconv"
 )
 
@@ -97,6 +98,7 @@ func (h Handler) GetPlaces(c echo.Context) error {
 	request.Labels = []string{labels}
 
 	if city == "" {
+		log.Println("Getting places in box")
 		latitude, err := strconv.ParseFloat(latitudeStr, 64)
 		if err != nil {
 			return err
@@ -120,6 +122,7 @@ func (h Handler) GetPlaces(c echo.Context) error {
 		request.LatitudeDelta = latitudeDelta
 		request.LongitudeDelta = longitudeDelta
 	} else {
+		log.Println("Getting places in city")
 		request.City = city
 	}
 
