@@ -103,7 +103,16 @@ func (u Usecase) GetPlaces(ctx context.Context, request models.GetPlacesRequest)
 	if request.City == "" {
 		request.City = "all"
 	}
-	return u.repo.GetPlaces(ctx, request)
+
+	places, err := u.repo.GetPlaces(ctx, request)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(places) == 0 {
+		return nil, fmt.Errorf("no places found")
+	}
+	return places, nil
 }
 
 func (u Usecase) UpdatePlace(ctx context.Context, request models.UpdatePlaceRequest) error {
