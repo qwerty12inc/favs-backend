@@ -33,7 +33,10 @@ func handleResponse(c echo.Context, status models.Status, body interface{}) erro
 	case models.Forbidden:
 		return c.JSON(403, status)
 	default:
-		return c.String(500, "Internal server error")
+		return c.JSON(500, models.Status{
+			Code:    models.InternalError,
+			Message: "Internal server error",
+		})
 	}
 }
 

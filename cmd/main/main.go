@@ -8,6 +8,7 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	echoSwagger "github.com/swaggo/echo-swagger"
 	_ "gitlab.com/v.rianov/favs-backend/docs"
+	"gitlab.com/v.rianov/favs-backend/internal/models"
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/maps"
 	middleware2 "gitlab.com/v.rianov/favs-backend/internal/pkg/middleware"
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/places/delivery"
@@ -114,9 +115,11 @@ func run() error {
 		for {
 			cities := []string{"Amsterdam", "Milan"}
 			for _, city := range cities {
-				err := placeUsecase.ImportPlacesFromSheet(ctx, fmt.Sprintf("%s!A2:G", city), city, false)
-				if err != nil {
-					log.Println(err)
+				status := placeUsecase.ImportPlacesFromSheet(ctx, fmt.Sprintf("%s!A2:G", city), city, false)
+				if status.Code != models.OK {
+					log.Println("Failed to import places from sheet", status)
+				} else {
+					log.Println("Places imported from sheet", city)
 				}
 			}
 			time.Sleep(40 * time.Minute)
