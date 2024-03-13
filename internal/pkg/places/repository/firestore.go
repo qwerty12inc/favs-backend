@@ -20,43 +20,46 @@ func NewRepository(cl *firestore.Client) Repository {
 	}
 }
 
-func (r Repository) SavePlace(ctx context.Context, place models.Place) error {
+func (r Repository) SavePlace(ctx context.Context, place models.Place) models.Status {
 	log.Println("Saving place: ", place)
 	_, err := r.cl.Collection("places").Doc(place.ID).Create(ctx, place)
-	return err
+	if err != nil {
+		return models.Status{models.InternalError, err.Error()}
+	}
+	return models.Status{models.OK, "OK"}
 }
 
-func (r Repository) GetPlace(ctx context.Context, id string) (models.Place, error) {
+func (r Repository) GetPlace(ctx context.Context, id string) (models.Place, models.Status) {
 	doc, err := r.cl.Collection("places").Doc(id).Get(ctx)
 	if err != nil {
-		return models.Place{}, err
+		return models.Place{}, models.Status{models.InternalError, err.Error()}
 	}
 	var place models.Place
 	err = doc.DataTo(&place)
 	if err != nil {
-		return models.Place{}, err
+		return models.Place{}, models.Status{models.InternalError, err.Error()}
 	}
-	return place, nil
+	return place, models.Status{models.OK, "OK"}
 }
 
-func (r Repository) GetPlaceByName(ctx context.Context, name string) (models.Place, error) {
+func (r Repository) GetPlaceByName(ctx context.Context, name string) (models.Place, models.Status) {
 	iter := r.cl.Collection("places").Where("name", "==", name).Documents(ctx)
 	doc, err := iter.Next()
 	if errors.Is(err, iterator.Done) {
-		return models.Place{}, errors.New("place not found")
+		return models.Place{}, models.Status{models.NotFound, "Place not found"}
 	}
 	if err != nil {
-		return models.Place{}, err
+		return models.Place{}, models.Status{models.InternalError, err.Error()}
 	}
 	var place models.Place
 	err = doc.DataTo(&place)
 	if err != nil {
-		return models.Place{}, err
+		return models.Place{}, models.Status{models.InternalError, err.Error()}
 	}
-	return place, nil
+	return place, models.Status{models.OK, "OK"}
 }
 
-func (r Repository) GetPlaces(ctx context.Context, request models.GetPlacesRequest) ([]models.Place, error) {
+func (r Repository) GetPlaces(ctx context.Context, request models.GetPlacesRequest) ([]models.Place, models.Status) {
 	box := geohash.Box{
 		MinLat: request.Center.Latitude - request.LatitudeDelta,
 		MaxLat: request.Center.Latitude + request.LatitudeDelta,
@@ -84,19 +87,22 @@ func (r Repository) GetPlaces(ctx context.Context, request models.GetPlacesReque
 			break
 		}
 		if err != nil {
-			return nil, err
+			return nil, models.Status{models.InternalError, err.Error()}
 		}
 		var place models.Place
 		err = doc.DataTo(&place)
 		if err != nil {
-			return nil, err
+			return nil, models.Status{models.InternalError, err.Error()}
 		}
 		places = append(places, place)
 	}
-	return places, nil
+	return places, models.Status{models.OK, "OK"}
 }
 
-func (r Repository) DeletePlace(ctx context.Context, id string) error {
+func (r Repository) DeletePlace(ctx context.Context, id string) models.Status {
 	_, err := r.cl.Collection("places").Doc(id).Delete(ctx)
-	return err
+	if err != nil {
+		return models.Status{models.InternalError, err.Error()}
+	}
+	return models.Status{models.OK, "OK"}
 }

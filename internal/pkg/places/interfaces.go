@@ -6,18 +6,18 @@ import (
 )
 
 type Repository interface {
-	SavePlace(ctx context.Context, place models.Place) error
-	GetPlace(ctx context.Context, id string) (models.Place, error)
-	GetPlaces(ctx context.Context, request models.GetPlacesRequest) ([]models.Place, error)
-	DeletePlace(ctx context.Context, id string) error
-	GetPlaceByName(ctx context.Context, name string) (models.Place, error)
+	SavePlace(ctx context.Context, place models.Place) models.Status
+	GetPlace(ctx context.Context, id string) (models.Place, models.Status)
+	GetPlaces(ctx context.Context, request models.GetPlacesRequest) ([]models.Place, models.Status)
+	DeletePlace(ctx context.Context, id string) models.Status
+	GetPlaceByName(ctx context.Context, name string) (models.Place, models.Status)
 }
 
 type Usecase interface {
-	CreatePlace(ctx context.Context, request models.CreatePlaceRequest) error
-	GetPlace(ctx context.Context, id string) (models.Place, error)
-	GetPlaces(ctx context.Context, request models.GetPlacesRequest) ([]models.Place, error)
-	UpdatePlace(ctx context.Context, request models.UpdatePlaceRequest) error
-	DeletePlace(ctx context.Context, id string) error
-	ImportPlacesFromSheet(ctx context.Context, sheetRange string, city string, force bool) error
+	CreatePlace(ctx context.Context, request models.CreatePlaceRequest) models.Status
+	GetPlace(ctx context.Context, id string) (models.Place, models.Status)
+	GetPlaces(ctx context.Context, request models.GetPlacesRequest) ([]models.Place, models.Status)
+	UpdatePlace(ctx context.Context, request models.UpdatePlaceRequest) models.Status
+	DeletePlace(ctx context.Context, id string) models.Status
+	ImportPlacesFromSheet(ctx context.Context, sheetRange string, city string, force bool) models.Status
 }

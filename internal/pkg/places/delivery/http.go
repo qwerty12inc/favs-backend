@@ -18,6 +18,25 @@ func NewHandler(usecase usecase.Usecase) Handler {
 	}
 }
 
+func handleResponse(c echo.Context, status models.Status, body interface{}) error {
+	switch status.Code {
+	case models.OK:
+		return c.JSON(200, body)
+	case models.BadRequest:
+		return c.JSON(400, status)
+	case models.NotFound:
+		return c.JSON(404, status)
+	case models.InternalError:
+		return c.JSON(500, status)
+	case models.Unauthorized:
+		return c.JSON(401, status)
+	case models.Forbidden:
+		return c.JSON(403, status)
+	default:
+		return c.String(500, "Internal server error")
+	}
+}
+
 // CreatePlace godoc
 // @Summary Create place
 // @Description Create place
@@ -38,7 +57,8 @@ func (h Handler) CreatePlace(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	err = h.usecase.CreatePlace(c.Request().Context(), request)
+	status := h.usecase.CreatePlace(c.Request().Context(), request)
+	err = handleResponse(c, status, nil)
 	if err != nil {
 		return err
 	}
@@ -61,9 +81,9 @@ func (h Handler) CreatePlace(c echo.Context) error {
 // @Router /places/{id} [get]
 func (h Handler) GetPlace(c echo.Context) error {
 	id := c.Param("id")
-	place, err := h.usecase.GetPlace(c.Request().Context(), id)
+	place, status := h.usecase.GetPlace(c.Request().Context(), id)
+	err := handleResponse(c, status, place)
 	if err != nil {
-		c.String(500, err.Error())
 		return err
 	}
 	return c.JSON(200, place)
@@ -126,7 +146,8 @@ func (h Handler) GetPlaces(c echo.Context) error {
 		request.City = city
 	}
 
-	places, err := h.usecase.GetPlaces(c.Request().Context(), request)
+	places, status := h.usecase.GetPlaces(c.Request().Context(), request)
+	err := handleResponse(c, status, places)
 	if err != nil {
 		return err
 	}
@@ -153,7 +174,8 @@ func (h Handler) UpdatePlace(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	err = h.usecase.UpdatePlace(c.Request().Context(), request)
+	status := h.usecase.UpdatePlace(c.Request().Context(), request)
+	err = handleResponse(c, status, nil)
 	if err != nil {
 		return err
 	}
@@ -176,7 +198,8 @@ func (h Handler) UpdatePlace(c echo.Context) error {
 // @Router /places/{id} [delete]
 func (h Handler) DeletePlace(c echo.Context) error {
 	id := c.Param("id")
-	err := h.usecase.DeletePlace(c.Request().Context(), id)
+	status := h.usecase.DeletePlace(c.Request().Context(), id)
+	err := handleResponse(c, status, nil)
 	if err != nil {
 		return err
 	}
