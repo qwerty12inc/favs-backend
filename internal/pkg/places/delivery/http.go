@@ -4,6 +4,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"gitlab.com/v.rianov/favs-backend/internal/models"
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/places/usecase"
+	"strconv"
 )
 
 type Handler struct {
@@ -88,36 +89,39 @@ func (h Handler) GetPlace(c echo.Context) error {
 func (h Handler) GetPlaces(c echo.Context) error {
 	request := models.GetPlacesRequest{}
 	city := c.QueryParam("city")
-	//latitudeStr := c.QueryParam("latitude")
-	//longitudeStr := c.QueryParam("longitude")
-	//latitudeDeltaStr := c.QueryParam("latitudeDelta")
-	//longitudeDeltaStr := c.QueryParam("longitudeDelta")
+	latitudeStr := c.QueryParam("latitude")
+	longitudeStr := c.QueryParam("longitude")
+	latitudeDeltaStr := c.QueryParam("latitudeDelta")
+	longitudeDeltaStr := c.QueryParam("longitudeDelta")
 	labels := c.QueryParam("labels")
 	request.Labels = []string{labels}
 
-	//latitude, err := strconv.ParseFloat(latitudeStr, 64)
-	//if err != nil {
-	//	return err
-	//}
-	//longitude, err := strconv.ParseFloat(longitudeStr, 64)
-	//if err != nil {
-	//	return err
-	//}
-	//latitudeDelta, err := strconv.ParseFloat(latitudeDeltaStr, 64)
-	//if err != nil {
-	//	return err
-	//}
-	//longitudeDelta, err := strconv.ParseFloat(longitudeDeltaStr, 64)
-	//if err != nil {
-	//	return err
-	//}
-	//request.Center = models.Coordinates{
-	//	Latitude:  latitude,
-	//	Longitude: longitude,
-	//}
-	//request.LatitudeDelta = latitudeDelta
-	//request.LongitudeDelta = longitudeDelta
-	request.City = city
+	if city == "" {
+		latitude, err := strconv.ParseFloat(latitudeStr, 64)
+		if err != nil {
+			return err
+		}
+		longitude, err := strconv.ParseFloat(longitudeStr, 64)
+		if err != nil {
+			return err
+		}
+		latitudeDelta, err := strconv.ParseFloat(latitudeDeltaStr, 64)
+		if err != nil {
+			return err
+		}
+		longitudeDelta, err := strconv.ParseFloat(longitudeDeltaStr, 64)
+		if err != nil {
+			return err
+		}
+		request.Center = models.Coordinates{
+			Latitude:  latitude,
+			Longitude: longitude,
+		}
+		request.LatitudeDelta = latitudeDelta
+		request.LongitudeDelta = longitudeDelta
+	} else {
+		request.City = city
+	}
 
 	places, err := h.usecase.GetPlaces(c.Request().Context(), request)
 	if err != nil {

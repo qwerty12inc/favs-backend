@@ -10,6 +10,7 @@ type Place struct {
 	Website     string      `firestore:"website"`
 	Instagram   string      `firestore:"instagram"`
 	Labels      []string    `firestore:"labels"`
+	GeoHash     string      `firestore:"geohash"`
 }
 
 type Coordinates struct {

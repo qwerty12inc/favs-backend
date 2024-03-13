@@ -4,6 +4,7 @@ import (
 	"cloud.google.com/go/firestore"
 	"context"
 	"errors"
+	"github.com/mmcloughlin/geohash"
 	"gitlab.com/v.rianov/favs-backend/internal/models"
 	"google.golang.org/api/iterator"
 	"log"
@@ -56,9 +57,17 @@ func (r Repository) GetPlaceByName(ctx context.Context, name string) (models.Pla
 }
 
 func (r Repository) GetPlaces(ctx context.Context, request models.GetPlacesRequest) ([]models.Place, error) {
+	box := geohash.Box{
+		MinLat: request.Center.Latitude - request.LatitudeDelta,
+		MaxLat: request.Center.Latitude + request.LatitudeDelta,
+		MinLng: request.Center.Longitude - request.LongitudeDelta,
+		MaxLng: request.Center.Longitude + request.LongitudeDelta,
+	}
 	var iter *firestore.DocumentIterator
 	if request.City == "" {
-		iter = r.cl.Collection("places").Documents(ctx)
+		iter = r.cl.Collection("places").OrderBy("geohash", firestore.Asc).
+			StartAt(geohash.Encode(box.MinLat, box.MinLng)).
+			EndAt(geohash.Encode(box.MaxLat, box.MaxLng)).Documents(ctx)
 	} else {
 		iter = r.cl.Collection("places").
 			Where("city", "==", request.City).

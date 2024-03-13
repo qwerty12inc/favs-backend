@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/mmcloughlin/geohash"
 	"gitlab.com/v.rianov/favs-backend/internal/models"
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/googlesheets"
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/maps"
@@ -42,6 +43,7 @@ func (u Usecase) CreatePlace(ctx context.Context, request models.CreatePlaceRequ
 		City:        request.City,
 		Website:     request.Website,
 		Labels:      request.Labels,
+		GeoHash:     geohash.Encode(coordinates.Latitude, coordinates.Longitude),
 	}
 	return u.repo.SavePlace(ctx, place)
 }
@@ -71,6 +73,7 @@ func (u Usecase) ImportPlacesFromSheet(ctx context.Context, sheetRange string,
 			Website:     place.Website,
 			Instagram:   place.Instagram,
 			Labels:      place.Labels,
+			GeoHash:     geohash.Encode(coordinates.Latitude, coordinates.Longitude),
 		}
 
 		oldPlace, err := u.repo.GetPlaceByName(ctx, placeModel.Name)
