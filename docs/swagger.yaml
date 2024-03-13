@@ -124,6 +124,11 @@ paths:
         name: labels
         required: true
         type: array
+      - description: City
+        in: query
+        name: city
+        required: true
+        type: string
       produces:
       - application/json
       responses:

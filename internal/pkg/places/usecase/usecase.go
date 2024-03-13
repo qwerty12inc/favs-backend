@@ -9,6 +9,7 @@ import (
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/maps"
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/places"
 	"log"
+	"strings"
 )
 
 type Usecase struct {
@@ -66,7 +67,7 @@ func (u Usecase) ImportPlacesFromSheet(ctx context.Context, sheetRange string,
 			Description: place.Description,
 			LocationURL: place.LocationURL,
 			Coordinates: coordinates,
-			City:        city,
+			City:        strings.ToLower(city),
 			Website:     place.Website,
 			Instagram:   place.Instagram,
 			Labels:      place.Labels,
@@ -95,6 +96,7 @@ func (u Usecase) GetPlace(ctx context.Context, id string) (models.Place, error) 
 }
 
 func (u Usecase) GetPlaces(ctx context.Context, request models.GetPlacesRequest) ([]models.Place, error) {
+	request.City = strings.ToLower(request.City)
 	return u.repo.GetPlaces(ctx, request)
 }
 

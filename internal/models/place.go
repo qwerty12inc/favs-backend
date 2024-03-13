@@ -52,6 +52,7 @@ type UpdatePlaceRequest struct {
 }
 
 type GetPlacesRequest struct {
+	City           string      `json:"city,omitempty"`
 	Center         Coordinates `json:"center,omitempty"`
 	LatitudeDelta  float64     `json:"latitude_delta,omitempty"`
 	LongitudeDelta float64     `json:"longitude_delta,omitempty"`

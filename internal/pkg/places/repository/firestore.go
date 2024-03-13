@@ -57,7 +57,7 @@ func (r Repository) GetPlaceByName(ctx context.Context, name string) (models.Pla
 
 func (r Repository) GetPlaces(ctx context.Context, request models.GetPlacesRequest) ([]models.Place, error) {
 	iter := r.cl.Collection("places").
-		Where("city", "==", "Amsterdam").
+		Where("city", "==", request.City).
 		Documents(ctx)
 
 	var places []models.Place

@@ -82,11 +82,13 @@ func (h Handler) GetPlace(c echo.Context) error {
 // @Param latitudeDelta query float64 true "Latitude delta"
 // @Param longitudeDelta query float64 true "Longitude delta"
 // @Param labels query []string true "Labels"
+// @Param city query string true "City"
 // @Success 200 {array} models.Place
 // @Failure 500 "Internal server error"
 // @Router /places [get]
 func (h Handler) GetPlaces(c echo.Context) error {
 	request := models.GetPlacesRequest{}
+	city := c.QueryParam("city")
 	latitudeStr := c.QueryParam("latitude")
 	longitudeStr := c.QueryParam("longitude")
 	latitudeDeltaStr := c.QueryParam("latitudeDelta")
@@ -116,6 +118,7 @@ func (h Handler) GetPlaces(c echo.Context) error {
 	}
 	request.LatitudeDelta = latitudeDelta
 	request.LongitudeDelta = longitudeDelta
+	request.City = city
 
 	places, err := h.usecase.GetPlaces(c.Request().Context(), request)
 	if err != nil {
