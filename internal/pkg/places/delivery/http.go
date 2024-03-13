@@ -4,6 +4,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"gitlab.com/v.rianov/favs-backend/internal/models"
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/places/usecase"
+	"gitlab.com/v.rianov/favs-backend/internal/pkg/utils"
 	"log"
 	"strconv"
 )
@@ -15,28 +16,6 @@ type Handler struct {
 func NewHandler(usecase usecase.Usecase) Handler {
 	return Handler{
 		usecase: usecase,
-	}
-}
-
-func handleResponse(c echo.Context, status models.Status, body interface{}) error {
-	switch status.Code {
-	case models.OK:
-		return c.JSON(200, body)
-	case models.BadRequest:
-		return c.JSON(400, status)
-	case models.NotFound:
-		return c.JSON(404, status)
-	case models.InternalError:
-		return c.JSON(500, status)
-	case models.Unauthorized:
-		return c.JSON(401, status)
-	case models.Forbidden:
-		return c.JSON(403, status)
-	default:
-		return c.JSON(500, models.Status{
-			Code:    models.InternalError,
-			Message: "Internal server error",
-		})
 	}
 }
 
@@ -61,7 +40,7 @@ func (h Handler) CreatePlace(c echo.Context) error {
 		return err
 	}
 	status := h.usecase.CreatePlace(c.Request().Context(), request)
-	err = handleResponse(c, status, nil)
+	err = utils.HandleResponse(c, status, nil)
 	if err != nil {
 		return err
 	}
@@ -85,11 +64,7 @@ func (h Handler) CreatePlace(c echo.Context) error {
 func (h Handler) GetPlace(c echo.Context) error {
 	id := c.Param("id")
 	place, status := h.usecase.GetPlace(c.Request().Context(), id)
-	err := handleResponse(c, status, place)
-	if err != nil {
-		return err
-	}
-	return c.JSON(200, place)
+	return utils.HandleResponse(c, status, place)
 }
 
 // GetPlaces godoc
@@ -150,11 +125,7 @@ func (h Handler) GetPlaces(c echo.Context) error {
 	}
 
 	places, status := h.usecase.GetPlaces(c.Request().Context(), request)
-	err := handleResponse(c, status, places)
-	if err != nil {
-		return err
-	}
-	return c.JSON(200, places)
+	return utils.HandleResponse(c, status, places)
 }
 
 // UpdatePlace godoc
@@ -178,11 +149,7 @@ func (h Handler) UpdatePlace(c echo.Context) error {
 		return err
 	}
 	status := h.usecase.UpdatePlace(c.Request().Context(), request)
-	err = handleResponse(c, status, nil)
-	if err != nil {
-		return err
-	}
-	return c.NoContent(200)
+	return utils.HandleResponse(c, status, nil)
 }
 
 // DeletePlace godoc
@@ -202,9 +169,5 @@ func (h Handler) UpdatePlace(c echo.Context) error {
 func (h Handler) DeletePlace(c echo.Context) error {
 	id := c.Param("id")
 	status := h.usecase.DeletePlace(c.Request().Context(), id)
-	err := handleResponse(c, status, nil)
-	if err != nil {
-		return err
-	}
-	return c.NoContent(200)
+	return utils.HandleResponse(c, status, nil)
 }

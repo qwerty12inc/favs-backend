@@ -16,6 +16,6 @@ const (
 )
 
 type Status struct {
-	Code    StatusCode `json:"code"`
+	Code    StatusCode `json:"-"`
 	Message string     `json:"message"`
 }
