@@ -1,21 +1,21 @@
 package models
 
 type Place struct {
-	ID          string      `firestore:"id"`
-	Name        string      `firestore:"name"`
-	Description string      `firestore:"description"`
-	LocationURL string      `firestore:"location_url"`
-	Coordinates Coordinates `firestore:"coordinates"`
-	City        string      `firestore:"city"`
-	Website     string      `firestore:"website"`
-	Instagram   string      `firestore:"instagram"`
-	Labels      []string    `firestore:"labels"`
-	GeoHash     string      `firestore:"geohash"`
+	ID          string      `firestore:"id" json:"id"`
+	Name        string      `firestore:"name" json:"name"`
+	Description string      `firestore:"description" json:"description"`
+	LocationURL string      `firestore:"location_url" json:"locationURL"`
+	Coordinates Coordinates `firestore:"coordinates" json:"coordinates"`
+	City        string      `firestore:"city" json:"city"`
+	Website     string      `firestore:"website" json:"website"`
+	Instagram   string      `firestore:"instagram" json:"instagram"`
+	Labels      []string    `firestore:"labels" json:"labels"`
+	GeoHash     string      `firestore:"geohash" json:"geoHash"`
 }
 
 type Coordinates struct {
-	Latitude  float64 `firestore:"latitude"`
-	Longitude float64 `firestore:"longitude"`
+	Latitude  float64 `firestore:"latitude" json:"latitude"`
+	Longitude float64 `firestore:"longitude" json:"longitude"`
 }
 
 type GoogleSheetPlace struct {
