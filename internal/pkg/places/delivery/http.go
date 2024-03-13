@@ -40,11 +40,7 @@ func (h Handler) CreatePlace(c echo.Context) error {
 		return err
 	}
 	status := h.usecase.CreatePlace(c.Request().Context(), request)
-	err = utils.HandleResponse(c, status, nil)
-	if err != nil {
-		return err
-	}
-	return c.NoContent(201)
+	return utils.HandleResponse(c, status, nil)
 }
 
 // GetPlace godoc
