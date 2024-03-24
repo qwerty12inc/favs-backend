@@ -62,6 +62,13 @@ func (u Usecase) ImportPlacesFromSheet(ctx context.Context, sheetRange string,
 	}
 
 	for _, place := range places {
+		log.Printf("Getting place by name: %s\n", place.Name)
+		oldPlace, status := u.repo.GetPlaceByName(ctx, place.Name)
+		if status.Code == models.OK && oldPlace.Name == place.Name && !force {
+			log.Printf("Place with name %s already exists, skipping.\n", place.Name)
+			continue
+		}
+
 		placeInfo, err := u.linkResolver.GetPlaceInfo(ctx, place.LocationURL, place.Name)
 		if err != nil {
 			log.Printf("models.Status while resolving coordinates: %v url: %s\n", err, place.LocationURL)
@@ -88,13 +95,6 @@ func (u Usecase) ImportPlacesFromSheet(ctx context.Context, sheetRange string,
 		}
 		if placeInfo.Name == "" {
 			placeInfo.Name = place.Name
-		}
-
-		log.Printf("Getting place by name: %s\n", placeInfo.Name)
-		oldPlace, status := u.repo.GetPlaceByName(ctx, placeInfo.Name)
-		if status.Code == models.OK && oldPlace.Name == placeInfo.Name && !force {
-			log.Printf("Place with name %s already exists, skipping.\n", placeInfo.Name)
-			continue
 		}
 
 		log.Println("Saving place: ", placeInfo.Name)
