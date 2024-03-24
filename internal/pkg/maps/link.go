@@ -50,6 +50,7 @@ func (l LocationLinkResolverImpl) GetPlaceInfo(ctx context.Context, link, name s
 		},
 		Radius: 2,
 	})
+	log.Println("Results: ", res.Results, " Error: ", err)
 	if err != nil {
 		log.Println("Error while searching for place: ", err)
 		return nil, err
