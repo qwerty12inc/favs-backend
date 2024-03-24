@@ -34,11 +34,11 @@ func NewLocationLinkResolver(cl *maps.Client) LocationLinkResolverImpl {
 }
 
 func (l LocationLinkResolverImpl) GetPlaceInfo(ctx context.Context, link, name string) (*models.Place, error) {
+	log.Println("Resolving link: ", link)
 	c, err := l.ResolveLink(link)
 	if err != nil {
 		return nil, err
 	}
-	c = c
 
 	res, err := l.cl.TextSearch(ctx, &maps.TextSearchRequest{
 		Query: name,

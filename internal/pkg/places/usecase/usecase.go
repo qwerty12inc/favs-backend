@@ -60,6 +60,7 @@ func (u Usecase) ImportPlacesFromSheet(ctx context.Context, sheetRange string,
 		placeInfo, err := u.linkResolver.GetPlaceInfo(ctx, place.LocationURL, place.Name)
 		if err != nil {
 			log.Printf("models.Status while resolving coordinates: %v url: %s\n", err, place.LocationURL)
+			continue
 		}
 
 		placeInfo.ID = uuid.New().String()
