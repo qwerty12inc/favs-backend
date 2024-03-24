@@ -69,7 +69,7 @@ func (u Usecase) ImportPlacesFromSheet(ctx context.Context, sheetRange string,
 		if placeInfo.City == "" {
 			placeInfo.City = strings.ToLower(city)
 		}
-		if placeInfo.Website == "" {
+		if placeInfo.Instagram == "" {
 			placeInfo.Instagram = place.Instagram
 		}
 		if placeInfo.Description == "" {

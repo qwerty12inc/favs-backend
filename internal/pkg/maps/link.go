@@ -37,9 +37,11 @@ func (l LocationLinkResolverImpl) GetPlaceInfo(ctx context.Context, link, name s
 	log.Println("Resolving link: ", link)
 	c, err := l.ResolveLink(link)
 	if err != nil {
+		log.Println("Error while resolving link: ", err)
 		return nil, err
 	}
 
+	log.Println("Resolved coordinates: ", c)
 	res, err := l.cl.TextSearch(ctx, &maps.TextSearchRequest{
 		Query: name,
 		Location: &maps.LatLng{
@@ -49,7 +51,12 @@ func (l LocationLinkResolverImpl) GetPlaceInfo(ctx context.Context, link, name s
 		Radius: 2,
 	})
 	if err != nil {
+		log.Println("Error while searching for place: ", err)
 		return nil, err
+	}
+	if len(res.Results) == 0 {
+		log.Println("No places found for query: ", name, " coordinates: ", c)
+		return nil, fmt.Errorf("no places found")
 	}
 
 	placeID := res.Results[0].PlaceID
