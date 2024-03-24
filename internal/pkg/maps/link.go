@@ -71,7 +71,7 @@ func (l LocationLinkResolverImpl) GetPlaceInfo(ctx context.Context, link, name s
 		return nil, err
 	}
 
-	return &models.Place{
+	resPlace := &models.Place{
 		Name:        place.Name,
 		Description: place.FormattedAddress,
 		LocationURL: place.URL,
@@ -91,11 +91,16 @@ func (l LocationLinkResolverImpl) GetPlaceInfo(ctx context.Context, link, name s
 			return photoRefs
 		}(),
 		Address:          place.FormattedAddress,
-		OpeningInfo:      place.CurrentOpeningHours.WeekdayText,
 		GoogleMapsRating: place.Rating,
 		Reservable:       place.Reservable,
 		Delivery:         place.Delivery,
-	}, nil
+	}
+
+	if place.OpeningHours != nil {
+		resPlace.OpeningInfo = place.CurrentOpeningHours.WeekdayText
+	}
+
+	return resPlace, nil
 }
 
 func (l LocationLinkResolverImpl) ResolveLink(link string) (models.Coordinates, error) {
