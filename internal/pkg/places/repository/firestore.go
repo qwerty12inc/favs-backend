@@ -71,6 +71,9 @@ func (r Repository) GetCities(ctx context.Context) ([]string, models.Status) {
 		if err != nil {
 			return nil, models.Status{models.InternalError, err.Error()}
 		}
+
+		log.Println("data", doc.Data())
+
 		var city string
 		err = doc.DataTo(&city)
 		if err != nil {
