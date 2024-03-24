@@ -51,6 +51,11 @@ func (u Usecase) CreatePlace(ctx context.Context, request models.CreatePlaceRequ
 
 func (u Usecase) ImportPlacesFromSheet(ctx context.Context, sheetRange string,
 	city string, force bool) models.Status {
+	defer func() {
+		if x := recover(); x != nil {
+			log.Printf("recovering: %v", x)
+		}
+	}()
 	places, status := u.parser.ParsePlaces(ctx, sheetRange)
 	if status.Code != models.OK {
 		return models.Status{models.InternalError, "failed to parse places"}
