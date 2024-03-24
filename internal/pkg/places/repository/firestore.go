@@ -62,7 +62,7 @@ func (r Repository) GetPlaceByName(ctx context.Context, name string) (models.Pla
 
 func (r Repository) GetCities(ctx context.Context) ([]string, models.Status) {
 	iter := r.cl.Collection("places").Select("city").Documents(ctx)
-	var cities map[string]bool
+	cities := make(map[string]bool)
 	for {
 		doc, err := iter.Next()
 		if errors.Is(err, iterator.Done) {
