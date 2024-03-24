@@ -1,12 +1,13 @@
 package delivery
 
 import (
+	"log"
+	"strconv"
+
 	"github.com/labstack/echo/v4"
 	"gitlab.com/v.rianov/favs-backend/internal/models"
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/places/usecase"
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/utils"
-	"log"
-	"strconv"
 )
 
 type Handler struct {
@@ -19,29 +20,15 @@ func NewHandler(usecase usecase.Usecase) Handler {
 	}
 }
 
-// CreatePlace godoc
-// @Summary Create place
-// @Description Create place
-// @Tags places
-// @Accept json
-// @Produce json
-// @Param place body models.CreatePlaceRequest true "Place"
-//
-//	@Param			Authorization	header		string	true	"Authentication header"
-//
-// @Success 201 "Place created"
-// @Failure 400 "Bad request"
-// @Failure 500 "Internal server error"
-// @Router /places [post]
-func (h Handler) CreatePlace(c echo.Context) error {
-	request := models.CreatePlaceRequest{}
-	err := c.Bind(&request)
-	if err != nil {
-		return err
-	}
-	status := h.usecase.CreatePlace(c.Request().Context(), request)
-	return utils.HandleResponse(c, status, nil)
-}
+//func (h Handler) CreatePlace(c echo.Context) error {
+//	request := models.CreatePlaceRequest{}
+//	err := c.Bind(&request)
+//	if err != nil {
+//		return err
+//	}
+//	status := h.usecase.CreatePlace(c.Request().Context(), request)
+//	return utils.HandleResponse(c, status, nil)
+//}
 
 // GetPlace godoc
 // @Summary Get place
@@ -124,46 +111,18 @@ func (h Handler) GetPlaces(c echo.Context) error {
 	return utils.HandleResponse(c, status, places)
 }
 
-// UpdatePlace godoc
-// @Summary Update place
-// @Description Update place
-// @Tags places
-// @Accept json
-// @Produce json
-//
-//	@Param			Authorization	header		string	true	"Authentication header"
-//
-// @Param place body models.UpdatePlaceRequest true "Place"
-// @Success 200 "Place updated"
-// @Failure 400 "Bad request"
-// @Failure 500 "Internal server error"
-// @Router /places [put]
-func (h Handler) UpdatePlace(c echo.Context) error {
-	request := models.UpdatePlaceRequest{}
-	err := c.Bind(&request)
-	if err != nil {
-		return err
-	}
-	status := h.usecase.UpdatePlace(c.Request().Context(), request)
-	return utils.HandleResponse(c, status, nil)
-}
+//func (h Handler) UpdatePlace(c echo.Context) error {
+//	request := models.UpdatePlaceRequest{}
+//	err := c.Bind(&request)
+//	if err != nil {
+//		return err
+//	}
+//	status := h.usecase.UpdatePlace(c.Request().Context(), request)
+//	return utils.HandleResponse(c, status, nil)
+//}
 
-// DeletePlace godoc
-// @Summary Delete place
-// @Description Delete place
-// @Tags places
-// @Accept json
-// @Produce json
-//
-//	@Param			Authorization	header		string	true	"Authentication header"
-//
-// @Param id path string true "Place ID"
-// @Success 200 "Place deleted"
-// @Failure 404 "Place not found"
-// @Failure 500 "Internal server error"
-// @Router /places/{id} [delete]
-func (h Handler) DeletePlace(c echo.Context) error {
-	id := c.Param("id")
-	status := h.usecase.DeletePlace(c.Request().Context(), id)
-	return utils.HandleResponse(c, status, nil)
-}
+//func (h Handler) DeletePlace(c echo.Context) error {
+//	id := c.Param("id")
+//	status := h.usecase.DeletePlace(c.Request().Context(), id)
+//	return utils.HandleResponse(c, status, nil)
+//}

@@ -100,90 +100,6 @@ const docTemplate = `{
                         "description": "Internal server error"
                     }
                 }
-            },
-            "put": {
-                "description": "Update place",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "places"
-                ],
-                "summary": "Update place",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Authentication header",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "Place",
-                        "name": "place",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.UpdatePlaceRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Place updated"
-                    },
-                    "400": {
-                        "description": "Bad request"
-                    },
-                    "500": {
-                        "description": "Internal server error"
-                    }
-                }
-            },
-            "post": {
-                "description": "Create place",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "places"
-                ],
-                "summary": "Create place",
-                "parameters": [
-                    {
-                        "description": "Place",
-                        "name": "place",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.CreatePlaceRequest"
-                        }
-                    },
-                    {
-                        "type": "string",
-                        "description": "Authentication header",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Place created"
-                    },
-                    "400": {
-                        "description": "Bad request"
-                    },
-                    "500": {
-                        "description": "Internal server error"
-                    }
-                }
             }
         },
         "/places/{id}": {
@@ -229,46 +145,6 @@ const docTemplate = `{
                         "description": "Internal server error"
                     }
                 }
-            },
-            "delete": {
-                "description": "Delete place",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "places"
-                ],
-                "summary": "Delete place",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Authentication header",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Place ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Place deleted"
-                    },
-                    "404": {
-                        "description": "Place not found"
-                    },
-                    "500": {
-                        "description": "Internal server error"
-                    }
-                }
             }
         }
     },
@@ -284,49 +160,29 @@ const docTemplate = `{
                 }
             }
         },
-        "models.CreatePlaceRequest": {
-            "type": "object",
-            "properties": {
-                "city": {
-                    "type": "string"
-                },
-                "closed_at": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "labels": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "location": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "open_at": {
-                    "type": "string"
-                },
-                "website": {
-                    "type": "string"
-                }
-            }
-        },
         "models.Place": {
             "type": "object",
             "properties": {
+                "address": {
+                    "type": "string"
+                },
                 "city": {
                     "type": "string"
                 },
                 "coordinates": {
                     "$ref": "#/definitions/models.Coordinates"
                 },
+                "delivery": {
+                    "type": "boolean"
+                },
                 "description": {
                     "type": "string"
+                },
+                "geoHash": {
+                    "type": "string"
+                },
+                "googleMapsRating": {
+                    "type": "number"
                 },
                 "id": {
                     "type": "string"
@@ -346,43 +202,20 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
-                "website": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.UpdatePlaceRequest": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "city": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "labels": {
+                "openningDays": {
                     "type": "array",
                     "items": {
                         "type": "string"
                     }
                 },
-                "location": {
-                    "type": "string"
+                "photoRef": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
-                "name": {
-                    "type": "string"
-                },
-                "phone": {
-                    "type": "string"
-                },
-                "type": {
-                    "type": "string"
+                "reservable": {
+                    "type": "boolean"
                 },
                 "website": {
                     "type": "string"

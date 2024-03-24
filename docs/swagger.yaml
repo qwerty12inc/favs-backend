@@ -7,35 +7,22 @@ definitions:
       longitude:
         type: number
     type: object
-  models.CreatePlaceRequest:
-    properties:
-      city:
-        type: string
-      closed_at:
-        type: string
-      description:
-        type: string
-      labels:
-        items:
-          type: string
-        type: array
-      location:
-        type: string
-      name:
-        type: string
-      open_at:
-        type: string
-      website:
-        type: string
-    type: object
   models.Place:
     properties:
+      address:
+        type: string
       city:
         type: string
       coordinates:
         $ref: '#/definitions/models.Coordinates'
+      delivery:
+        type: boolean
       description:
         type: string
+      geoHash:
+        type: string
+      googleMapsRating:
+        type: number
       id:
         type: string
       instagram:
@@ -48,31 +35,16 @@ definitions:
         type: string
       name:
         type: string
-      website:
-        type: string
-    type: object
-  models.UpdatePlaceRequest:
-    properties:
-      address:
-        type: string
-      city:
-        type: string
-      description:
-        type: string
-      id:
-        type: string
-      labels:
+      openningDays:
         items:
           type: string
         type: array
-      location:
-        type: string
-      name:
-        type: string
-      phone:
-        type: string
-      type:
-        type: string
+      photoRef:
+        items:
+          type: string
+        type: array
+      reservable:
+        type: boolean
       website:
         type: string
     type: object
@@ -143,90 +115,7 @@ paths:
       summary: Get places
       tags:
       - places
-    post:
-      consumes:
-      - application/json
-      description: Create place
-      parameters:
-      - description: Place
-        in: body
-        name: place
-        required: true
-        schema:
-          $ref: '#/definitions/models.CreatePlaceRequest'
-      - description: Authentication header
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Place created
-        "400":
-          description: Bad request
-        "500":
-          description: Internal server error
-      summary: Create place
-      tags:
-      - places
-    put:
-      consumes:
-      - application/json
-      description: Update place
-      parameters:
-      - description: Authentication header
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Place
-        in: body
-        name: place
-        required: true
-        schema:
-          $ref: '#/definitions/models.UpdatePlaceRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Place updated
-        "400":
-          description: Bad request
-        "500":
-          description: Internal server error
-      summary: Update place
-      tags:
-      - places
   /places/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: Delete place
-      parameters:
-      - description: Authentication header
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Place ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Place deleted
-        "404":
-          description: Place not found
-        "500":
-          description: Internal server error
-      summary: Delete place
-      tags:
-      - places
     get:
       consumes:
       - application/json

@@ -9,6 +9,7 @@ services:
       SPREADSHEET_ID: ${SPREADSHEET_ID}
       SHEETS_SERVICE_ACCOUNT_PATH: /src/credentials.json
       SHEETS_TOKEN_PATH: /src/token.json
+      MAPS_API_KEY: ${MAPS_API_KEY}
     volumes:
       - /home/slavaryanov:/src
     command: ./favsapi

@@ -72,6 +72,7 @@ deploy:
         - ssh -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_SERVER "echo 'BASE_ADDR=$BASE_ADDR' >> .env"
         - ssh -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_SERVER "echo 'SIGNING_KEY=$SIGNING_KEY' >> .env"
         - ssh -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_SERVER "echo 'SPREADSHEET_ID=$SPREADSHEET_ID' >> .env"
+        - ssh -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_SERVER "echo 'MAPS_API_KEY=$MAPS_API_KEY' >> .env"
         - echo $SPREADSHEET_ID
         - ssh -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_SERVER "echo 'FIRESTORE_PROJECT_ID=$FIRESTORE_PROJECT_ID' >> .env"
         - ssh -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_SERVER "sudo docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY"

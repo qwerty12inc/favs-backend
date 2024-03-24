@@ -3,14 +3,15 @@ package usecase
 import (
 	"context"
 	"fmt"
+	"log"
+	"strings"
+
 	"github.com/google/uuid"
 	"github.com/mmcloughlin/geohash"
 	"gitlab.com/v.rianov/favs-backend/internal/models"
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/googlesheets"
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/maps"
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/places"
-	"log"
-	"strings"
 )
 
 type Usecase struct {
@@ -56,35 +57,40 @@ func (u Usecase) ImportPlacesFromSheet(ctx context.Context, sheetRange string,
 	}
 
 	for _, place := range places {
-		coordinates, err := u.linkResolver.ResolveLink(place.LocationURL)
+		placeInfo, err := u.linkResolver.GetPlaceInfo(ctx, place.LocationURL, place.Name)
 		if err != nil {
 			log.Printf("models.Status while resolving coordinates: %v url: %s\n", err, place.LocationURL)
 		}
 
-		log.Printf("Coordinates resolved: %v\n", coordinates)
-
-		placeModel := models.Place{
-			ID:          uuid.New().String(),
-			Name:        place.Name,
-			Description: place.Description,
-			LocationURL: place.LocationURL,
-			Coordinates: coordinates,
-			City:        strings.ToLower(city),
-			Website:     place.Website,
-			Instagram:   place.Instagram,
-			Labels:      place.Labels,
-			GeoHash:     geohash.Encode(coordinates.Latitude, coordinates.Longitude),
+		placeInfo.ID = uuid.New().String()
+		placeInfo.GeoHash = geohash.Encode(placeInfo.Coordinates.Latitude, placeInfo.Coordinates.Longitude)
+		placeInfo.Labels = place.Labels
+		if placeInfo.City == "" {
+			placeInfo.City = strings.ToLower(city)
+		}
+		if placeInfo.Website == "" {
+			placeInfo.Instagram = place.Instagram
+		}
+		if placeInfo.Description == "" {
+			placeInfo.Description = place.Description
+		}
+		if placeInfo.Website == "" {
+			placeInfo.Website = place.Website
+		}
+		if placeInfo.LocationURL == "" {
+			placeInfo.LocationURL = place.LocationURL
+		}
+		if placeInfo.Name == "" {
+			placeInfo.Name = place.Name
 		}
 
-		oldPlace, status := u.repo.GetPlaceByName(ctx, placeModel.Name)
-		if status.Code == models.OK && oldPlace.Name == placeModel.Name && !force {
-			log.Printf("Place with name %s already exists, skipping.\n", placeModel.Name)
+		oldPlace, status := u.repo.GetPlaceByName(ctx, placeInfo.Name)
+		if status.Code == models.OK && oldPlace.Name == placeInfo.Name && !force {
+			log.Printf("Place with name %s already exists, skipping.\n", placeInfo.Name)
 			continue
 		}
 
-		log.Printf("Saving place: %v\n", placeModel)
-
-		status = u.repo.SavePlace(ctx, placeModel)
+		status = u.repo.SavePlace(ctx, *placeInfo)
 		if status.Code != models.OK {
 			log.Printf("models.Status while saving place: %v\n", status)
 			return status

@@ -4,22 +4,24 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
-	echoSwagger "github.com/swaggo/echo-swagger"
-	_ "gitlab.com/v.rianov/favs-backend/docs"
-	"gitlab.com/v.rianov/favs-backend/internal/models"
-	"gitlab.com/v.rianov/favs-backend/internal/pkg/maps"
-	middleware2 "gitlab.com/v.rianov/favs-backend/internal/pkg/middleware"
-	"gitlab.com/v.rianov/favs-backend/internal/pkg/places/delivery"
-	"gitlab.com/v.rianov/favs-backend/internal/pkg/places/repository"
-	"gitlab.com/v.rianov/favs-backend/internal/pkg/places/usecase"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
+	echoSwagger "github.com/swaggo/echo-swagger"
+	_ "gitlab.com/v.rianov/favs-backend/docs"
+	"gitlab.com/v.rianov/favs-backend/internal/models"
+	pkgmaps "gitlab.com/v.rianov/favs-backend/internal/pkg/maps"
+	middleware2 "gitlab.com/v.rianov/favs-backend/internal/pkg/middleware"
+	"gitlab.com/v.rianov/favs-backend/internal/pkg/places/delivery"
+	"gitlab.com/v.rianov/favs-backend/internal/pkg/places/repository"
+	"gitlab.com/v.rianov/favs-backend/internal/pkg/places/usecase"
+	"googlemaps.github.io/maps"
 )
 
 type ServiceConfig struct {
@@ -39,7 +41,7 @@ func NewServiceConfig() ServiceConfig {
 }
 
 // @title           Favs API
-// @version         0.1.0
+// @version         0.2.0
 // @description     This is a documentation for favs API endpoints.
 
 // @contact.name   API Maintainer
@@ -93,17 +95,23 @@ func run() error {
 		return err
 	}
 
+	cl, err := maps.NewClient(maps.WithAPIKey("AIzaSyAtK6R8-35hxX-KYB1JoDbbnQaX2RJcYGU"))
+	if err != nil {
+		log.Println("Failed to create maps client", err)
+		return err
+	}
+
 	// Place handlers
 	placeRepo := repository.NewRepository(client)
-	placeUsecase := usecase.NewUsecase(placeRepo, maps.LocationLinkResolverImpl{}, sheetsParser)
+	placeUsecase := usecase.NewUsecase(placeRepo, pkgmaps.NewLocationLinkResolver(cl), sheetsParser)
 	placeHandler := delivery.NewHandler(placeUsecase)
 	placeGroup := apiV1Group.Group("/places", authMiddleware.Auth)
 	{
-		placeGroup.POST("", placeHandler.CreatePlace)
+		//placeGroup.POST("", placeHandler.CreatePlace)
 		placeGroup.GET("/:id", placeHandler.GetPlace)
 		placeGroup.GET("", placeHandler.GetPlaces)
-		placeGroup.PUT("", placeHandler.UpdatePlace)
-		placeGroup.DELETE("/:id", placeHandler.DeletePlace)
+		//placeGroup.PUT("", placeHandler.UpdatePlace)
+		//placeGroup.DELETE("/:id", placeHandler.DeletePlace)
 	}
 
 	go func() {

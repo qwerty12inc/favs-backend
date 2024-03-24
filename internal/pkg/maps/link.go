@@ -1,8 +1,13 @@
 package maps
 
 import (
+	"context"
 	"fmt"
+	"log"
+
 	"gitlab.com/v.rianov/favs-backend/internal/models"
+	"googlemaps.github.io/maps"
+
 	"net/http"
 	"regexp"
 	"strconv"
@@ -12,13 +17,76 @@ import (
 type LocationLinkResolver interface {
 	// ResolveLink resolves a location link and returns coordinates
 	ResolveLink(link string) (models.Coordinates, error)
+	GetPlaceInfo(ctx context.Context, link, name string) (*models.Place, error)
 }
 
 type LocationLinkResolverImpl struct {
+	cl *maps.Client
 }
 
 var coordinatesRegexp = `@(-?\d+\.\d+),(-?\d+\.\d+)`
 var googleMapsRegexp = `https:\/\/maps\.app\.goo\.gl\/[A-Za-z0-9]+`
+
+func NewLocationLinkResolver(cl *maps.Client) LocationLinkResolverImpl {
+	return LocationLinkResolverImpl{
+		cl: cl,
+	}
+}
+
+func (l LocationLinkResolverImpl) GetPlaceInfo(ctx context.Context, link, name string) (*models.Place, error) {
+	c, err := l.ResolveLink(link)
+	if err != nil {
+		return nil, err
+	}
+	c = c
+
+	res, err := l.cl.TextSearch(ctx, &maps.TextSearchRequest{
+		Query: name,
+		Location: &maps.LatLng{
+			Lat: c.Latitude,
+			Lng: c.Longitude,
+		},
+		Radius: 2,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	placeID := res.Results[0].PlaceID
+	place, err := l.cl.PlaceDetails(ctx, &maps.PlaceDetailsRequest{
+		PlaceID: placeID,
+	})
+	if err != nil {
+		log.Println("Error while getting place details: ", err)
+		return nil, err
+	}
+
+	return &models.Place{
+		Name:        place.Name,
+		Description: place.FormattedAddress,
+		LocationURL: place.URL,
+		Coordinates: models.Coordinates{
+			Latitude:  place.Geometry.Location.Lat,
+			Longitude: place.Geometry.Location.Lng,
+		},
+		City:    place.Vicinity,
+		Website: place.Website,
+		Labels:  []string{},
+		GeoHash: "",
+		PhotoRefList: func() []string {
+			var photoRefs []string
+			for _, photo := range place.Photos {
+				photoRefs = append(photoRefs, photo.PhotoReference)
+			}
+			return photoRefs
+		}(),
+		Address:          place.FormattedAddress,
+		OpeningInfo:      place.CurrentOpeningHours.WeekdayText,
+		GoogleMapsRating: place.Rating,
+		Reservable:       place.Reservable,
+		Delivery:         place.Delivery,
+	}, nil
+}
 
 func (l LocationLinkResolverImpl) ResolveLink(link string) (models.Coordinates, error) {
 	r, err := regexp.Compile(googleMapsRegexp)
