@@ -79,7 +79,7 @@ func (l LocationLinkResolverImpl) GetPlaceInfo(ctx context.Context, link, name s
 			Latitude:  place.Geometry.Location.Lat,
 			Longitude: place.Geometry.Location.Lng,
 		},
-		City:    place.Vicinity,
+		City:    "",
 		Website: place.Website,
 		Labels:  []string{},
 		GeoHash: "",
