@@ -107,11 +107,13 @@ func run() error {
 	placeHandler := delivery.NewHandler(placeUsecase)
 	placeGroup := apiV1Group.Group("/places", authMiddleware.Auth)
 	{
-		//placeGroup.POST("", placeHandler.CreatePlace)
 		placeGroup.GET("/:id", placeHandler.GetPlace)
 		placeGroup.GET("", placeHandler.GetPlaces)
-		//placeGroup.PUT("", placeHandler.UpdatePlace)
-		//placeGroup.DELETE("/:id", placeHandler.DeletePlace)
+	}
+
+	cityGroup := apiV1Group.Group("/cities", authMiddleware.Auth)
+	{
+		cityGroup.GET("", placeHandler.GetCities)
 	}
 
 	go func() {

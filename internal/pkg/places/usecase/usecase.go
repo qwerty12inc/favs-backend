@@ -136,3 +136,7 @@ func (u Usecase) UpdatePlace(ctx context.Context, request models.UpdatePlaceRequ
 func (u Usecase) DeletePlace(ctx context.Context, id string) models.Status {
 	return u.repo.DeletePlace(ctx, id)
 }
+
+func (u Usecase) GetCities(ctx context.Context) ([]string, models.Status) {
+	return u.repo.GetCities(ctx)
+}

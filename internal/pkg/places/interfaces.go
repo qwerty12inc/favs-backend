@@ -2,6 +2,7 @@ package places
 
 import (
 	"context"
+
 	"gitlab.com/v.rianov/favs-backend/internal/models"
 )
 
@@ -11,6 +12,7 @@ type Repository interface {
 	GetPlaces(ctx context.Context, request models.GetPlacesRequest) ([]models.Place, models.Status)
 	DeletePlace(ctx context.Context, id string) models.Status
 	GetPlaceByName(ctx context.Context, name string) (models.Place, models.Status)
+	GetCities(ctx context.Context) ([]string, models.Status)
 }
 
 type Usecase interface {
@@ -20,4 +22,5 @@ type Usecase interface {
 	UpdatePlace(ctx context.Context, request models.UpdatePlaceRequest) models.Status
 	DeletePlace(ctx context.Context, id string) models.Status
 	ImportPlacesFromSheet(ctx context.Context, sheetRange string, city string, force bool) models.Status
+	GetCities(ctx context.Context) ([]string, models.Status)
 }

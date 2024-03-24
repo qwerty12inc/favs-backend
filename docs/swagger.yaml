@@ -55,8 +55,29 @@ info:
     name: API Maintainer
   description: This is a documentation for favs API endpoints.
   title: Favs API
-  version: 0.1.0
+  version: 0.2.0
 paths:
+  /cities:
+    get:
+      description: Get cities
+      parameters:
+      - description: Authentication header
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: string
+            type: array
+        "500":
+          description: Internal server error
+      summary: Get cities
+      tags:
+      - cities
   /places:
     get:
       consumes:

@@ -1,13 +1,14 @@
 package repository
 
 import (
-	"cloud.google.com/go/firestore"
 	"context"
 	"errors"
+	"log"
+
+	"cloud.google.com/go/firestore"
 	"github.com/mmcloughlin/geohash"
 	"gitlab.com/v.rianov/favs-backend/internal/models"
 	"google.golang.org/api/iterator"
-	"log"
 )
 
 type Repository struct {
@@ -57,6 +58,27 @@ func (r Repository) GetPlaceByName(ctx context.Context, name string) (models.Pla
 		return models.Place{}, models.Status{models.InternalError, err.Error()}
 	}
 	return place, models.Status{models.OK, "OK"}
+}
+
+func (r Repository) GetCities(ctx context.Context) ([]string, models.Status) {
+	iter := r.cl.Collection("places").Select("city").Documents(ctx)
+	cities := make([]string, 0)
+	for {
+		doc, err := iter.Next()
+		if errors.Is(err, iterator.Done) {
+			break
+		}
+		if err != nil {
+			return nil, models.Status{models.InternalError, err.Error()}
+		}
+		var city string
+		err = doc.DataTo(&city)
+		if err != nil {
+			return nil, models.Status{models.InternalError, err.Error()}
+		}
+		cities = append(cities, city)
+	}
+	return cities, models.Status{models.OK, "OK"}
 }
 
 func (r Repository) GetPlaces(ctx context.Context, request models.GetPlacesRequest) ([]models.Place, models.Status) {

@@ -20,16 +20,6 @@ func NewHandler(usecase usecase.Usecase) Handler {
 	}
 }
 
-//func (h Handler) CreatePlace(c echo.Context) error {
-//	request := models.CreatePlaceRequest{}
-//	err := c.Bind(&request)
-//	if err != nil {
-//		return err
-//	}
-//	status := h.usecase.CreatePlace(c.Request().Context(), request)
-//	return utils.HandleResponse(c, status, nil)
-//}
-
 // GetPlace godoc
 // @Summary Get place
 // @Description Get place
@@ -111,18 +101,17 @@ func (h Handler) GetPlaces(c echo.Context) error {
 	return utils.HandleResponse(c, status, places)
 }
 
-//func (h Handler) UpdatePlace(c echo.Context) error {
-//	request := models.UpdatePlaceRequest{}
-//	err := c.Bind(&request)
-//	if err != nil {
-//		return err
-//	}
-//	status := h.usecase.UpdatePlace(c.Request().Context(), request)
-//	return utils.HandleResponse(c, status, nil)
-//}
-
-//func (h Handler) DeletePlace(c echo.Context) error {
-//	id := c.Param("id")
-//	status := h.usecase.DeletePlace(c.Request().Context(), id)
-//	return utils.HandleResponse(c, status, nil)
-//}
+// GetCities godoc
+// @Summary Get cities
+// @Description Get cities
+// @Tags cities
+//
+//	@Param			Authorization	header		string	true	"Authentication header"
+//
+// @Success 200 {array} string
+// @Failure 500 "Internal server error"
+// @Router /cities [get]
+func (h Handler) GetCities(c echo.Context) error {
+	cities, status := h.usecase.GetCities(c.Request().Context())
+	return utils.HandleResponse(c, status, cities)
+}

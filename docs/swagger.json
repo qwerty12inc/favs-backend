@@ -7,11 +7,43 @@
             "name": "API Maintainer",
             "email": "v.rianov@kabanov.agency"
         },
-        "version": "0.1.0"
+        "version": "0.2.0"
     },
     "host": "34.159.168.142",
     "basePath": "/api/v1",
     "paths": {
+        "/cities": {
+            "get": {
+                "description": "Get cities",
+                "tags": [
+                    "cities"
+                ],
+                "summary": "Get cities",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authentication header",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
         "/places": {
             "get": {
                 "description": "Get places",
