@@ -61,6 +61,7 @@ func (l LocationLinkResolverImpl) GetPlaceInfo(ctx context.Context, link, name s
 	}
 
 	placeID := res.Results[0].PlaceID
+	log.Println("Place ID: ", placeID)
 	place, err := l.cl.PlaceDetails(ctx, &maps.PlaceDetailsRequest{
 		PlaceID: placeID,
 	})
