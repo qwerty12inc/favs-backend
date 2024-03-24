@@ -74,12 +74,12 @@ func (r Repository) GetCities(ctx context.Context) ([]string, models.Status) {
 
 		log.Println("data", doc.Data())
 
-		var city string
+		var city map[string]interface{}
 		err = doc.DataTo(&city)
 		if err != nil {
 			return nil, models.Status{models.InternalError, err.Error()}
 		}
-		cities = append(cities, city)
+		cities = append(cities, city["city"].(string))
 	}
 	return cities, models.Status{models.OK, "OK"}
 }
