@@ -62,7 +62,7 @@ func (r Repository) GetPlaceByName(ctx context.Context, name string) (models.Pla
 
 func (r Repository) GetCities(ctx context.Context) ([]string, models.Status) {
 	iter := r.cl.Collection("places").Select("city").Documents(ctx)
-	cities := make([]string, 0)
+	var cities map[string]bool
 	for {
 		doc, err := iter.Next()
 		if errors.Is(err, iterator.Done) {
@@ -71,17 +71,18 @@ func (r Repository) GetCities(ctx context.Context) ([]string, models.Status) {
 		if err != nil {
 			return nil, models.Status{models.InternalError, err.Error()}
 		}
-
-		log.Println("data", doc.Data())
-
-		var city map[string]interface{}
-		err = doc.DataTo(&city)
+		var place models.Place
+		err = doc.DataTo(&place)
 		if err != nil {
 			return nil, models.Status{models.InternalError, err.Error()}
 		}
-		cities = append(cities, city["city"].(string))
+		cities[place.City] = true
 	}
-	return cities, models.Status{models.OK, "OK"}
+	filteredCities := make([]string, 0, len(cities))
+	for city := range cities {
+		filteredCities = append(filteredCities, city)
+	}
+	return filteredCities, models.Status{models.OK, "OK"}
 }
 
 func (r Repository) GetPlaces(ctx context.Context, request models.GetPlacesRequest) ([]models.Place, models.Status) {
