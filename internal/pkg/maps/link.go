@@ -65,6 +65,7 @@ func (l LocationLinkResolverImpl) GetPlaceInfo(ctx context.Context, link, name s
 	place, err := l.cl.PlaceDetails(ctx, &maps.PlaceDetailsRequest{
 		PlaceID: placeID,
 	})
+	log.Println("Place details: ", place, " Error: ", err)
 	if err != nil {
 		log.Println("Error while getting place details: ", err)
 		return nil, err

@@ -85,12 +85,14 @@ func (u Usecase) ImportPlacesFromSheet(ctx context.Context, sheetRange string,
 			placeInfo.Name = place.Name
 		}
 
+		log.Printf("Getting place by name: %s\n", placeInfo.Name)
 		oldPlace, status := u.repo.GetPlaceByName(ctx, placeInfo.Name)
 		if status.Code == models.OK && oldPlace.Name == placeInfo.Name && !force {
 			log.Printf("Place with name %s already exists, skipping.\n", placeInfo.Name)
 			continue
 		}
 
+		log.Println("Saving place: ", placeInfo.Name)
 		status = u.repo.SavePlace(ctx, *placeInfo)
 		if status.Code != models.OK {
 			log.Printf("models.Status while saving place: %v\n", status)
