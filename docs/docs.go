@@ -50,6 +50,38 @@ const docTemplate = `{
                 }
             }
         },
+        "/labels": {
+            "get": {
+                "description": "Get labels",
+                "tags": [
+                    "labels"
+                ],
+                "summary": "Get labels",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authentication header",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
         "/places": {
             "get": {
                 "description": "Get places",

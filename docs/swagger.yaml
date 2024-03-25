@@ -78,6 +78,27 @@ paths:
       summary: Get cities
       tags:
       - cities
+  /labels:
+    get:
+      description: Get labels
+      parameters:
+      - description: Authentication header
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: string
+            type: array
+        "500":
+          description: Internal server error
+      summary: Get labels
+      tags:
+      - labels
   /places:
     get:
       consumes:

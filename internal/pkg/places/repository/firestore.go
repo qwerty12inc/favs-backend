@@ -138,3 +138,30 @@ func (r Repository) DeletePlace(ctx context.Context, id string) models.Status {
 	}
 	return models.Status{models.OK, "OK"}
 }
+
+func (r Repository) GetLabels(ctx context.Context) ([]string, models.Status) {
+	iter := r.cl.Collection("places").Select("labels").Documents(ctx)
+	labels := make(map[string]bool)
+	for {
+		doc, err := iter.Next()
+		if errors.Is(err, iterator.Done) {
+			break
+		}
+		if err != nil {
+			return nil, models.Status{models.InternalError, err.Error()}
+		}
+		var place models.Place
+		err = doc.DataTo(&place)
+		if err != nil {
+			return nil, models.Status{models.InternalError, err.Error()}
+		}
+		for _, label := range place.Labels {
+			labels[label] = true
+		}
+	}
+	filteredLabels := make([]string, 0, len(labels))
+	for label := range labels {
+		filteredLabels = append(filteredLabels, label)
+	}
+	return filteredLabels, models.Status{models.OK, "OK"}
+}

@@ -140,3 +140,7 @@ func (u Usecase) DeletePlace(ctx context.Context, id string) models.Status {
 func (u Usecase) GetCities(ctx context.Context) ([]string, models.Status) {
 	return u.repo.GetCities(ctx)
 }
+
+func (u Usecase) GetLabels(ctx context.Context) ([]string, models.Status) {
+	return u.repo.GetLabels(ctx)
+}
