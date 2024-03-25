@@ -59,6 +59,7 @@ func (u Usecase) ImportPlacesFromSheet(ctx context.Context, sheetRange string,
 			log.Printf("recovering: %v", x)
 		}
 	}()
+
 	places, status := u.parser.ParsePlaces(ctx, sheetRange)
 	if status.Code != models.OK {
 		return models.Status{models.InternalError, "failed to parse places"}
