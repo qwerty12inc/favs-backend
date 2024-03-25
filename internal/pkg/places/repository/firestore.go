@@ -143,8 +143,13 @@ func (r Repository) DeletePlace(ctx context.Context, id string) models.Status {
 	return models.Status{models.OK, "OK"}
 }
 
-func (r Repository) GetLabels(ctx context.Context) ([]string, models.Status) {
-	iter := r.cl.Collection("places").Select("labels").Documents(ctx)
+func (r Repository) GetLabels(ctx context.Context, city string) ([]string, models.Status) {
+	query := r.cl.Collection("places").Select("labels")
+	if city != "" {
+		query = query.Where("city", "==", city)
+	}
+	iter := query.Documents(ctx)
+
 	labels := make(map[string]bool)
 	for {
 		doc, err := iter.Next()

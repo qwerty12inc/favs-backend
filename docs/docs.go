@@ -50,13 +50,13 @@ const docTemplate = `{
                 }
             }
         },
-        "/labels": {
+        "/filters": {
             "get": {
-                "description": "Get labels",
+                "description": "Get filters",
                 "tags": [
                     "labels"
                 ],
-                "summary": "Get labels",
+                "summary": "Get filters",
                 "parameters": [
                     {
                         "type": "string",
@@ -64,6 +64,12 @@ const docTemplate = `{
                         "name": "Authorization",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "City",
+                        "name": "city",
+                        "in": "query"
                     }
                 ],
                 "responses": {

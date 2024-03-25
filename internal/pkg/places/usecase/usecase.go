@@ -141,6 +141,6 @@ func (u Usecase) GetCities(ctx context.Context) ([]string, models.Status) {
 	return u.repo.GetCities(ctx)
 }
 
-func (u Usecase) GetFilters(ctx context.Context) ([]string, models.Status) {
-	return u.repo.GetLabels(ctx)
+func (u Usecase) GetFilters(ctx context.Context, city string) ([]string, models.Status) {
+	return u.repo.GetLabels(ctx, city)
 }

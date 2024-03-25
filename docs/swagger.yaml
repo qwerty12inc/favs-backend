@@ -78,14 +78,18 @@ paths:
       summary: Get cities
       tags:
       - cities
-  /labels:
+  /filters:
     get:
-      description: Get labels
+      description: Get filters
       parameters:
       - description: Authentication header
         in: header
         name: Authorization
         required: true
+        type: string
+      - description: City
+        in: query
+        name: city
         type: string
       responses:
         "200":
@@ -96,7 +100,7 @@ paths:
             type: array
         "500":
           description: Internal server error
-      summary: Get labels
+      summary: Get filters
       tags:
       - labels
   /places:

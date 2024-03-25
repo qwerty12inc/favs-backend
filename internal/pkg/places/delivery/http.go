@@ -122,10 +122,12 @@ func (h Handler) GetCities(c echo.Context) error {
 //
 //	@Param			Authorization	header		string	true	"Authentication header"
 //
+// @Param city query string false "City"
 // @Success 200 {array} string
 // @Failure 500 "Internal server error"
 // @Router /filters [get]
 func (h Handler) GetFilters(c echo.Context) error {
-	labels, status := h.usecase.GetFilters(c.Request().Context())
+	city := c.QueryParam("city")
+	labels, status := h.usecase.GetFilters(c.Request().Context(), city)
 	return utils.HandleResponse(c, status, labels)
 }
