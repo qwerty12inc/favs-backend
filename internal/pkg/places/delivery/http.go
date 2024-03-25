@@ -65,8 +65,7 @@ func (h Handler) GetPlaces(c echo.Context) error {
 	longitudeStr := c.QueryParam("longitude")
 	latitudeDeltaStr := c.QueryParam("latitudeDelta")
 	longitudeDeltaStr := c.QueryParam("longitudeDelta")
-	labels := c.QueryParam("labels")
-	request.Labels = []string{labels}
+	request.Labels = c.QueryParams()["labels"]
 
 	if city == "" {
 		log.Println("Getting places in box")
