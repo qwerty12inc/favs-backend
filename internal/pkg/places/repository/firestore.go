@@ -86,15 +86,15 @@ func (r Repository) GetCities(ctx context.Context) ([]string, models.Status) {
 }
 
 func (r Repository) GetPlaces(ctx context.Context, request models.GetPlacesRequest) ([]models.Place, models.Status) {
-	box := geohash.Box{
-		MinLat: request.Center.Latitude - request.LatitudeDelta,
-		MaxLat: request.Center.Latitude + request.LatitudeDelta,
-		MinLng: request.Center.Longitude - request.LongitudeDelta,
-		MaxLng: request.Center.Longitude + request.LongitudeDelta,
-	}
 	var iter *firestore.DocumentIterator
 	var query firestore.Query
 	if request.City == "" {
+		box := geohash.Box{
+			MinLat: request.Center.Latitude - request.LatitudeDelta,
+			MaxLat: request.Center.Latitude + request.LatitudeDelta,
+			MinLng: request.Center.Longitude - request.LongitudeDelta,
+			MaxLng: request.Center.Longitude + request.LongitudeDelta,
+		}
 		log.Println("Getting places in box: ", box)
 		log.Println("Min: ", geohash.Encode(box.MinLat, box.MinLng))
 		log.Println("Max: ", geohash.Encode(box.MaxLat, box.MaxLng))
@@ -102,6 +102,7 @@ func (r Repository) GetPlaces(ctx context.Context, request models.GetPlacesReque
 			StartAt(geohash.Encode(box.MinLat, box.MinLng)).
 			EndAt(geohash.Encode(box.MaxLat, box.MaxLng))
 	} else {
+		log.Println("Getting places in city: ", request.City)
 		query = r.cl.Collection("places").
 			Where("city", "==", request.City)
 	}
