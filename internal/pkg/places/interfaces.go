@@ -22,7 +22,8 @@ type Usecase interface {
 	GetPlaces(ctx context.Context, request models.GetPlacesRequest) ([]models.Place, models.Status)
 	UpdatePlace(ctx context.Context, request models.UpdatePlaceRequest) models.Status
 	DeletePlace(ctx context.Context, id string) models.Status
-	ImportPlacesFromSheet(ctx context.Context, sheetRange string, city string, force bool) models.Status
+	ImportPlacesFromSheet(ctx context.Context, sheetRange string, city, category string,
+		force bool) models.Status
 	GetCities(ctx context.Context) ([]string, models.Status)
 	GetFilters(ctx context.Context, city string) ([]string, models.Status)
 }

@@ -3,6 +3,7 @@ package models
 type Place struct {
 	ID             string          `firestore:"id" json:"id"`
 	Name           string          `firestore:"name" json:"name"`
+	Category       string          `firestore:"category" json:"category"`
 	Description    string          `firestore:"description" json:"description"`
 	LocationURL    string          `firestore:"location_url" json:"locationURL"`
 	Coordinates    Coordinates     `firestore:"coordinates" json:"coordinates"`

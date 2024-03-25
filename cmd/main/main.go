@@ -137,17 +137,15 @@ func run() error {
 				log.Println("Recovered from panic", r)
 			}
 		}()
-		for {
-			cities := []string{"Amsterdam", "Milan"}
-			for _, city := range cities {
-				status := placeUsecase.ImportPlacesFromSheet(ctx, fmt.Sprintf("%s!A2:G", city), city, false)
-				if status.Code != models.OK {
-					log.Println("Failed to import places from sheet", status)
-				} else {
-					log.Println("Places imported from sheet", city)
-				}
+		cities := []string{"Amsterdam", "Milan"}
+		for _, city := range cities {
+			status := placeUsecase.ImportPlacesFromSheet(ctx, fmt.Sprintf("%s!A2:G", city),
+				city, "food", false)
+			if status.Code != models.OK {
+				log.Println("Failed to import places from sheet", status)
+			} else {
+				log.Println("Places imported from sheet", city)
 			}
-			time.Sleep(12 * time.Hour)
 		}
 	}()
 

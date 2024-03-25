@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"strconv"
 	"strings"
 
-	"github.com/google/uuid"
 	"github.com/mmcloughlin/geohash"
 	"gitlab.com/v.rianov/favs-backend/internal/models"
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/googlesheets"
@@ -53,7 +53,7 @@ func (u Usecase) CreatePlace(ctx context.Context, request models.CreatePlaceRequ
 }
 
 func (u Usecase) ImportPlacesFromSheet(ctx context.Context, sheetRange string,
-	city string, force bool) models.Status {
+	city, category string, force bool) models.Status {
 	defer func() {
 		if x := recover(); x != nil {
 			log.Printf("recovering: %v", x)
@@ -65,7 +65,7 @@ func (u Usecase) ImportPlacesFromSheet(ctx context.Context, sheetRange string,
 		return models.Status{models.InternalError, "failed to parse places"}
 	}
 
-	for _, place := range places {
+	for i, place := range places {
 		log.Printf("Getting place by name: %s\n", place.Name)
 		oldPlace, status := u.repo.GetPlaceByName(ctx, place.Name)
 		if status.Code == models.OK && oldPlace.Name == place.Name && !force {
@@ -79,7 +79,7 @@ func (u Usecase) ImportPlacesFromSheet(ctx context.Context, sheetRange string,
 			return models.Status{models.InternalError, "failed to resolve coordinates"}
 		}
 
-		placeInfo.ID = uuid.New().String()
+		placeInfo.ID = strconv.Itoa(i)
 		placeInfo.GeoHash = geohash.Encode(placeInfo.Coordinates.Latitude, placeInfo.Coordinates.Longitude)
 		placeInfo.Labels = place.Labels
 		if placeInfo.City == "" {
@@ -99,6 +99,9 @@ func (u Usecase) ImportPlacesFromSheet(ctx context.Context, sheetRange string,
 		}
 		if placeInfo.Name == "" {
 			placeInfo.Name = place.Name
+		}
+		if placeInfo.Category == "" {
+			placeInfo.Category = category
 		}
 
 		log.Println("Saving place: ", placeInfo.Name)
