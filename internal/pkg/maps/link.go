@@ -83,21 +83,27 @@ func (l LocationLinkResolverImpl) GetPlaceInfo(ctx context.Context, link, name s
 		Website: place.Website,
 		Labels:  []string{},
 		GeoHash: "",
-		PhotoRefList: func() []string {
-			var photoRefs []string
-			for _, photo := range place.Photos {
-				photoRefs = append(photoRefs, photo.PhotoReference)
-			}
-			return photoRefs
-		}(),
-		Address:          place.FormattedAddress,
-		GoogleMapsRating: place.Rating,
-		Reservable:       place.Reservable,
-		Delivery:         place.Delivery,
+		GoogleMapsInfo: &models.GoogleMapsInfo{
+			PlaceID:          placeID,
+			Rating:           place.Rating,
+			Reservable:       place.Reservable,
+			Delivery:         place.Delivery,
+			FormattedAddress: place.FormattedAddress,
+			LocationURL:      place.URL,
+			Website:          place.Website,
+			PhotoRefList: func() []string {
+				var photoRefs []string
+				for _, photo := range place.Photos {
+					photoRefs = append(photoRefs, photo.PhotoReference)
+				}
+				return photoRefs
+			}(),
+		},
+		Address: place.FormattedAddress,
 	}
 
 	if place.OpeningHours != nil {
-		resPlace.OpeningInfo = place.CurrentOpeningHours.WeekdayText
+		resPlace.GoogleMapsInfo.OpeningInfo = place.CurrentOpeningHours.WeekdayText
 	}
 
 	return resPlace, nil

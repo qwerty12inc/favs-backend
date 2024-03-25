@@ -1,22 +1,30 @@
 package models
 
 type Place struct {
-	ID               string      `firestore:"id" json:"id"`
-	Name             string      `firestore:"name" json:"name"`
-	Description      string      `firestore:"description" json:"description"`
-	LocationURL      string      `firestore:"location_url" json:"locationURL"`
-	Coordinates      Coordinates `firestore:"coordinates" json:"coordinates"`
-	City             string      `firestore:"city" json:"city"`
-	Website          string      `firestore:"website" json:"website"`
-	Instagram        string      `firestore:"instagram" json:"instagram"`
-	Labels           []string    `firestore:"labels" json:"labels"`
-	GeoHash          string      `firestore:"geohash" json:"geoHash"`
-	Address          string      `firestore:"address" json:"address"`
-	PhotoRefList     []string    `firestore:"photo_ref_list" json:"photoRef"`
-	OpeningInfo      []string    `firestore:"opening_info" json:"openningDays"`
-	GoogleMapsRating float32     `firestore:"google_maps_rating" json:"googleMapsRating"`
-	Reservable       bool        `firestore:"reservable" json:"reservable"`
-	Delivery         bool        `firestore:"delivery" json:"delivery"`
+	ID             string          `firestore:"id" json:"id"`
+	Name           string          `firestore:"name" json:"name"`
+	Description    string          `firestore:"description" json:"description"`
+	LocationURL    string          `firestore:"location_url" json:"locationURL"`
+	Coordinates    Coordinates     `firestore:"coordinates" json:"coordinates"`
+	City           string          `firestore:"city" json:"city"`
+	Website        string          `firestore:"website" json:"website"`
+	Instagram      string          `firestore:"instagram" json:"instagram"`
+	Labels         []string        `firestore:"labels" json:"labels"`
+	GeoHash        string          `firestore:"geohash" json:"geoHash"`
+	Address        string          `firestore:"address" json:"address"`
+	GoogleMapsInfo *GoogleMapsInfo `firestore:"google_maps_info" json:"googleMapsInfo"`
+}
+
+type GoogleMapsInfo struct {
+	PlaceID          string   `firestore:"place_id" json:"placeID"`
+	OpeningInfo      []string `firestore:"opening_info" json:"openingInfo"`
+	FormattedAddress string   `firestore:"formatted_address" json:"formattedAddress"`
+	LocationURL      string   `firestore:"location_url" json:"locationURL"`
+	Rating           float32  `firestore:"rating" json:"rating"`
+	Website          string   `firestore:"website" json:"website"`
+	Reservable       bool     `firestore:"reservable" json:"reservable"`
+	Delivery         bool     `firestore:"delivery" json:"delivery"`
+	PhotoRefList     []string `firestore:"photo_ref_list" json:"photoRef"`
 }
 
 type Coordinates struct {
