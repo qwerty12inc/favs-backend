@@ -108,6 +108,7 @@ func (r Repository) GetPlaces(ctx context.Context, request models.GetPlacesReque
 	}
 
 	if len(request.Labels) > 0 {
+		log.Println("Filtering by labels: ", request.Labels)
 		query = query.Where("labels", "array-contains-any", request.Labels)
 	}
 
