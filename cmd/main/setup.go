@@ -10,9 +10,9 @@ import (
 	"os"
 
 	"cloud.google.com/go/firestore"
-	"cloud.google.com/go/storage"
 	firebase "firebase.google.com/go"
 	"firebase.google.com/go/auth"
+	"firebase.google.com/go/storage"
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/googlesheets"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
@@ -60,7 +60,12 @@ func setupStorageClient(ctx context.Context) (*storage.Client, error) {
 		return nil, err
 	}
 	sa := option.WithCredentialsFile(os.Getenv(serviceAccountPathEnv))
-	client, err := storage.NewClient(ctx, sa)
+	app, err := firebase.NewApp(ctx, nil, sa)
+	if err != nil {
+		return nil, err
+	}
+
+	client, err := app.Storage(ctx)
 	if err != nil {
 		return nil, err
 	}
