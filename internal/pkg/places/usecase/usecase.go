@@ -142,5 +142,12 @@ func (u Usecase) GetCities(ctx context.Context) ([]string, models.Status) {
 }
 
 func (u Usecase) GetFilters(ctx context.Context, city string) ([]string, models.Status) {
-	return u.repo.GetLabels(ctx, city)
+	filters, status := u.repo.GetLabels(ctx, city)
+	if status.Code != models.OK {
+		return nil, status
+	}
+	if len(filters) == 0 {
+		return nil, models.Status{models.NotFound, "filters not found"}
+	}
+	return filters, models.Status{models.OK, "OK"}
 }
