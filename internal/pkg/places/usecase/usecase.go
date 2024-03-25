@@ -18,15 +18,18 @@ type Usecase struct {
 	repo         places.Repository
 	linkResolver maps.LocationLinkResolver
 	parser       googlesheets.SheetParser
+	storageRepo  places.StorageRepository
 }
 
 func NewUsecase(repo places.Repository,
 	linkResolver maps.LocationLinkResolver,
-	parser googlesheets.SheetParser) Usecase {
+	parser googlesheets.SheetParser,
+	storageRepo places.StorageRepository) Usecase {
 	return Usecase{
 		repo:         repo,
 		linkResolver: linkResolver,
 		parser:       parser,
+		storageRepo:  storageRepo,
 	}
 }
 
@@ -150,4 +153,13 @@ func (u Usecase) GetFilters(ctx context.Context, city string) ([]string, models.
 		return nil, models.Status{models.NotFound, "filters not found"}
 	}
 	return filters, models.Status{models.OK, "OK"}
+}
+
+func (u Usecase) GetPlacePhotoURLs(ctx context.Context, placeID string) ([]string, models.Status) {
+	place, status := u.repo.GetPlace(ctx, placeID)
+	if status.Code != models.OK {
+		return nil, status
+	}
+	object := fmt.Sprintf("places/%s/%s", place.City, placeID)
+	return u.storageRepo.GetPlacePhotoURLs(ctx, object)
 }

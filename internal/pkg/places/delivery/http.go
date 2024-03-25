@@ -131,3 +131,22 @@ func (h Handler) GetFilters(c echo.Context) error {
 	labels, status := h.usecase.GetFilters(c.Request().Context(), city)
 	return utils.HandleResponse(c, status, labels)
 }
+
+// GetPlacePhotos godoc
+// @Summary Get place photos
+// @Description Get place photos
+// @Tags places
+// @Produce json
+// @Param id path string true "Place ID"
+//
+//	@Param			Authorization	header		string	true	"Authentication header"
+//
+// @Success 200 {array} string
+// @Failure 404 "Place not found"
+// @Failure 500 "Internal server error"
+// @Router /places/{id}/photos [get]
+func (h Handler) GetPlacePhotos(c echo.Context) error {
+	id := c.Param("id")
+	photos, status := h.usecase.GetPlacePhotoURLs(c.Request().Context(), id)
+	return utils.HandleResponse(c, status, photos)
+}

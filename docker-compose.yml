@@ -10,6 +10,7 @@ services:
       SHEETS_SERVICE_ACCOUNT_PATH: /src/credentials.json
       SHEETS_TOKEN_PATH: /src/token.json
       MAPS_API_KEY: ${MAPS_API_KEY}
+      PLACES_BUCKET_ID: ${PLACES_BUCKET_ID}
     volumes:
       - /home/slavaryanov:/src
     command: ./favsapi

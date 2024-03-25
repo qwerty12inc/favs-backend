@@ -1,21 +1,23 @@
 package main
 
 import (
-	"cloud.google.com/go/firestore"
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
+	"log"
+	"net/http"
+	"os"
+
+	"cloud.google.com/go/firestore"
+	"cloud.google.com/go/storage"
 	firebase "firebase.google.com/go"
 	"firebase.google.com/go/auth"
-	"fmt"
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/googlesheets"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/option"
 	"google.golang.org/api/sheets/v4"
-	"log"
-	"net/http"
-	"os"
 )
 
 func checkEnvVar(names ...string) error {
@@ -42,6 +44,23 @@ func setupFirestore(ctx context.Context) (*firestore.Client, error) {
 	}
 
 	client, err := app.Firestore(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return client, nil
+}
+
+func setupStorageClient(ctx context.Context) (*storage.Client, error) {
+	err := checkEnvVar("PLACES_BUCKET_ID")
+	if err != nil {
+		return nil, err
+	}
+	err = checkEnvVar(serviceAccountPathEnv)
+	if err != nil {
+		return nil, err
+	}
+	sa := option.WithCredentialsFile(os.Getenv(serviceAccountPathEnv))
+	client, err := storage.NewClient(ctx, sa)
 	if err != nil {
 		return nil, err
 	}

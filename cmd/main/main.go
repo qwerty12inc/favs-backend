@@ -101,14 +101,24 @@ func run() error {
 		return err
 	}
 
+	storageCLient, err := setupStorageClient(ctx)
+	if err != nil {
+		log.Println("Failed to create storage client", err)
+		return err
+	}
+
+	storageRepo := repository.NewStorageRepository(storageCLient, os.Getenv("PLACES_BUCKET_ID"))
+
 	// Place handlers
 	placeRepo := repository.NewRepository(client)
-	placeUsecase := usecase.NewUsecase(placeRepo, pkgmaps.NewLocationLinkResolver(cl), sheetsParser)
+	placeUsecase := usecase.NewUsecase(placeRepo,
+		pkgmaps.NewLocationLinkResolver(cl), sheetsParser, storageRepo)
 	placeHandler := delivery.NewHandler(placeUsecase)
 	placeGroup := apiV1Group.Group("/places", authMiddleware.Auth)
 	{
 		placeGroup.GET("/:id", placeHandler.GetPlace)
 		placeGroup.GET("", placeHandler.GetPlaces)
+		placeGroup.GET("/:id/photos", placeHandler.GetPlacePhotos)
 	}
 
 	cityGroup := apiV1Group.Group("/cities", authMiddleware.Auth)

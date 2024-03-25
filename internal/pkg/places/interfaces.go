@@ -26,3 +26,7 @@ type Usecase interface {
 	GetCities(ctx context.Context) ([]string, models.Status)
 	GetFilters(ctx context.Context, city string) ([]string, models.Status)
 }
+
+type StorageRepository interface {
+	GetPlacePhotoURLs(ctx context.Context, object string) ([]string, models.Status)
+}
