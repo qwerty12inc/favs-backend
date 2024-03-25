@@ -137,7 +137,7 @@ func run() error {
 					log.Println("Places imported from sheet", city)
 				}
 			}
-			time.Sleep(40 * time.Minute)
+			time.Sleep(12 * time.Hour)
 		}
 	}()
 

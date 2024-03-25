@@ -2,10 +2,11 @@ package googlesheets
 
 import (
 	"context"
-	"gitlab.com/v.rianov/favs-backend/internal/models"
-	"google.golang.org/api/sheets/v4"
 	"log"
 	"strings"
+
+	"gitlab.com/v.rianov/favs-backend/internal/models"
+	"google.golang.org/api/sheets/v4"
 )
 
 type SheetParser interface {
@@ -45,6 +46,7 @@ func (s SheetsParser) ParsePlaces(ctx context.Context, readRange string) ([]mode
 			labels := strings.Split(row[1].(string), "/")
 			for i, label := range labels {
 				labels[i] = strings.TrimSpace(label)
+				labels[i] = strings.ToLower(labels[i])
 			}
 			place.Labels = labels
 		}
