@@ -7,6 +7,31 @@ definitions:
       longitude:
         type: number
     type: object
+  models.GoogleMapsInfo:
+    properties:
+      delivery:
+        type: boolean
+      formattedAddress:
+        type: string
+      locationURL:
+        type: string
+      openingInfo:
+        items:
+          type: string
+        type: array
+      photoRef:
+        items:
+          type: string
+        type: array
+      placeID:
+        type: string
+      rating:
+        type: number
+      reservable:
+        type: boolean
+      website:
+        type: string
+    type: object
   models.Place:
     properties:
       address:
@@ -15,14 +40,12 @@ definitions:
         type: string
       coordinates:
         $ref: '#/definitions/models.Coordinates'
-      delivery:
-        type: boolean
       description:
         type: string
       geoHash:
         type: string
-      googleMapsRating:
-        type: number
+      googleMapsInfo:
+        $ref: '#/definitions/models.GoogleMapsInfo'
       id:
         type: string
       instagram:
@@ -35,16 +58,6 @@ definitions:
         type: string
       name:
         type: string
-      openningDays:
-        items:
-          type: string
-        type: array
-      photoRef:
-        items:
-          type: string
-        type: array
-      reservable:
-        type: boolean
       website:
         type: string
     type: object

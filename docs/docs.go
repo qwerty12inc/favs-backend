@@ -230,6 +230,44 @@ const docTemplate = `{
                 }
             }
         },
+        "models.GoogleMapsInfo": {
+            "type": "object",
+            "properties": {
+                "delivery": {
+                    "type": "boolean"
+                },
+                "formattedAddress": {
+                    "type": "string"
+                },
+                "locationURL": {
+                    "type": "string"
+                },
+                "openingInfo": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "photoRef": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "placeID": {
+                    "type": "string"
+                },
+                "rating": {
+                    "type": "number"
+                },
+                "reservable": {
+                    "type": "boolean"
+                },
+                "website": {
+                    "type": "string"
+                }
+            }
+        },
         "models.Place": {
             "type": "object",
             "properties": {
@@ -242,17 +280,14 @@ const docTemplate = `{
                 "coordinates": {
                     "$ref": "#/definitions/models.Coordinates"
                 },
-                "delivery": {
-                    "type": "boolean"
-                },
                 "description": {
                     "type": "string"
                 },
                 "geoHash": {
                     "type": "string"
                 },
-                "googleMapsRating": {
-                    "type": "number"
+                "googleMapsInfo": {
+                    "$ref": "#/definitions/models.GoogleMapsInfo"
                 },
                 "id": {
                     "type": "string"
@@ -271,21 +306,6 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
-                },
-                "openningDays": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "photoRef": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "reservable": {
-                    "type": "boolean"
                 },
                 "website": {
                     "type": "string"
