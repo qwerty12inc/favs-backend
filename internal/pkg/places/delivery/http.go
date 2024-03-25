@@ -115,17 +115,17 @@ func (h Handler) GetCities(c echo.Context) error {
 	return utils.HandleResponse(c, status, cities)
 }
 
-// GetLabels godoc
-// @Summary Get labels
-// @Description Get labels
+// GetFilters godoc
+// @Summary Get filters
+// @Description Get filters
 // @Tags labels
 //
 //	@Param			Authorization	header		string	true	"Authentication header"
 //
 // @Success 200 {array} string
 // @Failure 500 "Internal server error"
-// @Router /labels [get]
-func (h Handler) GetLabels(c echo.Context) error {
-	labels, status := h.usecase.GetLabels(c.Request().Context())
+// @Router /filters [get]
+func (h Handler) GetFilters(c echo.Context) error {
+	labels, status := h.usecase.GetFilters(c.Request().Context())
 	return utils.HandleResponse(c, status, labels)
 }

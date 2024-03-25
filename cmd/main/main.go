@@ -116,9 +116,9 @@ func run() error {
 		cityGroup.GET("", placeHandler.GetCities)
 	}
 
-	labelsGroup := apiV1Group.Group("/labels", authMiddleware.Auth)
+	labelsGroup := apiV1Group.Group("/filters", authMiddleware.Auth)
 	{
-		labelsGroup.GET("", placeHandler.GetLabels)
+		labelsGroup.GET("", placeHandler.GetFilters)
 	}
 
 	go func() {
