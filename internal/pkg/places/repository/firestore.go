@@ -60,9 +60,10 @@ func (r Repository) GetPlaceByName(ctx context.Context, name string) (models.Pla
 	return place, models.Status{models.OK, "OK"}
 }
 
-func (r Repository) GetCities(ctx context.Context) ([]string, models.Status) {
-	iter := r.cl.Collection("places").Select("city").Documents(ctx)
-	cities := make(map[string]bool)
+func (r Repository) GetCities(ctx context.Context) ([]models.City, models.Status) {
+	iter := r.cl.Collection("cities").Documents(ctx)
+
+	var cities []models.City
 	for {
 		doc, err := iter.Next()
 		if errors.Is(err, iterator.Done) {
@@ -71,18 +72,35 @@ func (r Repository) GetCities(ctx context.Context) ([]string, models.Status) {
 		if err != nil {
 			return nil, models.Status{models.InternalError, err.Error()}
 		}
-		var place models.Place
-		err = doc.DataTo(&place)
+		var city models.City
+		err = doc.DataTo(&city)
 		if err != nil {
 			return nil, models.Status{models.InternalError, err.Error()}
 		}
-		cities[place.City] = true
+		cities = append(cities, city)
 	}
-	filteredCities := make([]string, 0, len(cities))
-	for city := range cities {
-		filteredCities = append(filteredCities, city)
+	return cities, models.Status{models.OK, "OK"}
+}
+
+func (r Repository) SaveCity(ctx context.Context, city models.City) models.Status {
+	_, err := r.cl.Collection("cities").Doc(city.Name).Create(ctx, city)
+	if err != nil {
+		return models.Status{models.InternalError, err.Error()}
 	}
-	return filteredCities, models.Status{models.OK, "OK"}
+	return models.Status{models.OK, "OK"}
+}
+
+func (r Repository) GetCity(ctx context.Context, name string) (models.City, models.Status) {
+	doc, err := r.cl.Collection("cities").Doc(name).Get(ctx)
+	if err != nil {
+		return models.City{}, models.Status{models.InternalError, err.Error()}
+	}
+	var city models.City
+	err = doc.DataTo(&city)
+	if err != nil {
+		return models.City{}, models.Status{models.InternalError, err.Error()}
+	}
+	return city, models.Status{models.OK, "OK"}
 }
 
 func (r Repository) GetPlaces(ctx context.Context, request models.GetPlacesRequest) ([]models.Place, models.Status) {

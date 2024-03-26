@@ -41,6 +41,7 @@ type GoogleSheetPlace struct {
 	Website     string
 	Instagram   string
 	Labels      []string
+	Category    string
 }
 
 type CreatePlaceRequest struct {

@@ -65,13 +65,21 @@ func (u Usecase) ImportPlacesFromSheet(ctx context.Context, sheetRange string,
 		return models.Status{models.InternalError, "failed to parse places"}
 	}
 
+	city = strings.ToLower(city)
+
+	categoryLabels := make(map[string]map[string]struct{})
+	for _, place := range places {
+		if _, ok := categoryLabels[place.Category]; !ok {
+			categoryLabels[place.Category] = make(map[string]struct{})
+		}
+		for _, label := range place.Labels {
+			categoryLabels[place.Category][label] = struct{}{}
+		}
+	}
+
 	for _, place := range places {
 		log.Printf("Getting place by name: %s\n", place.Name)
 		oldPlace, status := u.repo.GetPlaceByName(ctx, place.Name)
-		if status.Code == models.OK && oldPlace.Name == place.Name && !force {
-			log.Printf("Place with name %s already exists, skipping.\n", place.Name)
-			continue
-		}
 
 		placeInfo, err := u.linkResolver.GetPlaceInfo(ctx, place.LocationURL, place.Name)
 		if err != nil {
@@ -79,7 +87,12 @@ func (u Usecase) ImportPlacesFromSheet(ctx context.Context, sheetRange string,
 			return models.Status{models.InternalError, "failed to resolve coordinates"}
 		}
 
-		placeInfo.ID = uuid.New().String()
+		if oldPlace.ID != "" {
+			placeInfo.ID = oldPlace.ID
+		} else {
+			placeInfo.ID = uuid.New().String()
+		}
+
 		placeInfo.GeoHash = geohash.Encode(placeInfo.Coordinates.Latitude, placeInfo.Coordinates.Longitude)
 		placeInfo.Labels = place.Labels
 		if placeInfo.City == "" {
@@ -112,6 +125,32 @@ func (u Usecase) ImportPlacesFromSheet(ctx context.Context, sheetRange string,
 		}
 		log.Printf("Place saved.\n")
 	}
+
+	cityInfo, err := u.linkResolver.GetCityInfo(ctx, city)
+	if err != nil {
+		log.Printf("models.Status while resolving city info: %v\n", err)
+		return models.Status{models.InternalError, "failed to resolve city info"}
+	}
+
+	for category, labels := range categoryLabels {
+		cityInfo.Categories = append(cityInfo.Categories, models.Category{
+			Name: category,
+			Filters: func() []string {
+				var res []string
+				for label := range labels {
+					res = append(res, label)
+				}
+				return res
+			}(),
+		})
+	}
+
+	status = u.repo.SaveCity(ctx, cityInfo)
+	if status.Code != models.OK {
+		log.Printf("models.Status while saving city: %v\n", status)
+		return status
+	}
+
 	return models.Status{models.OK, "OK"}
 }
 
@@ -144,8 +183,16 @@ func (u Usecase) DeletePlace(ctx context.Context, id string) models.Status {
 	return u.repo.DeletePlace(ctx, id)
 }
 
-func (u Usecase) GetCities(ctx context.Context) ([]string, models.Status) {
+func (u Usecase) GetCities(ctx context.Context) ([]models.City, models.Status) {
 	return u.repo.GetCities(ctx)
+}
+
+func (u Usecase) SaveCity(ctx context.Context, city models.City) models.Status {
+	return u.repo.SaveCity(ctx, city)
+}
+
+func (u Usecase) GetCity(ctx context.Context, name string) (models.City, models.Status) {
+	return u.repo.GetCity(ctx, name)
 }
 
 func (u Usecase) GetFilters(ctx context.Context, city string) ([]string, models.Status) {

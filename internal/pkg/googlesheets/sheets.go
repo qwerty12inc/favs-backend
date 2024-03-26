@@ -62,6 +62,9 @@ func (s SheetsParser) ParsePlaces(ctx context.Context, readRange string) ([]mode
 		if len(row) > 5 {
 			place.Website = row[5].(string)
 		}
+		if len(row) > 6 {
+			place.Category = row[6].(string)
+		}
 		places = append(places, place)
 	}
 	return places, models.Status{Code: models.OK}

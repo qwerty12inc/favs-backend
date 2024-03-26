@@ -1,5 +1,27 @@
 basePath: /api/v1
 definitions:
+  models.Category:
+    properties:
+      filters:
+        items:
+          type: string
+        type: array
+      name:
+        type: string
+    type: object
+  models.City:
+    properties:
+      categories:
+        items:
+          $ref: '#/definitions/models.Category'
+        type: array
+      center:
+        $ref: '#/definitions/models.Coordinates'
+      imageURL:
+        type: string
+      name:
+        type: string
+    type: object
   models.Coordinates:
     properties:
       latitude:
@@ -35,6 +57,8 @@ definitions:
   models.Place:
     properties:
       address:
+        type: string
+      category:
         type: string
       city:
         type: string
@@ -84,7 +108,7 @@ paths:
           description: OK
           schema:
             items:
-              type: string
+              $ref: '#/definitions/models.City'
             type: array
         "500":
           description: Internal server error
@@ -202,6 +226,36 @@ paths:
         "500":
           description: Internal server error
       summary: Get place
+      tags:
+      - places
+  /places/{id}/photos:
+    get:
+      description: Get place photos
+      parameters:
+      - description: Place ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Authentication header
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: string
+            type: array
+        "404":
+          description: Place not found
+        "500":
+          description: Internal server error
+      summary: Get place photos
       tags:
       - places
 securityDefinitions:

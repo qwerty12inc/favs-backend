@@ -12,8 +12,10 @@ type Repository interface {
 	GetPlaces(ctx context.Context, request models.GetPlacesRequest) ([]models.Place, models.Status)
 	DeletePlace(ctx context.Context, id string) models.Status
 	GetPlaceByName(ctx context.Context, name string) (models.Place, models.Status)
-	GetCities(ctx context.Context) ([]string, models.Status)
+	GetCities(ctx context.Context) ([]models.City, models.Status)
 	GetLabels(ctx context.Context, city string) ([]string, models.Status)
+	SaveCity(ctx context.Context, city models.City) models.Status
+	GetCity(ctx context.Context, name string) (models.City, models.Status)
 }
 
 type Usecase interface {
@@ -24,8 +26,10 @@ type Usecase interface {
 	DeletePlace(ctx context.Context, id string) models.Status
 	ImportPlacesFromSheet(ctx context.Context, sheetRange string, city, category string,
 		force bool) models.Status
-	GetCities(ctx context.Context) ([]string, models.Status)
+	GetCities(ctx context.Context) ([]models.City, models.Status)
+	SaveCity(ctx context.Context, city models.City) models.Status
 	GetFilters(ctx context.Context, city string) ([]string, models.Status)
+	GetCity(ctx context.Context, name string) (models.City, models.Status)
 }
 
 type StorageRepository interface {

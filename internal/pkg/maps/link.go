@@ -18,6 +18,7 @@ type LocationLinkResolver interface {
 	// ResolveLink resolves a location link and returns coordinates
 	ResolveLink(link string) (models.Coordinates, error)
 	GetPlaceInfo(ctx context.Context, link, name string) (*models.Place, error)
+	GetCityInfo(ctx context.Context, cityName string) (models.City, error)
 }
 
 type LocationLinkResolverImpl struct {
@@ -73,7 +74,7 @@ func (l LocationLinkResolverImpl) GetPlaceInfo(ctx context.Context, link, name s
 
 	resPlace := &models.Place{
 		Name:        place.Name,
-		Description: place.FormattedAddress,
+		Description: "",
 		LocationURL: place.URL,
 		Coordinates: models.Coordinates{
 			Latitude:  place.Geometry.Location.Lat,
@@ -107,6 +108,35 @@ func (l LocationLinkResolverImpl) GetPlaceInfo(ctx context.Context, link, name s
 	}
 
 	return resPlace, nil
+}
+
+func (l LocationLinkResolverImpl) GetCityInfo(ctx context.Context, cityName string) (models.City, error) {
+	res, err := l.cl.TextSearch(ctx, &maps.TextSearchRequest{
+		Query: cityName,
+	})
+	if err != nil {
+		return models.City{}, err
+	}
+
+	if len(res.Results) == 0 {
+		return models.City{}, fmt.Errorf("no cities found")
+	}
+
+	placeID := res.Results[0].PlaceID
+	place, err := l.cl.PlaceDetails(ctx, &maps.PlaceDetailsRequest{
+		PlaceID: placeID,
+	})
+	if err != nil {
+		return models.City{}, err
+	}
+
+	return models.City{
+		Name: place.Name,
+		Center: models.Coordinates{
+			Latitude:  place.Geometry.Location.Lat,
+			Longitude: place.Geometry.Location.Lng,
+		},
+	}, nil
 }
 
 func (l LocationLinkResolverImpl) ResolveLink(link string) (models.Coordinates, error) {

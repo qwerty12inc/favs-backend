@@ -107,7 +107,7 @@ func (h Handler) GetPlaces(c echo.Context) error {
 //
 //	@Param			Authorization	header		string	true	"Authentication header"
 //
-// @Success 200 {array} string
+// @Success 200 {array} models.City
 // @Failure 500 "Internal server error"
 // @Router /cities [get]
 func (h Handler) GetCities(c echo.Context) error {
