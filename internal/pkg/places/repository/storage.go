@@ -46,7 +46,7 @@ func (r StorageRepository) GetPlacePhotoURLs(ctx context.Context, object string)
 			return nil, models.Status{models.InternalError, err.Error()}
 		}
 		log.Println("Got object: ", attrs.ContentDisposition, attrs.Name)
-		urls = append(urls, attrs.Name)
+		urls = append(urls, attrs.MediaLink)
 	}
 	return urls, models.Status{models.OK, "OK"}
 }
