@@ -83,7 +83,7 @@ func (r Repository) GetCities(ctx context.Context) ([]models.City, models.Status
 }
 
 func (r Repository) SaveCity(ctx context.Context, city models.City) models.Status {
-	_, err := r.cl.Collection("cities").Doc(city.Name).Create(ctx, city)
+	_, err := r.cl.Collection("cities").Doc(city.Name).Set(ctx, city)
 	if err != nil {
 		return models.Status{models.InternalError, err.Error()}
 	}

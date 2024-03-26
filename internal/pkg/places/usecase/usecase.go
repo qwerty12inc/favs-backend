@@ -69,6 +69,10 @@ func (u Usecase) ImportPlacesFromSheet(ctx context.Context, sheetRange string,
 
 	categoryLabels := make(map[string]map[string]struct{})
 	for _, place := range places {
+		if place.Category == "" {
+			log.Printf("Skipping place without category: %s\n", place.Name)
+			continue
+		}
 		if _, ok := categoryLabels[place.Category]; !ok {
 			categoryLabels[place.Category] = make(map[string]struct{})
 		}
