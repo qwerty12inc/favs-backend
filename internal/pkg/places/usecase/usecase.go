@@ -6,7 +6,6 @@ import (
 	"log"
 	"strings"
 
-	"github.com/google/uuid"
 	"github.com/mmcloughlin/geohash"
 	"gitlab.com/v.rianov/favs-backend/internal/models"
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/googlesheets"
@@ -81,54 +80,54 @@ func (u Usecase) ImportPlacesFromSheet(ctx context.Context, sheetRange string,
 		}
 	}
 
-	for _, place := range places {
-		log.Printf("Getting place by name: %s\n", place.Name)
-		oldPlace, status := u.repo.GetPlaceByName(ctx, place.Name)
-
-		placeInfo, err := u.linkResolver.GetPlaceInfo(ctx, place.LocationURL, place.Name, city)
-		if err != nil {
-			log.Printf("models.Status while resolving coordinates: %v url: %s\n", err, place.LocationURL)
-			return models.Status{models.InternalError, "failed to resolve coordinates"}
-		}
-
-		if oldPlace.ID != "" {
-			placeInfo.ID = oldPlace.ID
-		} else {
-			placeInfo.ID = uuid.New().String()
-		}
-
-		placeInfo.GeoHash = geohash.Encode(placeInfo.Coordinates.Latitude, placeInfo.Coordinates.Longitude)
-		placeInfo.Labels = place.Labels
-		if placeInfo.City == "" {
-			placeInfo.City = strings.ToLower(city)
-		}
-		if placeInfo.Instagram == "" {
-			placeInfo.Instagram = place.Instagram
-		}
-		if placeInfo.Description == "" {
-			placeInfo.Description = place.Description
-		}
-		if placeInfo.Website == "" {
-			placeInfo.Website = place.Website
-		}
-		if placeInfo.LocationURL == "" {
-			placeInfo.LocationURL = place.LocationURL
-		}
-		if placeInfo.Name == "" {
-			placeInfo.Name = place.Name
-		}
-		if placeInfo.Category == "" {
-			placeInfo.Category = category
-		}
-
-		log.Println("Saving place: ", placeInfo.Name)
-		status = u.repo.SavePlace(ctx, *placeInfo)
-		if status.Code != models.OK {
-			log.Printf("models.Status while saving place: %v\n", status)
-			return status
-		}
-		log.Printf("Place saved.\n")
-	}
+	//for _, place := range places {
+	//	log.Printf("Getting place by name: %s\n", place.Name)
+	//	oldPlace, status := u.repo.GetPlaceByName(ctx, place.Name)
+	//
+	//	placeInfo, err := u.linkResolver.GetPlaceInfo(ctx, place.LocationURL, place.Name, city)
+	//	if err != nil {
+	//		log.Printf("models.Status while resolving coordinates: %v url: %s\n", err, place.LocationURL)
+	//		return models.Status{models.InternalError, "failed to resolve coordinates"}
+	//	}
+	//
+	//	if oldPlace.ID != "" {
+	//		placeInfo.ID = oldPlace.ID
+	//	} else {
+	//		placeInfo.ID = uuid.New().String()
+	//	}
+	//
+	//	placeInfo.GeoHash = geohash.Encode(placeInfo.Coordinates.Latitude, placeInfo.Coordinates.Longitude)
+	//	placeInfo.Labels = place.Labels
+	//	if placeInfo.City == "" {
+	//		placeInfo.City = strings.ToLower(city)
+	//	}
+	//	if placeInfo.Instagram == "" {
+	//		placeInfo.Instagram = place.Instagram
+	//	}
+	//	if placeInfo.Description == "" {
+	//		placeInfo.Description = place.Description
+	//	}
+	//	if placeInfo.Website == "" {
+	//		placeInfo.Website = place.Website
+	//	}
+	//	if placeInfo.LocationURL == "" {
+	//		placeInfo.LocationURL = place.LocationURL
+	//	}
+	//	if placeInfo.Name == "" {
+	//		placeInfo.Name = place.Name
+	//	}
+	//	if placeInfo.Category == "" {
+	//		placeInfo.Category = category
+	//	}
+	//
+	//	log.Println("Saving place: ", placeInfo.Name)
+	//	status = u.repo.SavePlace(ctx, *placeInfo)
+	//	if status.Code != models.OK {
+	//		log.Printf("models.Status while saving place: %v\n", status)
+	//		return status
+	//	}
+	//	log.Printf("Place saved.\n")
+	//}
 
 	cityInfo, err := u.linkResolver.GetCityInfo(ctx, city)
 	if err != nil {
@@ -152,7 +151,7 @@ func (u Usecase) ImportPlacesFromSheet(ctx context.Context, sheetRange string,
 	cityInfo.ImageURL = "places/" + city + "/city.jpg"
 	status = u.repo.SaveCity(ctx, cityInfo)
 	if status.Code != models.OK {
-		log.Printf("models.Status while saving city: %v\n", status)
+		log.Printf("status while saving city: %v\n", status)
 		return status
 	}
 
