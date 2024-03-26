@@ -114,6 +114,7 @@ func (h Handler) GetPlaces(c echo.Context) error {
 // @Router /cities [get]
 func (h Handler) GetCities(c echo.Context) error {
 	cities, status := h.usecase.GetCities(c.Request().Context())
+
 	return utils.HandleResponse(c, status, cities)
 }
 
