@@ -23,7 +23,7 @@ func NewRepository(cl *firestore.Client) Repository {
 
 func (r Repository) SavePlace(ctx context.Context, place models.Place) models.Status {
 	log.Println("Saving place: ", place)
-	_, err := r.cl.Collection("places").Doc(place.ID).Create(ctx, place)
+	_, err := r.cl.Collection("places").Doc(place.ID).Set(ctx, place)
 	if err != nil {
 		return models.Status{models.InternalError, err.Error()}
 	}
