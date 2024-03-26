@@ -8,6 +8,6 @@ type City struct {
 }
 
 type Category struct {
-	Name    string   `firestore:"name" json:"name"`
-	Filters []string `firestore:"filters" json:"filters"`
+	Name   string   `firestore:"name" json:"name"`
+	Labels []string `firestore:"labels" json:"labels"`
 }

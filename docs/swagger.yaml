@@ -2,7 +2,7 @@ basePath: /api/v1
 definitions:
   models.Category:
     properties:
-      filters:
+      labels:
         items:
           type: string
         type: array
@@ -115,31 +115,6 @@ paths:
       summary: Get cities
       tags:
       - cities
-  /filters:
-    get:
-      description: Get filters
-      parameters:
-      - description: Authentication header
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: City
-        in: query
-        name: city
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              type: string
-            type: array
-        "500":
-          description: Internal server error
-      summary: Get filters
-      tags:
-      - labels
   /places:
     get:
       consumes:
@@ -179,6 +154,11 @@ paths:
         name: labels
         required: true
         type: array
+      - description: Category
+        in: query
+        name: category
+        required: true
+        type: string
       - description: City
         in: query
         name: city

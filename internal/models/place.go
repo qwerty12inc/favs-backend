@@ -74,6 +74,7 @@ type GetPlacesRequest struct {
 	LatitudeDelta  float64     `json:"latitude_delta,omitempty"`
 	LongitudeDelta float64     `json:"longitude_delta,omitempty"`
 	Labels         []string    `json:"labels,omitempty"`
+	Category       string      `json:"category,omitempty"`
 }
 
 type GetFiltersRequest struct {

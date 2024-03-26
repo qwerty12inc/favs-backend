@@ -50,44 +50,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/filters": {
-            "get": {
-                "description": "Get filters",
-                "tags": [
-                    "labels"
-                ],
-                "summary": "Get filters",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Authentication header",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "City",
-                        "name": "city",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error"
-                    }
-                }
-            }
-        },
         "/places": {
             "get": {
                 "description": "Get places",
@@ -145,6 +107,13 @@ const docTemplate = `{
                         "collectionFormat": "csv",
                         "description": "Labels",
                         "name": "labels",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Category",
+                        "name": "category",
                         "in": "query",
                         "required": true
                     },
@@ -267,7 +236,7 @@ const docTemplate = `{
         "models.Category": {
             "type": "object",
             "properties": {
-                "filters": {
+                "labels": {
                     "type": "array",
                     "items": {
                         "type": "string"

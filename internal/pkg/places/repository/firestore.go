@@ -127,6 +127,11 @@ func (r Repository) GetPlaces(ctx context.Context, request models.GetPlacesReque
 
 	log.Println("Length of labels: ", len(request.Labels))
 
+	if request.Category != "" {
+		log.Println("Filtering by category: ", request.Category)
+		query = query.Where("category", "==", request.Category)
+	}
+
 	if len(request.Labels) > 0 {
 		log.Println("Filtering by labels: ", request.Labels)
 		query = query.Where("labels", "array-contains-any", request.Labels)

@@ -54,6 +54,7 @@ func (h Handler) GetPlace(c echo.Context) error {
 // @Param latitudeDelta query float64 true "Latitude delta"
 // @Param longitudeDelta query float64 true "Longitude delta"
 // @Param labels query []string true "Labels"
+// @Param category query string true "Category"
 // @Param city query string true "City"
 // @Success 200 {array} models.Place
 // @Failure 500 "Internal server error"
@@ -65,6 +66,7 @@ func (h Handler) GetPlaces(c echo.Context) error {
 	longitudeStr := c.QueryParam("longitude")
 	latitudeDeltaStr := c.QueryParam("latitudeDelta")
 	longitudeDeltaStr := c.QueryParam("longitudeDelta")
+	request.Category = c.QueryParam("category")
 	request.Labels = c.QueryParams()["labels"]
 
 	if city == "" {
@@ -113,23 +115,6 @@ func (h Handler) GetPlaces(c echo.Context) error {
 func (h Handler) GetCities(c echo.Context) error {
 	cities, status := h.usecase.GetCities(c.Request().Context())
 	return utils.HandleResponse(c, status, cities)
-}
-
-// GetFilters godoc
-// @Summary Get filters
-// @Description Get filters
-// @Tags labels
-//
-//	@Param			Authorization	header		string	true	"Authentication header"
-//
-// @Param city query string false "City"
-// @Success 200 {array} string
-// @Failure 500 "Internal server error"
-// @Router /filters [get]
-func (h Handler) GetFilters(c echo.Context) error {
-	city := c.QueryParam("city")
-	labels, status := h.usecase.GetFilters(c.Request().Context(), city)
-	return utils.HandleResponse(c, status, labels)
 }
 
 // GetPlacePhotos godoc

@@ -139,7 +139,7 @@ func (u Usecase) ImportPlacesFromSheet(ctx context.Context, sheetRange string,
 	for category, labels := range categoryLabels {
 		cityInfo.Categories = append(cityInfo.Categories, models.Category{
 			Name: category,
-			Filters: func() []string {
+			Labels: func() []string {
 				var res []string
 				for label := range labels {
 					res = append(res, label)
@@ -198,17 +198,6 @@ func (u Usecase) SaveCity(ctx context.Context, city models.City) models.Status {
 
 func (u Usecase) GetCity(ctx context.Context, name string) (models.City, models.Status) {
 	return u.repo.GetCity(ctx, name)
-}
-
-func (u Usecase) GetFilters(ctx context.Context, city string) ([]string, models.Status) {
-	filters, status := u.repo.GetLabels(ctx, city)
-	if status.Code != models.OK {
-		return nil, status
-	}
-	if len(filters) == 0 {
-		return nil, models.Status{models.NotFound, "filters not found"}
-	}
-	return filters, models.Status{models.OK, "OK"}
 }
 
 func (u Usecase) GetPlacePhotoURLs(ctx context.Context, placeID string) ([]string, models.Status) {

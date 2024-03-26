@@ -13,7 +13,6 @@ type Repository interface {
 	DeletePlace(ctx context.Context, id string) models.Status
 	GetPlaceByName(ctx context.Context, name string) (models.Place, models.Status)
 	GetCities(ctx context.Context) ([]models.City, models.Status)
-	GetLabels(ctx context.Context, city string) ([]string, models.Status)
 	SaveCity(ctx context.Context, city models.City) models.Status
 	GetCity(ctx context.Context, name string) (models.City, models.Status)
 }
@@ -28,7 +27,6 @@ type Usecase interface {
 		force bool) models.Status
 	GetCities(ctx context.Context) ([]models.City, models.Status)
 	SaveCity(ctx context.Context, city models.City) models.Status
-	GetFilters(ctx context.Context, city string) ([]string, models.Status)
 	GetCity(ctx context.Context, name string) (models.City, models.Status)
 }
 
