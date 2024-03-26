@@ -85,7 +85,7 @@ func (u Usecase) ImportPlacesFromSheet(ctx context.Context, sheetRange string,
 		log.Printf("Getting place by name: %s\n", place.Name)
 		oldPlace, status := u.repo.GetPlaceByName(ctx, place.Name)
 
-		placeInfo, err := u.linkResolver.GetPlaceInfo(ctx, place.LocationURL, place.Name)
+		placeInfo, err := u.linkResolver.GetPlaceInfo(ctx, place.LocationURL, place.Name, city)
 		if err != nil {
 			log.Printf("models.Status while resolving coordinates: %v url: %s\n", err, place.LocationURL)
 			return models.Status{models.InternalError, "failed to resolve coordinates"}
@@ -149,6 +149,7 @@ func (u Usecase) ImportPlacesFromSheet(ctx context.Context, sheetRange string,
 		})
 	}
 
+	cityInfo.ImageURL = "places/" + city + "/city.jpg"
 	status = u.repo.SaveCity(ctx, cityInfo)
 	if status.Code != models.OK {
 		log.Printf("models.Status while saving city: %v\n", status)

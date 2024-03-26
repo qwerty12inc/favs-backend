@@ -17,7 +17,7 @@ import (
 type LocationLinkResolver interface {
 	// ResolveLink resolves a location link and returns coordinates
 	ResolveLink(link string) (models.Coordinates, error)
-	GetPlaceInfo(ctx context.Context, link, name string) (*models.Place, error)
+	GetPlaceInfo(ctx context.Context, link, name, city string) (*models.Place, error)
 	GetCityInfo(ctx context.Context, cityName string) (models.City, error)
 }
 
@@ -34,7 +34,7 @@ func NewLocationLinkResolver(cl *maps.Client) LocationLinkResolverImpl {
 	}
 }
 
-func (l LocationLinkResolverImpl) GetPlaceInfo(ctx context.Context, link, name string) (*models.Place, error) {
+func (l LocationLinkResolverImpl) GetPlaceInfo(ctx context.Context, link, name, city string) (*models.Place, error) {
 	log.Println("Resolving link: ", link)
 	c, err := l.ResolveLink(link)
 	if err != nil {
@@ -44,7 +44,7 @@ func (l LocationLinkResolverImpl) GetPlaceInfo(ctx context.Context, link, name s
 
 	log.Println("Resolved coordinates: ", c)
 	res, err := l.cl.TextSearch(ctx, &maps.TextSearchRequest{
-		Query: name,
+		Query: name + " " + city,
 		Location: &maps.LatLng{
 			Lat: c.Latitude,
 			Lng: c.Longitude,
