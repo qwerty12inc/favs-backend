@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"os/signal"
@@ -13,6 +12,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/labstack/gommon/log"
 	echoSwagger "github.com/swaggo/echo-swagger"
 	_ "gitlab.com/v.rianov/favs-backend/docs"
 	"gitlab.com/v.rianov/favs-backend/internal/models"
@@ -67,18 +67,22 @@ func run() error {
 	e.Use(middleware.Logger())
 	e.Use(middleware.RequestID())
 
+	if l, ok := e.Logger.(*log.Logger); ok {
+		l.SetHeader("${time_rfc3339} ${level}")
+	}
+
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	client, err := setupFirestore(ctx)
-	log.Println("Firestore client created", err)
+	log.Info("Firestore client created", err)
 	if err != nil {
 		return err
 	}
 	defer client.Close()
 
 	authClient, err := setupFirebaseAuth(ctx)
-	log.Println("Firebase auth client created", err)
+	log.Info("Firebase auth client created", err)
 	if err != nil {
 		return err
 	}
@@ -97,13 +101,13 @@ func run() error {
 
 	cl, err := maps.NewClient(maps.WithAPIKey("AIzaSyAtK6R8-35hxX-KYB1JoDbbnQaX2RJcYGU"))
 	if err != nil {
-		log.Println("Failed to create maps client", err)
+		log.Info("Failed to create maps client", err)
 		return err
 	}
 
 	storageCLient, err := setupStorageClient(ctx)
 	if err != nil {
-		log.Println("Failed to create storage client", err)
+		log.Info("Failed to create storage client", err)
 		return err
 	}
 
@@ -129,7 +133,7 @@ func run() error {
 	go func() {
 		defer func() {
 			if r := recover(); r != nil {
-				log.Println("Recovered from panic", r)
+				log.Info("Recovered from panic", r)
 			}
 		}()
 		cities := []string{"Amsterdam", "Milan"}
@@ -137,9 +141,9 @@ func run() error {
 			status := placeUsecase.ImportPlacesFromSheet(ctx, fmt.Sprintf("%s!A2:G", city),
 				city, "food", false)
 			if status.Code != models.OK {
-				log.Println("Failed to import places from sheet", status)
+				log.Info("Failed to import places from sheet", status)
 			} else {
-				log.Println("Places imported from sheet", city)
+				log.Info("Places imported from sheet", city)
 			}
 		}
 	}()

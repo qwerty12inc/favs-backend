@@ -3,9 +3,9 @@ package usecase
 import (
 	"context"
 	"fmt"
-	"log"
 	"strings"
 
+	"github.com/labstack/gommon/log"
 	"github.com/mmcloughlin/geohash"
 	"gitlab.com/v.rianov/favs-backend/internal/models"
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/googlesheets"

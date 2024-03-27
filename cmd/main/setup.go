@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 
@@ -13,6 +12,7 @@ import (
 	firebase "firebase.google.com/go"
 	"firebase.google.com/go/auth"
 	"firebase.google.com/go/storage"
+	"github.com/labstack/gommon/log"
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/googlesheets"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
@@ -26,7 +26,6 @@ func checkEnvVar(names ...string) error {
 			return errors.New(name + " is not set")
 		}
 	}
-
 	return nil
 }
 
@@ -50,8 +49,10 @@ func setupFirestore(ctx context.Context) (*firestore.Client, error) {
 	return client, nil
 }
 
+const placesBucketIDEnv = "PLACES_BUCKET_ID"
+
 func setupStorageClient(ctx context.Context) (*storage.Client, error) {
-	err := checkEnvVar("PLACES_BUCKET_ID")
+	err := checkEnvVar(placesBucketIDEnv)
 	if err != nil {
 		return nil, err
 	}

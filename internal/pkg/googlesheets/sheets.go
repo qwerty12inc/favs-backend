@@ -2,9 +2,9 @@ package googlesheets
 
 import (
 	"context"
-	"log"
 	"strings"
 
+	"github.com/labstack/gommon/log"
 	"gitlab.com/v.rianov/favs-backend/internal/models"
 	"google.golang.org/api/sheets/v4"
 )
@@ -28,7 +28,7 @@ func NewSheetsParser(cl *sheets.Service, sheetRef string) SheetsParser {
 func (s SheetsParser) ParsePlaces(ctx context.Context, readRange string) ([]models.GoogleSheetPlace, models.Status) {
 	resp, err := s.Cl.Spreadsheets.Values.Get(s.SheetRef, readRange).Do()
 	if err != nil {
-		log.Println("Error while reading from sheet: ", err, " range: ", readRange, " sheet: ", s.SheetRef)
+		log.Error("Error while reading from sheet: ", err, " range: ", readRange, " sheet: ", s.SheetRef)
 		return nil, models.Status{
 			Code:    models.InternalError,
 			Message: err.Error(),

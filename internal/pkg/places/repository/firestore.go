@@ -3,9 +3,9 @@ package repository
 import (
 	"context"
 	"errors"
-	"log"
 
 	"cloud.google.com/go/firestore"
+	"github.com/labstack/gommon/log"
 	"github.com/mmcloughlin/geohash"
 	"gitlab.com/v.rianov/favs-backend/internal/models"
 	"google.golang.org/api/iterator"
@@ -22,7 +22,7 @@ func NewRepository(cl *firestore.Client) Repository {
 }
 
 func (r Repository) SavePlace(ctx context.Context, place models.Place) models.Status {
-	log.Println("Saving place: ", place)
+	log.Debug("Saving place: ", place)
 	_, err := r.cl.Collection("places").Doc(place.ID).Set(ctx, place)
 	if err != nil {
 		return models.Status{models.InternalError, err.Error()}
@@ -113,27 +113,27 @@ func (r Repository) GetPlaces(ctx context.Context, request models.GetPlacesReque
 			MinLng: request.Center.Longitude - request.LongitudeDelta,
 			MaxLng: request.Center.Longitude + request.LongitudeDelta,
 		}
-		log.Println("Getting places in box: ", box)
-		log.Println("Min: ", geohash.Encode(box.MinLat, box.MinLng))
-		log.Println("Max: ", geohash.Encode(box.MaxLat, box.MaxLng))
+		log.Debug("Getting places in box: ", box)
+		log.Debug("Min: ", geohash.Encode(box.MinLat, box.MinLng))
+		log.Debug("Max: ", geohash.Encode(box.MaxLat, box.MaxLng))
 		query = r.cl.Collection("places").OrderBy("geohash", firestore.Asc).
 			StartAt(geohash.Encode(box.MinLat, box.MinLng)).
 			EndAt(geohash.Encode(box.MaxLat, box.MaxLng))
 	} else {
-		log.Println("Getting places in city: ", request.City)
+		log.Debug("Getting places in city: ", request.City)
 		query = r.cl.Collection("places").
 			Where("city", "==", request.City)
 	}
 
-	log.Println("Length of labels: ", len(request.Labels))
+	log.Debug("Length of labels: ", len(request.Labels))
 
 	if request.Category != "" {
-		log.Println("Filtering by category: ", request.Category)
+		log.Debug("Filtering by category: ", request.Category)
 		query = query.Where("category", "==", request.Category)
 	}
 
 	if len(request.Labels) > 0 {
-		log.Println("Filtering by labels: ", request.Labels)
+		log.Debug("Filtering by labels: ", request.Labels)
 		query = query.Where("labels", "array-contains-any", request.Labels)
 	}
 
@@ -146,13 +146,13 @@ func (r Repository) GetPlaces(ctx context.Context, request models.GetPlacesReque
 			break
 		}
 		if err != nil {
-			log.Println("Error while getting place: ", err)
+			log.Error("Error while getting place: ", err)
 			return nil, models.Status{models.InternalError, err.Error()}
 		}
 		var place models.Place
 		err = doc.DataTo(&place)
 		if err != nil {
-			log.Println("Error while converting data to place: ", err)
+			log.Error("Error while converting data to place: ", err)
 			return nil, models.Status{models.InternalError, err.Error()}
 		}
 		places = append(places, place)

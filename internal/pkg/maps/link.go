@@ -3,8 +3,8 @@ package maps
 import (
 	"context"
 	"fmt"
-	"log"
 
+	"github.com/labstack/gommon/log"
 	"gitlab.com/v.rianov/favs-backend/internal/models"
 	"googlemaps.github.io/maps"
 
@@ -35,14 +35,14 @@ func NewLocationLinkResolver(cl *maps.Client) LocationLinkResolverImpl {
 }
 
 func (l LocationLinkResolverImpl) GetPlaceInfo(ctx context.Context, link, name, city string) (*models.Place, error) {
-	log.Println("Resolving link: ", link)
+	log.Debug("Resolving link: ", link)
 	c, err := l.ResolveLink(link)
 	if err != nil {
-		log.Println("Error while resolving link: ", err)
+		log.Error("Error while resolving link: ", err)
 		return nil, err
 	}
 
-	log.Println("Resolved coordinates: ", c)
+	log.Debug("Resolved coordinates: ", c)
 	res, err := l.cl.TextSearch(ctx, &maps.TextSearchRequest{
 		Query: name + " " + city,
 		Location: &maps.LatLng{
@@ -51,24 +51,24 @@ func (l LocationLinkResolverImpl) GetPlaceInfo(ctx context.Context, link, name, 
 		},
 		Radius: 2,
 	})
-	log.Println("Results: ", res.Results, " Error: ", err)
+	log.Debug("Results: ", res.Results, " Error: ", err)
 	if err != nil {
-		log.Println("Error while searching for place: ", err)
+		log.Error("Error while searching for place: ", err)
 		return nil, err
 	}
 	if len(res.Results) == 0 {
-		log.Println("No places found for query: ", name, " coordinates: ", c)
+		log.Error("No places found for query: ", name, " coordinates: ", c)
 		return nil, fmt.Errorf("no places found")
 	}
 
 	placeID := res.Results[0].PlaceID
-	log.Println("Place ID: ", placeID)
+	log.Debug("Place ID: ", placeID)
 	place, err := l.cl.PlaceDetails(ctx, &maps.PlaceDetailsRequest{
 		PlaceID: placeID,
 	})
-	log.Println("Place details: ", place, " Error: ", err)
+	log.Debug("Place details: ", place, " Error: ", err)
 	if err != nil {
-		log.Println("Error while getting place details: ", err)
+		log.Error("Error while getting place details: ", err)
 		return nil, err
 	}
 

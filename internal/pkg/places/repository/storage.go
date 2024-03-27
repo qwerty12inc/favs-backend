@@ -3,10 +3,10 @@ package repository
 import (
 	"context"
 	"errors"
-	"log"
 
 	storage2 "cloud.google.com/go/storage"
 	"firebase.google.com/go/storage"
+	"github.com/labstack/gommon/log"
 	"gitlab.com/v.rianov/favs-backend/internal/models"
 	"google.golang.org/api/iterator"
 )
@@ -26,11 +26,11 @@ func NewStorageRepository(cl *storage.Client, bucket string) StorageRepository {
 func (r StorageRepository) GetPlacePhotoURLs(ctx context.Context, object string) ([]string, models.Status) {
 	b, err := r.cl.Bucket(r.bucket)
 	if err != nil {
-		log.Println("Error while getting bucket: ", err)
+		log.Error("Error while getting bucket: ", err)
 		return nil, models.Status{models.InternalError, err.Error()}
 	}
 	if b == nil {
-		log.Println("Bucket is nil")
+		log.Error("Bucket is nil")
 		return nil, models.Status{models.InternalError, "Bucket is nil"}
 	}
 
@@ -42,10 +42,10 @@ func (r StorageRepository) GetPlacePhotoURLs(ctx context.Context, object string)
 			break
 		}
 		if err != nil {
-			log.Println("Error while getting object: ", err)
+			log.Error("Error while getting object: ", err)
 			return nil, models.Status{models.InternalError, err.Error()}
 		}
-		log.Println("Got object: ", attrs.ContentDisposition, attrs.Name)
+		log.Debug("Got object: ", attrs.ContentDisposition, attrs.Name)
 		urls = append(urls, attrs.Name)
 	}
 	return urls, models.Status{models.OK, "OK"}

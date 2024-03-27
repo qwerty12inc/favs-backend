@@ -1,10 +1,10 @@
 package delivery
 
 import (
-	"log"
 	"strconv"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/gommon/log"
 	"gitlab.com/v.rianov/favs-backend/internal/models"
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/places/usecase"
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/utils"
@@ -70,7 +70,7 @@ func (h Handler) GetPlaces(c echo.Context) error {
 	request.Labels = c.QueryParams()["labels"]
 
 	if city == "" {
-		log.Println("Getting places in box")
+		log.Debug("Getting places in box")
 		latitude, err := strconv.ParseFloat(latitudeStr, 64)
 		if err != nil {
 			return err
@@ -94,7 +94,7 @@ func (h Handler) GetPlaces(c echo.Context) error {
 		request.LatitudeDelta = latitudeDelta
 		request.LongitudeDelta = longitudeDelta
 	} else {
-		log.Println("Getting places in city")
+		log.Debug("Getting places in city")
 		request.City = city
 	}
 
@@ -114,7 +114,6 @@ func (h Handler) GetPlaces(c echo.Context) error {
 // @Router /cities [get]
 func (h Handler) GetCities(c echo.Context) error {
 	cities, status := h.usecase.GetCities(c.Request().Context())
-
 	return utils.HandleResponse(c, status, cities)
 }
 
