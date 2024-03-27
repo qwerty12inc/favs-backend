@@ -146,11 +146,13 @@ func (r Repository) GetPlaces(ctx context.Context, request models.GetPlacesReque
 			break
 		}
 		if err != nil {
+			log.Println("Error while getting place: ", err)
 			return nil, models.Status{models.InternalError, err.Error()}
 		}
 		var place models.Place
 		err = doc.DataTo(&place)
 		if err != nil {
+			log.Println("Error while converting data to place: ", err)
 			return nil, models.Status{models.InternalError, err.Error()}
 		}
 		places = append(places, place)
