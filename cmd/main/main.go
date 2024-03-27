@@ -87,7 +87,6 @@ func run() error {
 	}
 
 	authMiddleware := middleware2.NewAuthMiddlewareHandler(authClient)
-	_ = authMiddleware
 
 	apiV1Group := e.Group("/api/v1")
 
