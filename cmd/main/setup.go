@@ -18,6 +18,7 @@ import (
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/option"
 	"google.golang.org/api/sheets/v4"
+	"googlemaps.github.io/maps"
 )
 
 func checkEnvVar(names ...string) error {
@@ -181,4 +182,14 @@ func setupSheetsParser(ctx context.Context) (*googlesheets.SheetsParser, error) 
 	spreadsheetId := os.Getenv(spreadsheetIDEnv)
 	cl := googlesheets.NewSheetsParser(srv, spreadsheetId)
 	return &cl, nil
+}
+
+const mapsAPIKeyEnv = "MAPS_API_KEY"
+
+func setupMapsClient() (*maps.Client, error) {
+	cl, err := maps.NewClient(maps.WithAPIKey(os.Getenv(mapsAPIKeyEnv)))
+	if err != nil {
+		log.Info("Failed to create maps client", err)
+	}
+	return cl, err
 }

@@ -21,7 +21,6 @@ import (
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/places/delivery"
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/places/repository"
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/places/usecase"
-	"googlemaps.github.io/maps"
 )
 
 type ServiceConfig struct {
@@ -99,10 +98,9 @@ func run() error {
 		return err
 	}
 
-	cl, err := maps.NewClient(maps.WithAPIKey("AIzaSyAtK6R8-35hxX-KYB1JoDbbnQaX2RJcYGU"))
+	cl, err := setupMapsClient()
 	if err != nil {
-		log.Info("Failed to create maps client", err)
-		return err
+		log.Info("Failed to create maps client ", err)
 	}
 
 	storageCLient, err := setupStorageClient(ctx)
