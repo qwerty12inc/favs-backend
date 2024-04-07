@@ -15,7 +15,6 @@ import (
 	"github.com/labstack/gommon/log"
 	echoSwagger "github.com/swaggo/echo-swagger"
 	_ "gitlab.com/v.rianov/favs-backend/docs"
-	"gitlab.com/v.rianov/favs-backend/internal/models"
 	pkgmaps "gitlab.com/v.rianov/favs-backend/internal/pkg/maps"
 	middleware2 "gitlab.com/v.rianov/favs-backend/internal/pkg/middleware"
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/places/delivery"
@@ -126,24 +125,6 @@ func run() error {
 	{
 		cityGroup.GET("", placeHandler.GetCities)
 	}
-
-	go func() {
-		defer func() {
-			if r := recover(); r != nil {
-				log.Info("Recovered from panic", r)
-			}
-		}()
-		cities := []string{"Amsterdam", "Milan"}
-		for _, city := range cities {
-			status := placeUsecase.ImportPlacesFromSheet(ctx, fmt.Sprintf("%s!A2:G", city),
-				city, "food", false)
-			if status.Code != models.OK {
-				log.Info("Failed to import places from sheet", status)
-			} else {
-				log.Info("Places imported from sheet", city)
-			}
-		}
-	}()
 
 	// Health check
 	e.GET("/health/status", func(c echo.Context) error {
