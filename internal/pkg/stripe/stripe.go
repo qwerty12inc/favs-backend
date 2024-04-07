@@ -9,6 +9,7 @@ type StripeConnector interface {
 	GetProducts() ([]Product, error)
 	GetProductByID(id string) (Product, error)
 	GetPricesByProductID(id string) (uint, error)
+	GetProductByName(name string) (Product, error)
 }
 
 type Product struct {
@@ -54,6 +55,22 @@ func (s *StripeConnectorImpl) GetProductByID(id string) (Product, error) {
 		PriceID:   pr.DefaultPrice.ID,
 		Price:     pr.DefaultPrice.UnitAmount,
 	}, nil
+}
+
+func (s *StripeConnectorImpl) GetProductByName(name string) (Product, error) {
+	productParams := &stripe.ProductListParams{}
+	productIterator := product.List(productParams)
+	for productIterator.Next() {
+		if productIterator.Product().Name == name {
+			return Product{
+				ProductID: productIterator.Product().ID,
+				PriceID:   productIterator.Product().DefaultPrice.ID,
+				Price:     productIterator.Product().DefaultPrice.UnitAmount,
+			}, nil
+		}
+	}
+
+	return Product{}, nil
 }
 
 func (s *StripeConnectorImpl) GetPricesByProductID(id string) (uint, error) {

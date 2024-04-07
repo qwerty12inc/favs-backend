@@ -111,7 +111,7 @@ func (u Usecase) SaveUserPurchase(ctx context.Context, userEmail string, purchas
 }
 
 func (u Usecase) GeneratePaymentLink(ctx context.Context, userEmail string, purchase models.PurchaseObject) (string, models.Status) {
-	pr, err := u.stripeConnector.GetProductByID(purchase.ID)
+	pr, err := u.stripeConnector.GetProductByName(purchase.ID)
 	if err != nil {
 		return "", models.Status{models.InternalError, err.Error()}
 	}
