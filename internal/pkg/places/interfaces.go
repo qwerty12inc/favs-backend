@@ -15,6 +15,8 @@ type Repository interface {
 	GetCities(ctx context.Context) ([]models.City, models.Status)
 	SaveCity(ctx context.Context, city models.City) models.Status
 	GetCity(ctx context.Context, name string) (models.City, models.Status)
+	GetUserPurchases(ctx context.Context, userEmail string) (models.UserPurchases, models.Status)
+	SaveUserPurchase(ctx context.Context, userEmail string, purchase models.PurchaseObject) models.Status
 }
 
 type Usecase interface {
@@ -25,6 +27,8 @@ type Usecase interface {
 	GetCities(ctx context.Context) ([]models.City, models.Status)
 	SaveCity(ctx context.Context, city models.City) models.Status
 	GetCity(ctx context.Context, name string) (models.City, models.Status)
+	SaveUserPurchase(ctx context.Context, userEmail string, purchase models.PurchaseObject) models.Status
+	GeneratePaymentLink(ctx context.Context, userEmail string, purchase models.PurchaseObject) (string, models.Status)
 }
 
 type StorageRepository interface {

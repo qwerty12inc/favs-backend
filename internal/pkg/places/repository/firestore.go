@@ -199,3 +199,39 @@ func (r Repository) GetLabels(ctx context.Context, city string) ([]string, model
 	}
 	return filteredLabels, models.Status{models.OK, "OK"}
 }
+
+func (r Repository) GetUserPurchases(ctx context.Context, userEmail string) (models.UserPurchases, models.Status) {
+	doc, err := r.cl.Collection("user_purchases").Doc(userEmail).Get(ctx)
+	if err != nil {
+		return models.UserPurchases{}, models.Status{models.InternalError, err.Error()}
+	}
+
+	var purchases models.UserPurchases
+	err = doc.DataTo(&purchases)
+	if err != nil {
+		return models.UserPurchases{}, models.Status{models.InternalError, err.Error()}
+	}
+	return purchases, models.Status{models.OK, "OK"}
+}
+
+func (r Repository) SaveUserPurchase(ctx context.Context, userEmail string, purchase models.PurchaseObject) models.Status {
+	doc, err := r.cl.Collection("user_purchases").Doc(userEmail).Get(ctx)
+	if err != nil {
+		return models.Status{models.InternalError, err.Error()}
+	}
+
+	var purchases models.UserPurchases
+	if doc.Exists() {
+		err = doc.DataTo(&purchases)
+		if err != nil {
+			return models.Status{models.InternalError, err.Error()}
+		}
+	}
+
+	purchases.Objects = append(purchases.Objects, purchase)
+	_, err = r.cl.Collection("user_purchases").Doc(userEmail).Set(ctx, purchases)
+	if err != nil {
+		return models.Status{models.InternalError, err.Error()}
+	}
+	return models.Status{models.OK, "OK"}
+}

@@ -6,8 +6,3 @@ type City struct {
 	ImageURL   string      `firestore:"image_url" json:"imageURL"`
 	Categories []Category  `firestore:"categories" json:"categories"`
 }
-
-type Category struct {
-	Name   string   `firestore:"name" json:"name"`
-	Labels []string `firestore:"labels" json:"labels"`
-}

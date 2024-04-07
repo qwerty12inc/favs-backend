@@ -135,3 +135,31 @@ func (h Handler) GetPlacePhotos(c echo.Context) error {
 	photos, status := h.usecase.GetPlacePhotoURLs(c.Request().Context(), id)
 	return utils.HandleResponse(c, status, photos)
 }
+
+func (h Handler) SaveUserPurchase(c echo.Context) error {
+	purchaseStatus := c.QueryParam("status")
+	if purchaseStatus != "success" {
+		return c.JSON(400, "Invalid purchase status")
+	}
+
+	purchaseID := c.QueryParam("id")
+	userEmail := c.QueryParam("user_email")
+	purchase := models.PurchaseObject{
+		ID: purchaseID,
+	}
+	status := h.usecase.SaveUserPurchase(c.Request().Context(), userEmail, purchase)
+	if status.Code != models.OK {
+		return c.JSON(500, status)
+	}
+	return c.JSON(200, "OK")
+}
+
+func (h Handler) GeneratePaymentLink(c echo.Context) error {
+	userEmail := c.QueryParam("user_email")
+	purchaseID := c.QueryParam("id")
+	purchase := models.PurchaseObject{
+		ID: purchaseID,
+	}
+	link, status := h.usecase.GeneratePaymentLink(c.Request().Context(), userEmail, purchase)
+	return utils.HandleResponse(c, status, link)
+}
