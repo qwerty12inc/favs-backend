@@ -13,6 +13,7 @@ import (
 	"firebase.google.com/go/auth"
 	"firebase.google.com/go/storage"
 	"github.com/labstack/gommon/log"
+	"github.com/stripe/stripe-go/v76"
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/googlesheets"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
@@ -192,4 +193,13 @@ func setupMapsClient() (*maps.Client, error) {
 		log.Info("Failed to create maps client", err)
 	}
 	return cl, err
+}
+
+const stripeKeyEnv = "STRIPE_SECRET_KEY"
+
+func setupStripe() {
+	if os.Getenv(stripeKeyEnv) == "" {
+		log.Fatal("Stripe key is not set")
+	}
+	stripe.Key = os.Getenv(stripeKeyEnv)
 }

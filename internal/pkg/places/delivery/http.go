@@ -144,8 +144,14 @@ func (h Handler) SaveUserPurchase(c echo.Context) error {
 
 	purchaseID := c.QueryParam("id")
 	userEmail := c.QueryParam("user_email")
+	amount := c.QueryParam("amount")
+	price, err := strconv.ParseFloat(amount, 64)
+	if err != nil {
+		return c.JSON(400, "Invalid amount")
+	}
 	purchase := models.PurchaseObject{
-		ID: purchaseID,
+		ID:    purchaseID,
+		Price: int(price),
 	}
 	status := h.usecase.SaveUserPurchase(c.Request().Context(), userEmail, purchase)
 	if status.Code != models.OK {

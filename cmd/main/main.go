@@ -20,6 +20,7 @@ import (
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/places/delivery"
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/places/repository"
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/places/usecase"
+	"gitlab.com/v.rianov/favs-backend/internal/pkg/stripe"
 )
 
 type ServiceConfig struct {
@@ -109,10 +110,14 @@ func run() error {
 
 	storageRepo := repository.NewStorageRepository(storageCLient, os.Getenv("PLACES_BUCKET_ID"))
 
+	setupStripe()
+	stripeConnector := stripe.NewStripeConnector()
+
 	// Place handlers
 	placeRepo := repository.NewRepository(client)
 	placeUsecase := usecase.NewUsecase(placeRepo,
-		pkgmaps.NewLocationLinkResolver(cl), sheetsParser, storageRepo)
+		pkgmaps.NewLocationLinkResolver(cl), sheetsParser, storageRepo,
+		stripeConnector)
 	placeHandler := delivery.NewHandler(placeUsecase)
 	placeGroup := apiV1Group.Group("/places", authMiddleware.Auth)
 	{
@@ -124,6 +129,16 @@ func run() error {
 	cityGroup := apiV1Group.Group("/cities", authMiddleware.Auth)
 	{
 		cityGroup.GET("", placeHandler.GetCities)
+	}
+
+	purchaseGroup := apiV1Group.Group("/purchases", authMiddleware.Auth)
+	{
+		purchaseGroup.POST("", placeHandler.SaveUserPurchase)
+	}
+
+	paymentLinkGroup := apiV1Group.Group("/payments", authMiddleware.Auth)
+	{
+		paymentLinkGroup.POST("", placeHandler.GeneratePaymentLink)
 	}
 
 	// Health check
