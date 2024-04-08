@@ -11,6 +11,7 @@ services:
       SHEETS_TOKEN_PATH: /src/token.json
       MAPS_API_KEY: ${MAPS_API_KEY}
       PLACES_BUCKET_ID: ${PLACES_BUCKET_ID}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
     volumes:
       - /home/slavaryanov:/src
     command: ./favsapi
