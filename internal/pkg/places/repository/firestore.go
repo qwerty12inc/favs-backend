@@ -91,6 +91,8 @@ func (r Repository) SaveCity(ctx context.Context, city models.City) models.Statu
 }
 
 func (r Repository) GetCity(ctx context.Context, name string) (models.City, models.Status) {
+	// make first symbol to upper case
+	name = string(name[0]-32) + name[1:]
 	doc, err := r.cl.Collection("cities").Doc(name).Get(ctx)
 	if err != nil {
 		return models.City{}, models.Status{models.InternalError, err.Error()}
