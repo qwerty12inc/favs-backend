@@ -70,11 +70,7 @@ func (u Usecase) GetPlaces(ctx context.Context, request models.GetPlacesRequest)
 	if needsPurchase {
 		user := ctx.Value("user").(models.User)
 		userPurchases, status := u.repo.GetUserPurchases(ctx, user.Email)
-		if status.Code != models.OK {
-			log.Error("Failed to get user purchases ", status)
-			return nil, status
-		}
-		if !userPurchases.HasPurchase(stripeProductID) {
+		if !userPurchases.HasPurchase(stripeProductID) || status.Code != models.OK {
 			link, status := u.GeneratePaymentLink(ctx, user.Email, models.PurchaseObject{
 				ID: stripeProductID,
 			})
