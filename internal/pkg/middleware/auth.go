@@ -36,6 +36,8 @@ func (h AuthMiddlewareHandler) Auth(next echo.HandlerFunc) echo.HandlerFunc {
 			}
 			c.Set("user", user)
 			c.Set("token", token)
+			c.SetRequest(c.Request().WithContext(context.WithValue(c.Request().Context(), "user", user)))
+			c.SetRequest(c.Request().WithContext(context.WithValue(c.Request().Context(), "token", token)))
 			return next(c)
 		}
 
