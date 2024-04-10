@@ -1,6 +1,7 @@
 package stripe
 
 import (
+	"github.com/labstack/gommon/log"
 	"github.com/stripe/stripe-go/v76"
 	"github.com/stripe/stripe-go/v76/product"
 )
@@ -42,13 +43,14 @@ func (s *StripeConnectorImpl) GetProducts() ([]Product, error) {
 }
 
 func (s *StripeConnectorImpl) GetProductByID(id string) (Product, error) {
-	productParams := &stripe.ProductParams{
-		ID: stripe.String(id),
-	}
+	productParams := &stripe.ProductParams{}
 	pr, err := product.Get(id, productParams)
 	if err != nil {
+		log.Error("Error getting product by id: ", err)
 		return Product{}, err
 	}
+
+	log.Info("Product: ", pr)
 
 	return Product{
 		ProductID: pr.ID,

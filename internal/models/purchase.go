@@ -1,7 +1,6 @@
 package models
 
 type UserPurchases struct {
-	ID        string           `json:"id"`
 	UserEmail string           `json:"userEmail"`
 	Objects   []PurchaseObject `json:"objects"`
 }
@@ -16,6 +15,6 @@ func (up *UserPurchases) HasPurchase(id string) bool {
 }
 
 type PurchaseObject struct {
-	ID    string `json:"id"`
+	ID    string `json:"id"` // stripe product id
 	Price int    `json:"price"`
 }

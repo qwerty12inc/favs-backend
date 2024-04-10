@@ -44,6 +44,51 @@ const docTemplate = `{
                             }
                         }
                     },
+                    "404": {
+                        "description": "Cities not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/payments": {
+            "get": {
+                "description": "Generate payment link",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "purchases"
+                ],
+                "summary": "Generate payment link",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authentication header",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Purchase ID",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "text"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request"
+                    },
                     "500": {
                         "description": "Internal server error"
                     }
@@ -134,6 +179,12 @@ const docTemplate = `{
                                 "$ref": "#/definitions/models.Place"
                             }
                         }
+                    },
+                    "400": {
+                        "description": "Invalid request"
+                    },
+                    "404": {
+                        "description": "Place not found"
                     },
                     "500": {
                         "description": "Internal server error"
@@ -243,6 +294,12 @@ const docTemplate = `{
                     }
                 },
                 "name": {
+                    "type": "string"
+                },
+                "needsPurchase": {
+                    "type": "boolean"
+                },
+                "stripe_product_id": {
                     "type": "string"
                 }
             }

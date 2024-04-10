@@ -57,6 +57,8 @@ func (h Handler) GetPlace(c echo.Context) error {
 // @Param category query string true "Category"
 // @Param city query string true "City"
 // @Success 200 {array} models.Place
+// @Failure 400 "Invalid request"
+// @Failure 404 "Place not found"
 // @Failure 500 "Internal server error"
 // @Router /places [get]
 func (h Handler) GetPlaces(c echo.Context) error {
@@ -110,6 +112,7 @@ func (h Handler) GetPlaces(c echo.Context) error {
 //	@Param			Authorization	header		string	true	"Authentication header"
 //
 // @Success 200 {array} models.City
+// @Failure 404 "Cities not found"
 // @Failure 500 "Internal server error"
 // @Router /cities [get]
 func (h Handler) GetCities(c echo.Context) error {
@@ -160,12 +163,25 @@ func (h Handler) SaveUserPurchase(c echo.Context) error {
 	return c.JSON(200, "OK")
 }
 
+// GeneratePaymentLink godoc
+// @Summary Generate payment link
+// @Description Generate payment link
+// @Tags purchases
+// @Produce json
+//
+//	@Param			Authorization	header		string	true	"Authentication header"
+//
+// @Param id query string true "Purchase ID"
+// @Success 200 {text} string
+// @Failure 400 "Invalid request"
+// @Failure 500 "Internal server error"
+// @Router /payments [get]
 func (h Handler) GeneratePaymentLink(c echo.Context) error {
-	userEmail := c.QueryParam("user_email")
 	purchaseID := c.QueryParam("id")
 	purchase := models.PurchaseObject{
 		ID: purchaseID,
 	}
-	link, status := h.usecase.GeneratePaymentLink(c.Request().Context(), userEmail, purchase)
+	user := c.Get("user").(*models.User)
+	link, status := h.usecase.GeneratePaymentLink(c.Request().Context(), user.Email, purchase)
 	return utils.HandleResponse(c, status, link)
 }

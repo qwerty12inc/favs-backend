@@ -138,7 +138,7 @@ func run() error {
 
 	paymentLinkGroup := apiV1Group.Group("/payments", authMiddleware.Auth)
 	{
-		paymentLinkGroup.POST("", placeHandler.GeneratePaymentLink)
+		paymentLinkGroup.GET("", placeHandler.GeneratePaymentLink)
 	}
 
 	// Health check

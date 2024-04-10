@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/labstack/gommon/log"
 	"github.com/stripe/stripe-go/v76"
 	"github.com/stripe/stripe-go/v76/paymentlink"
 	"gitlab.com/v.rianov/favs-backend/internal/models"
@@ -56,9 +57,11 @@ func (u Usecase) GetPlaces(ctx context.Context, request models.GetPlacesRequest)
 	}
 
 	needsPurchase := false
+	stripeProductID := ""
 	for _, category := range city.Categories {
 		if category.Name == request.Category && category.NeedsPurchase {
 			needsPurchase = true
+			stripeProductID = category.StripeProductID
 			break
 		}
 	}
@@ -69,8 +72,14 @@ func (u Usecase) GetPlaces(ctx context.Context, request models.GetPlacesRequest)
 		if status.Code != models.OK {
 			return nil, status
 		}
-		if !userPurchases.HasPurchase(request.Category) {
-			return nil, models.Status{models.Forbidden, "You need to purchase this category"}
+		if !userPurchases.HasPurchase(stripeProductID) {
+			link, status := u.GeneratePaymentLink(ctx, user.Email, models.PurchaseObject{
+				ID: stripeProductID,
+			})
+			if status.Code != models.OK {
+				return nil, status
+			}
+			return nil, models.Status{models.Forbidden, "You need to purchase this category. Payment link: " + link}
 		}
 	}
 
@@ -113,14 +122,15 @@ func (u Usecase) SaveUserPurchase(ctx context.Context, userEmail string, purchas
 func (u Usecase) GeneratePaymentLink(ctx context.Context, userEmail string, purchase models.PurchaseObject) (string, models.Status) {
 	pr, err := u.stripeConnector.GetProductByID(purchase.ID)
 	if err != nil {
+		log.Error("Failed to get product ", err)
 		return "", models.Status{models.InternalError, err.Error()}
 	}
 
 	link, err := paymentlink.New(&stripe.PaymentLinkParams{
 		LineItems: []*stripe.PaymentLinkLineItemParams{
 			{
-				ID:       stripe.String(purchase.ID),
-				Quantity: stripe.Int64(pr.Price),
+				Quantity: stripe.Int64(1),
+				Price:    stripe.String(pr.PriceID),
 			},
 		},
 		Currency: stripe.String("usd"),
@@ -134,6 +144,7 @@ func (u Usecase) GeneratePaymentLink(ctx context.Context, userEmail string, purc
 		},
 	})
 	if err != nil {
+		log.Error("Failed to create payment link ", err)
 		return "", models.Status{models.InternalError, err.Error()}
 	}
 	return link.URL, models.Status{models.OK, "OK"}
