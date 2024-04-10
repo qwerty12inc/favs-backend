@@ -32,7 +32,7 @@ func (h AuthMiddlewareHandler) Auth(next echo.HandlerFunc) echo.HandlerFunc {
 		if token == "test" {
 			user := models.User{
 				UID:   "test",
-				Email: "",
+				Email: "test@test.com",
 			}
 			c.Set("user", user)
 			c.Set("token", token)
