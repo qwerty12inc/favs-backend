@@ -53,6 +53,7 @@ func (u Usecase) GetPlaces(ctx context.Context, request models.GetPlacesRequest)
 	request.City = strings.ToLower(request.City)
 	city, status := u.repo.GetCity(ctx, request.City)
 	if status.Code != models.OK {
+		log.Error("Failed to get city ", status)
 		return nil, status
 	}
 
@@ -70,6 +71,7 @@ func (u Usecase) GetPlaces(ctx context.Context, request models.GetPlacesRequest)
 		user := ctx.Value("user").(models.User)
 		userPurchases, status := u.repo.GetUserPurchases(ctx, user.Email)
 		if status.Code != models.OK {
+			log.Error("Failed to get user purchases ", status)
 			return nil, status
 		}
 		if !userPurchases.HasPurchase(stripeProductID) {
@@ -77,6 +79,7 @@ func (u Usecase) GetPlaces(ctx context.Context, request models.GetPlacesRequest)
 				ID: stripeProductID,
 			})
 			if status.Code != models.OK {
+				log.Error("Failed to generate payment link ", status)
 				return nil, status
 			}
 			return nil, models.Status{models.Forbidden, "You need to purchase this category. Payment link: " + link}
@@ -85,10 +88,12 @@ func (u Usecase) GetPlaces(ctx context.Context, request models.GetPlacesRequest)
 
 	places, status := u.repo.GetPlaces(ctx, request)
 	if status.Code != models.OK {
+		log.Error("Failed to get places ", status)
 		return nil, status
 	}
 
 	if len(places) == 0 {
+		log.Error("Places not found")
 		return nil, models.Status{models.NotFound, "places not found"}
 	}
 	return places, models.Status{models.OK, "OK"}
