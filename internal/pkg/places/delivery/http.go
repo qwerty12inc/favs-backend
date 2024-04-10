@@ -178,10 +178,14 @@ func (h Handler) SaveUserPurchase(c echo.Context) error {
 // @Router /payments [get]
 func (h Handler) GeneratePaymentLink(c echo.Context) error {
 	purchaseID := c.QueryParam("id")
+	userEmail := c.QueryParam("user_email")
 	purchase := models.PurchaseObject{
 		ID: purchaseID,
 	}
-	user := c.Get("user").(*models.User)
-	link, status := h.usecase.GeneratePaymentLink(c.Request().Context(), user.Email, purchase)
+	if userEmail == "" {
+		user := c.Get("user").(*models.User)
+		userEmail = user.Email
+	}
+	link, status := h.usecase.GeneratePaymentLink(c.Request().Context(), userEmail, purchase)
 	return utils.HandleResponse(c, status, link)
 }
