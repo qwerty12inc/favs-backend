@@ -8,12 +8,12 @@ import (
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/auth"
 )
 
-type UsecaseImpl struct {
+type AuthUsecaseImpl struct {
 	repo auth.Repository
 }
 
-func NewUsecase(repo auth.Repository) UsecaseImpl {
-	return UsecaseImpl{repo: repo}
+func NewAuthUsecaseImpl(repo auth.Repository) AuthUsecaseImpl {
+	return AuthUsecaseImpl{repo: repo}
 }
 
 func generateToken() string {
@@ -24,13 +24,13 @@ func generateToken() string {
 	return token
 }
 
-func (u UsecaseImpl) Login(ctx context.Context, telegramID string) (string, models.Status) {
+func (u AuthUsecaseImpl) Login(ctx context.Context, telegramID string) (string, models.Status) {
 	token := generateToken()
 	status := u.repo.StoreToken(ctx, telegramID, token)
 	return token, status
 }
 
-func (u UsecaseImpl) Verify(ctx context.Context, token, telegramID string) models.Status {
+func (u AuthUsecaseImpl) Verify(ctx context.Context, token, telegramID string) models.Status {
 	existingToken, status := u.repo.GetToken(ctx, telegramID)
 	if status.Code != models.OK {
 		return models.Status{

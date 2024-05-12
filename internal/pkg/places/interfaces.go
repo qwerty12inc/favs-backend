@@ -29,6 +29,7 @@ type Usecase interface {
 	GetCity(ctx context.Context, name string) (models.City, models.Status)
 	SaveUserPurchase(ctx context.Context, userEmail string, purchase models.PurchaseObject) models.Status
 	GeneratePaymentLink(ctx context.Context, userEmail string, purchase models.PurchaseObject) (string, models.Status)
+	TelegramGetPlaces(ctx context.Context, request models.GetPlacesRequest) ([]models.Place, models.Status)
 }
 
 type StorageRepository interface {

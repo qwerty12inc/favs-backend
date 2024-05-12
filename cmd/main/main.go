@@ -15,6 +15,9 @@ import (
 	"github.com/labstack/gommon/log"
 	echoSwagger "github.com/swaggo/echo-swagger"
 	_ "gitlab.com/v.rianov/favs-backend/docs"
+	delivery2 "gitlab.com/v.rianov/favs-backend/internal/pkg/auth/delivery"
+	repository2 "gitlab.com/v.rianov/favs-backend/internal/pkg/auth/repository"
+	usecase2 "gitlab.com/v.rianov/favs-backend/internal/pkg/auth/usecase"
 	pkgmaps "gitlab.com/v.rianov/favs-backend/internal/pkg/maps"
 	middleware2 "gitlab.com/v.rianov/favs-backend/internal/pkg/middleware"
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/places/delivery"
@@ -139,6 +142,22 @@ func run() error {
 	paymentLinkGroup := apiV1Group.Group("/payments", authMiddleware.Auth)
 	{
 		paymentLinkGroup.GET("", placeHandler.GeneratePaymentLink)
+	}
+
+	tgAuthRepo := repository2.NewAuthRepositoryImpl(client)
+	tgUsecase := usecase2.NewAuthUsecaseImpl(tgAuthRepo)
+	tgHandler := delivery2.NewAuthHandler(tgUsecase)
+
+	tgGroup := apiV1Group.Group("/tg")
+	{
+		tgGroup.POST("/login", tgHandler.Login)
+	}
+
+	tgPlaceGroup := apiV1Group.Group("/tg/places", authMiddleware.Auth)
+	{
+		tgPlaceGroup.GET("", placeHandler.TelegramGetPlaces)
+		tgPlaceGroup.GET("/:id", placeHandler.GetPlace)
+		tgPlaceGroup.GET("/:id/photos", placeHandler.GetPlacePhotos)
 	}
 
 	// Health check

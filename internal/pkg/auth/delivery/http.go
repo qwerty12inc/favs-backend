@@ -6,12 +6,12 @@ import (
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/utils"
 )
 
-type Handler struct {
+type AuthHandler struct {
 	uc auth.Usecase
 }
 
-func NewHandler(uc auth.Usecase) *Handler {
-	return &Handler{uc: uc}
+func NewAuthHandler(uc auth.Usecase) *AuthHandler {
+	return &AuthHandler{uc: uc}
 }
 
 // Login godoc
@@ -25,7 +25,7 @@ func NewHandler(uc auth.Usecase) *Handler {
 // @Failure 400 "Invalid request"
 // @Failure 500 "Internal server error"
 // @Router /tg/login [post]
-func (h *Handler) Login(c echo.Context) error {
+func (h *AuthHandler) Login(c echo.Context) error {
 	telegramID := c.QueryParam("telegramID")
 	token, status := h.uc.Login(c.Request().Context(), telegramID)
 	return utils.HandleResponse(c, status, token)
@@ -43,7 +43,7 @@ func (h *Handler) Login(c echo.Context) error {
 // @Failure 400 "Invalid request"
 // @Failure 500 "Internal server error"
 // @Router /tg/verify [post]
-func (h *Handler) Verify(c echo.Context) error {
+func (h *AuthHandler) Verify(c echo.Context) error {
 	token := c.QueryParam("token")
 	telegramID := c.QueryParam("telegramID")
 	status := h.uc.Verify(c.Request().Context(), token, telegramID)

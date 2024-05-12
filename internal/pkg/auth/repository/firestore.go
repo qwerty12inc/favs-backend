@@ -7,33 +7,43 @@ import (
 	"gitlab.com/v.rianov/favs-backend/internal/models"
 )
 
-type RepositoryImpl struct {
+type AuthRepositoryImpl struct {
 	cl *firestore.Client
 }
 
-func NewRepositoryImpl(cl *firestore.Client) *RepositoryImpl {
-	return &RepositoryImpl{cl: cl}
+func NewAuthRepositoryImpl(cl *firestore.Client) *AuthRepositoryImpl {
+	return &AuthRepositoryImpl{cl: cl}
 }
 
-func (r *RepositoryImpl) StoreToken(ctx context.Context, telegramID, token string) error {
+func (r *AuthRepositoryImpl) StoreToken(ctx context.Context, telegramID, token string) models.Status {
 	_, err := r.cl.Collection("tokens").Doc(telegramID).Set(ctx,
 		models.Token{
 			Token: token,
 		}, firestore.MergeAll)
 	if err != nil {
-		return err
+		return models.Status{
+			Code: models.InternalError,
+		}
 	}
-	return nil
+	return models.Status{
+		Code: models.OK,
+	}
 }
 
-func (r *RepositoryImpl) GetToken(ctx context.Context, telegramID string) (string, error) {
+func (r *AuthRepositoryImpl) GetToken(ctx context.Context, telegramID string) (string, models.Status) {
 	doc, err := r.cl.Collection("tokens").Doc(telegramID).Get(ctx)
 	if err != nil {
-		return "", err
+		return "", models.Status{
+			Code: models.NotFound,
+		}
 	}
 	var token models.Token
 	if err := doc.DataTo(&token); err != nil {
-		return "", err
+		return "", models.Status{
+			Code: models.InternalError,
+		}
 	}
-	return token.Token, nil
+	return token.Token, models.Status{
+		Code: models.OK,
+	}
 }

@@ -104,6 +104,70 @@ func (h Handler) GetPlaces(c echo.Context) error {
 	return utils.HandleResponse(c, status, places)
 }
 
+// TelegramGetPlaces godoc
+// @Summary Get places
+// @Description Get places
+// @Tags places
+// @Accept json
+// @Produce json
+//
+//	@Param			Authorization	header		string	true	"Authentication header"
+//
+// @Param latitude query float64 true "Latitude"
+// @Param longitude query float64 true "Longitude"
+// @Param latitudeDelta query float64 true "Latitude delta"
+// @Param longitudeDelta query float64 true "Longitude delta"
+// @Param labels query []string true "Labels"
+// @Param category query string true "Category"
+// @Param city query string true "City"
+// @Success 200 {array} models.Place
+// @Failure 400 "Invalid request"
+// @Failure 404 "Place not found"
+// @Failure 500 "Internal server error"
+// @Router /tg/places [get]
+func (h Handler) TelegramGetPlaces(c echo.Context) error {
+	request := models.GetPlacesRequest{}
+	city := c.QueryParam("city")
+	latitudeStr := c.QueryParam("latitude")
+	longitudeStr := c.QueryParam("longitude")
+	latitudeDeltaStr := c.QueryParam("latitudeDelta")
+	longitudeDeltaStr := c.QueryParam("longitudeDelta")
+	request.Category = c.QueryParam("category")
+	request.Labels = c.QueryParams()["labels"]
+
+	if city == "" {
+		log.Debug("Getting places in box")
+		latitude, err := strconv.ParseFloat(latitudeStr, 64)
+		if err != nil {
+			return err
+		}
+		longitude, err := strconv.ParseFloat(longitudeStr, 64)
+		if err != nil {
+			return err
+		}
+		latitudeDelta, err := strconv.ParseFloat(latitudeDeltaStr, 64)
+		if err != nil {
+			return err
+		}
+		longitudeDelta, err := strconv.ParseFloat(longitudeDeltaStr, 64)
+		if err != nil {
+			return err
+		}
+		request.Center = models.Coordinates{
+			Latitude:  latitude,
+			Longitude: longitude,
+		}
+		request.LatitudeDelta = latitudeDelta
+		request.LongitudeDelta = longitudeDelta
+	} else {
+		log.Debug("Getting places in city")
+		request.City = city
+	}
+
+	places, status := h.usecase.TelegramGetPlaces(c.Request().Context(), request)
+	return utils.HandleResponse(c, status, places)
+}
+
 // GetCities godoc
 // @Summary Get cities
 // @Description Get cities

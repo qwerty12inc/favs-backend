@@ -49,6 +49,20 @@ func (u Usecase) GetPlaceByName(ctx context.Context, name string) (models.Place,
 	return u.repo.GetPlaceByName(ctx, name)
 }
 
+func (u Usecase) getPlaces(ctx context.Context, request models.GetPlacesRequest) ([]models.Place, models.Status) {
+	places, status := u.repo.GetPlaces(ctx, request)
+	if status.Code != models.OK {
+		log.Error("Failed to get places ", status)
+		return nil, status
+	}
+
+	if len(places) == 0 {
+		log.Error("Places not found")
+		return nil, models.Status{models.NotFound, "places not found"}
+	}
+	return places, models.Status{models.OK, "OK"}
+}
+
 func (u Usecase) GetPlaces(ctx context.Context, request models.GetPlacesRequest) ([]models.Place, models.Status) {
 	request.City = strings.ToLower(request.City)
 	city, status := u.repo.GetCity(ctx, request.City)
@@ -82,17 +96,12 @@ func (u Usecase) GetPlaces(ctx context.Context, request models.GetPlacesRequest)
 		}
 	}
 
-	places, status := u.repo.GetPlaces(ctx, request)
-	if status.Code != models.OK {
-		log.Error("Failed to get places ", status)
-		return nil, status
-	}
+	return u.getPlaces(ctx, request)
+}
 
-	if len(places) == 0 {
-		log.Error("Places not found")
-		return nil, models.Status{models.NotFound, "places not found"}
-	}
-	return places, models.Status{models.OK, "OK"}
+func (u Usecase) TelegramGetPlaces(ctx context.Context,
+	request models.GetPlacesRequest) ([]models.Place, models.Status) {
+	return u.getPlaces(ctx, request)
 }
 
 func (u Usecase) GetCities(ctx context.Context) ([]models.City, models.Status) {
