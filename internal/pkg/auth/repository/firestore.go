@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"cloud.google.com/go/firestore"
+	"github.com/labstack/gommon/log"
 	"gitlab.com/v.rianov/favs-backend/internal/models"
 )
 
@@ -19,8 +20,9 @@ func (r *AuthRepositoryImpl) StoreToken(ctx context.Context, telegramID, token s
 	_, err := r.cl.Collection("tokens").Doc(telegramID).Set(ctx,
 		models.Token{
 			Token: token,
-		}, firestore.MergeAll)
+		})
 	if err != nil {
+		log.Error("Failed to store token ", err)
 		return models.Status{
 			Code: models.InternalError,
 		}

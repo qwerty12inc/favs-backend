@@ -82,10 +82,26 @@ definitions:
         items:
           type: string
         type: array
+      links:
+        items:
+          type: string
+        type: array
       locationURL:
         type: string
       name:
         type: string
+      openingInfo:
+        items:
+          type: string
+        type: array
+      services:
+        items:
+          type: string
+        type: array
+      serving:
+        items:
+          type: string
+        type: array
       website:
         type: string
     type: object
@@ -274,6 +290,103 @@ paths:
         "500":
           description: Internal server error
       summary: Get place photos
+      tags:
+      - places
+  /tg/login:
+    post:
+      consumes:
+      - application/json
+      description: Login
+      parameters:
+      - description: Telegram ID
+        in: query
+        name: telegramID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Invalid request
+        "500":
+          description: Internal server error
+      summary: Login
+      tags:
+      - auth
+  /tg/places:
+    get:
+      consumes:
+      - application/json
+      description: Get places
+      parameters:
+      - description: Authentication header
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Telegram ID
+        in: header
+        name: X-Telegram-ID
+        required: true
+        type: string
+      - description: Latitude
+        in: query
+        name: latitude
+        required: true
+        type: number
+      - description: Longitude
+        in: query
+        name: longitude
+        required: true
+        type: number
+      - description: Latitude delta
+        in: query
+        name: latitudeDelta
+        required: true
+        type: number
+      - description: Longitude delta
+        in: query
+        name: longitudeDelta
+        required: true
+        type: number
+      - collectionFormat: csv
+        description: Labels
+        in: query
+        items:
+          type: string
+        name: labels
+        required: true
+        type: array
+      - description: Category
+        in: query
+        name: category
+        required: true
+        type: string
+      - description: City
+        in: query
+        name: city
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Place'
+            type: array
+        "400":
+          description: Invalid request
+        "404":
+          description: Place not found
+        "500":
+          description: Internal server error
+      summary: Get places
       tags:
       - places
 securityDefinitions:

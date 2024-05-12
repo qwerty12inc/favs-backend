@@ -113,6 +113,8 @@ func (h Handler) GetPlaces(c echo.Context) error {
 //
 //	@Param			Authorization	header		string	true	"Authentication header"
 //
+//	@Param			X-Telegram-ID	header		string	true	"Telegram ID"
+//
 // @Param latitude query float64 true "Latitude"
 // @Param longitude query float64 true "Longitude"
 // @Param latitudeDelta query float64 true "Latitude delta"

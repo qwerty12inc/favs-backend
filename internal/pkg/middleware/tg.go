@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/gommon/log"
 	"gitlab.com/v.rianov/favs-backend/internal/models"
 	"gitlab.com/v.rianov/favs-backend/internal/pkg/auth"
 )
@@ -27,21 +28,10 @@ func (h TelegramMiddlewareHandler) Auth(next echo.HandlerFunc) echo.HandlerFunc 
 			return c.JSON(401, "Unauthorized")
 		}
 
-		if token == "test" {
-			user := models.User{
-				UID:   "test",
-				Email: "",
-			}
-			c.Set("user", user)
-			c.Set("token", token)
-			c.SetRequest(c.Request().WithContext(context.WithValue(c.Request().Context(), "user", user)))
-			c.SetRequest(c.Request().WithContext(context.WithValue(c.Request().Context(), "token", token)))
-			return next(c)
-		}
-
-		telegramID := c.QueryParam("telegramID")
+		telegramID := c.Request().Header.Get("X-Telegram-ID")
 		status := h.usecase.Verify(c.Request().Context(), token, telegramID)
 		if status.Code != models.OK {
+			log.Error("Failed to verify token ", status)
 			return c.JSON(401, "Unauthorized")
 		}
 

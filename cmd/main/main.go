@@ -65,6 +65,8 @@ func run() error {
 	serviceCfg := NewServiceConfig()
 	e := echo.New()
 
+	log.SetLevel(log.DEBUG)
+
 	e.Use(middleware.Recover())
 	e.Use(middleware.Logger())
 	e.Use(middleware.RequestID())
@@ -153,7 +155,9 @@ func run() error {
 		tgGroup.POST("/login", tgHandler.Login)
 	}
 
-	tgPlaceGroup := apiV1Group.Group("/tg/places", authMiddleware.Auth)
+	tgMiddleware := middleware2.NewTelegramMiddlewareHandler(tgUsecase)
+
+	tgPlaceGroup := apiV1Group.Group("/tg/places", tgMiddleware.Auth)
 	{
 		tgPlaceGroup.GET("", placeHandler.TelegramGetPlaces)
 		tgPlaceGroup.GET("/:id", placeHandler.GetPlace)

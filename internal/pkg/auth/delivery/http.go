@@ -31,18 +31,6 @@ func (h *AuthHandler) Login(c echo.Context) error {
 	return utils.HandleResponse(c, status, token)
 }
 
-// Verify godoc
-// @Summary Verify
-// @Description Verify
-// @Tags auth
-// @Accept json
-// @Produce json
-// @Param token query string true "Token"
-// @Param telegramID query string true "Telegram ID"
-// @Success 200 "OK"
-// @Failure 400 "Invalid request"
-// @Failure 500 "Internal server error"
-// @Router /tg/verify [post]
 func (h *AuthHandler) Verify(c echo.Context) error {
 	token := c.QueryParam("token")
 	telegramID := c.QueryParam("telegramID")
