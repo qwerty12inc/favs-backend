@@ -93,7 +93,7 @@ func run() error {
 
 	authMiddleware := middleware2.NewAuthMiddlewareHandler(authClient)
 
-	apiV1Group := e.Group("/api/v1")
+	apiV1Group := e.Group("/api/v1", middleware2.Cors)
 
 	apiV1Group.GET("/swagger/*", echoSwagger.WrapHandler)
 
@@ -153,15 +153,20 @@ func run() error {
 	tgGroup := apiV1Group.Group("/tg")
 	{
 		tgGroup.POST("/login", tgHandler.Login)
+		tgGroup.OPTIONS("/login", tgHandler.Login)
 	}
 
 	tgMiddleware := middleware2.NewTelegramMiddlewareHandler(tgUsecase)
 
 	tgPlaceGroup := apiV1Group.Group("/tg/places", tgMiddleware.Auth)
 	{
+		// add OPTIONS method for CORS preflight requests
 		tgPlaceGroup.GET("", placeHandler.TelegramGetPlaces)
+		tgPlaceGroup.OPTIONS("", placeHandler.TelegramGetPlaces)
 		tgPlaceGroup.GET("/:id", placeHandler.GetPlace)
+		tgPlaceGroup.OPTIONS("/:id", placeHandler.GetPlace)
 		tgPlaceGroup.GET("/:id/photos", placeHandler.GetPlacePhotos)
+		tgPlaceGroup.OPTIONS("/:id/photos", placeHandler.GetPlacePhotos)
 	}
 
 	// Health check
