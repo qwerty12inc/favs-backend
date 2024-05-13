@@ -67,10 +67,10 @@ func run() error {
 
 	log.SetLevel(log.DEBUG)
 
+	e.Use(middleware.CORS())
 	e.Use(middleware.Recover())
 	e.Use(middleware.Logger())
 	e.Use(middleware.RequestID())
-	e.Use(middleware.CORS())
 
 	if l, ok := e.Logger.(*log.Logger); ok {
 		l.SetHeader("${time_rfc3339} ${level}")
