@@ -70,6 +70,7 @@ func run() error {
 	e.Use(middleware.Recover())
 	e.Use(middleware.Logger())
 	e.Use(middleware.RequestID())
+	e.Use(middleware.CORS())
 
 	if l, ok := e.Logger.(*log.Logger); ok {
 		l.SetHeader("${time_rfc3339} ${level}")
@@ -153,7 +154,6 @@ func run() error {
 	tgGroup := apiV1Group.Group("/tg")
 	{
 		tgGroup.POST("/login", tgHandler.Login)
-		tgGroup.OPTIONS("/login", tgHandler.Login)
 	}
 
 	tgMiddleware := middleware2.NewTelegramMiddlewareHandler(tgUsecase)
@@ -162,11 +162,8 @@ func run() error {
 	{
 		// add OPTIONS method for CORS preflight requests
 		tgPlaceGroup.GET("", placeHandler.TelegramGetPlaces)
-		tgPlaceGroup.OPTIONS("", placeHandler.TelegramGetPlaces)
 		tgPlaceGroup.GET("/:id", placeHandler.GetPlace)
-		tgPlaceGroup.OPTIONS("/:id", placeHandler.GetPlace)
 		tgPlaceGroup.GET("/:id/photos", placeHandler.GetPlacePhotos)
-		tgPlaceGroup.OPTIONS("/:id/photos", placeHandler.GetPlacePhotos)
 	}
 
 	// Health check
