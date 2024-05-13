@@ -67,13 +67,7 @@ func run() error {
 
 	log.SetLevel(log.DEBUG)
 
-	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		Skipper:          middleware.DefaultSkipper,
-		AllowOrigins:     []string{"https://grusha229.github.io/favs-telegram/"},
-		AllowHeaders:     []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization},
-		AllowMethods:     []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete},
-		AllowCredentials: true,
-	}))
+	e.Use(middleware.CORS())
 	e.Use(middleware.Recover())
 	e.Use(middleware.Logger())
 	e.Use(middleware.RequestID())
