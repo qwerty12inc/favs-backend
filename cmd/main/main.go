@@ -165,7 +165,7 @@ func run() error {
 		tgPlaceGroup.GET("/:id", placeHandler.GetPlace)
 		tgPlaceGroup.GET("/:id/photos", placeHandler.GetPlacePhotos)
 	}
-	tgPlaceGroup.GET("/cities", placeHandler.GetCities, tgMiddleware.Auth)
+	tgPlaceGroup.GET("/cities", placeHandler.TelegramGetCities, tgMiddleware.Auth)
 
 	// Health check
 	e.GET("/health/status", func(c echo.Context) error {

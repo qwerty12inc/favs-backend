@@ -292,6 +292,38 @@ paths:
       summary: Get place photos
       tags:
       - places
+  /tg/cities:
+    get:
+      consumes:
+      - application/json
+      description: Get cities
+      parameters:
+      - description: Authentication header
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Telegram ID
+        in: header
+        name: X-Telegram-ID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.City'
+            type: array
+        "404":
+          description: Cities not found
+        "500":
+          description: Internal server error
+      summary: Get cities
+      tags:
+      - cities
   /tg/login:
     post:
       consumes:

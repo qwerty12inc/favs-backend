@@ -170,6 +170,26 @@ func (h Handler) TelegramGetPlaces(c echo.Context) error {
 	return utils.HandleResponse(c, status, places)
 }
 
+// TelegramGetCities godoc
+// @Summary Get cities
+// @Description Get cities
+// @Tags cities
+// @Accept json
+// @Produce json
+//
+//	@Param			Authorization	header		string	true	"Authentication header"
+//
+//	@Param			X-Telegram-ID	header		string	true	"Telegram ID"
+//
+// @Success 200 {array} models.City
+// @Failure 404 "Cities not found"
+// @Failure 500 "Internal server error"
+// @Router /tg/cities [get]
+func (h Handler) TelegramGetCities(c echo.Context) error {
+	cities, status := h.usecase.GetCities(c.Request().Context())
+	return utils.HandleResponse(c, status, cities)
+}
+
 // GetCities godoc
 // @Summary Get cities
 // @Description Get cities

@@ -101,7 +101,11 @@ func (u Usecase) GetPlaces(ctx context.Context, request models.GetPlacesRequest)
 
 func (u Usecase) TelegramGetPlaces(ctx context.Context,
 	request models.GetPlacesRequest) ([]models.Place, models.Status) {
-	return u.getPlaces(ctx, request)
+	res, status := u.getPlaces(ctx, request)
+	if status.Code != models.OK {
+		return nil, models.Status{}
+	}
+	return res[0:5], status
 }
 
 func (u Usecase) GetCities(ctx context.Context) ([]models.City, models.Status) {
