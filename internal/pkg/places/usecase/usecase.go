@@ -105,7 +105,10 @@ func (u Usecase) TelegramGetPlaces(ctx context.Context,
 	if status.Code != models.OK {
 		return nil, models.Status{}
 	}
-	return res[0:5], status
+	if len(res) <= 5 {
+		return res, status
+	}
+	return res[:5], status
 }
 
 func (u Usecase) GetCities(ctx context.Context) ([]models.City, models.Status) {
