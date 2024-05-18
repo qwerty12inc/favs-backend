@@ -103,7 +103,7 @@ func (u Usecase) TelegramGetPlaces(ctx context.Context,
 	request models.GetPlacesRequest) ([]models.Place, models.Status) {
 	res, status := u.getPlaces(ctx, request)
 	if status.Code != models.OK {
-		return nil, models.Status{}
+		return nil, status
 	}
 	if len(res) <= 5 {
 		return res, status
