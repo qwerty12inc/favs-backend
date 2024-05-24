@@ -421,6 +421,41 @@ paths:
       summary: Get places
       tags:
       - places
+  /tg/places/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get place
+      parameters:
+      - description: Place ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Authentication header
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Telegram ID
+        in: header
+        name: X-Telegram-ID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Place'
+        "404":
+          description: Place not found
+        "500":
+          description: Internal server error
+      summary: Get place
+      tags:
+      - places
 securityDefinitions:
   ApiKeyAuth:
     type: basic

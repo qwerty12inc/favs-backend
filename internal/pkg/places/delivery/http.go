@@ -40,6 +40,28 @@ func (h Handler) GetPlace(c echo.Context) error {
 	return utils.HandleResponse(c, status, place)
 }
 
+// TelegramGetPlace godoc
+// @Summary Get place
+// @Description Get place
+// @Tags places
+// @Accept json
+// @Produce json
+// @Param id path string true "Place ID"
+//
+//	@Param			Authorization	header		string	true	"Authentication header"
+//
+//	@Param			X-Telegram-ID	header		string	true	"Telegram ID"
+//
+// @Success 200 {object} models.Place
+// @Failure 404 "Place not found"
+// @Failure 500 "Internal server error"
+// @Router /tg/places/{id} [get]
+func (h Handler) TelegramGetPlace(c echo.Context) error {
+	id := c.Param("id")
+	place, status := h.usecase.GetPlace(c.Request().Context(), id)
+	return utils.HandleResponse(c, status, place)
+}
+
 // GetPlaces godoc
 // @Summary Get places
 // @Description Get places

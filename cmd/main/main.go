@@ -162,7 +162,7 @@ func run() error {
 	{
 		// add OPTIONS method for CORS preflight requests
 		tgPlaceGroup.GET("", placeHandler.TelegramGetPlaces)
-		tgPlaceGroup.GET("/:id", placeHandler.GetPlace)
+		tgPlaceGroup.GET("/:id", placeHandler.TelegramGetPlace)
 		tgPlaceGroup.GET("/:id/photos", placeHandler.GetPlacePhotos)
 	}
 	tgPlaceGroup.GET("/cities", placeHandler.TelegramGetCities, tgMiddleware.Auth)
