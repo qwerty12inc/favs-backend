@@ -14,6 +14,7 @@ type Place struct {
 	GeoHash        string          `firestore:"geohash" json:"geoHash"`
 	Address        string          `firestore:"address" json:"address"`
 	GoogleMapsInfo *GoogleMapsInfo `firestore:"google_maps_info" json:"googleMapsInfo"`
+	ImagePreview   string          `firestore:"image_preview" json:"imagePreview"`
 	Links          []string        `firestore:"links" json:"links"`
 	Serving        []string        `firestore:"serving" json:"serving"`
 	Services       []string        `firestore:"services" json:"services"`

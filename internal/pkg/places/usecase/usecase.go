@@ -92,6 +92,14 @@ func (u Usecase) getPlaces(ctx context.Context, request models.GetPlacesRequest)
 	wg.Wait()
 	log.Info("Time to generate signed URLs: ", time.Since(start))
 
+	for i := range places {
+		if places[i].ImagePreview == "" &&
+			places[i].GoogleMapsInfo != nil &&
+			len(places[i].GoogleMapsInfo.PhotoRefList) != 0 {
+			places[i].ImagePreview = places[i].GoogleMapsInfo.PhotoRefList[0]
+		}
+	}
+
 	if len(places) == 0 {
 		log.Error("Places not found")
 		return nil, models.Status{models.NotFound, "places not found"}
