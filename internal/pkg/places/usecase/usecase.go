@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/labstack/gommon/log"
 	"github.com/stripe/stripe-go/v76"
@@ -70,6 +71,7 @@ func (u Usecase) getPlaces(ctx context.Context, request models.GetPlacesRequest)
 		return nil, status
 	}
 
+	start := time.Now()
 	// transform all photo references to signed urls
 	for _, place := range places {
 		if place.GoogleMapsInfo != nil && len(place.GoogleMapsInfo.PhotoRefList) != 0 {
@@ -81,6 +83,7 @@ func (u Usecase) getPlaces(ctx context.Context, request models.GetPlacesRequest)
 			}
 		}
 	}
+	log.Info("Time to generate signed URLs: ", time.Since(start))
 
 	if len(places) == 0 {
 		log.Error("Places not found")
