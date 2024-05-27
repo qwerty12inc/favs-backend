@@ -34,4 +34,5 @@ type Usecase interface {
 
 type StorageRepository interface {
 	GetPlacePhotoURLs(ctx context.Context, object string) ([]string, models.Status)
+	GenerateSignedURL(ctx context.Context, object string) (string, models.Status)
 }

@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"errors"
+	"time"
 
 	storage2 "cloud.google.com/go/storage"
 	"firebase.google.com/go/storage"
@@ -21,6 +22,36 @@ func NewStorageRepository(cl *storage.Client, bucket string) StorageRepository {
 		cl:     cl,
 		bucket: bucket,
 	}
+}
+
+func (r StorageRepository) GenerateSignedURL(ctx context.Context, object string) (string, models.Status) {
+	b, err := r.cl.Bucket(r.bucket)
+	if err != nil {
+		log.Error("Error while getting bucket: ", err)
+		return "", models.Status{models.InternalError, err.Error()}
+	}
+	if b == nil {
+		log.Error("Bucket is nil")
+		return "", models.Status{models.InternalError, "Bucket is nil"}
+	}
+
+	o := b.Object(object)
+	_, err = o.Attrs(ctx)
+	if err != nil {
+		log.Error("Error while getting object: ", err)
+		return "", models.Status{models.InternalError, err.Error()}
+	}
+
+	url, err := b.SignedURL(object, &storage2.SignedURLOptions{
+		Method:  "GET",
+		Expires: time.Now().Add(time.Hour),
+	})
+	if err != nil {
+		log.Error("Error while generating signed url: ", err)
+		return "", models.Status{models.InternalError, err.Error()}
+	}
+
+	return url, models.Status{models.OK, "OK"}
 }
 
 func (r StorageRepository) GetPlacePhotoURLs(ctx context.Context, object string) ([]string, models.Status) {

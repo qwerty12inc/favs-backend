@@ -42,7 +42,21 @@ func (u Usecase) SavePlace(ctx context.Context, place models.Place) models.Statu
 }
 
 func (u Usecase) GetPlace(ctx context.Context, id string) (models.Place, models.Status) {
-	return u.repo.GetPlace(ctx, id)
+	place, status := u.repo.GetPlace(ctx, id)
+	if status.Code != models.OK {
+		return models.Place{}, status
+	}
+
+	// transform all photo references to signed urls
+	if place.GoogleMapsInfo != nil && len(place.GoogleMapsInfo.PhotoRefList) != 0 {
+		for i, ref := range place.GoogleMapsInfo.PhotoRefList {
+			place.GoogleMapsInfo.PhotoRefList[i], status = u.storageRepo.GenerateSignedURL(ctx, ref)
+			if status.Code != models.OK {
+				log.Error("Failed to generate signed URL ", status)
+			}
+		}
+	}
+	return place, models.Status{Code: models.OK, Message: "OK"}
 }
 
 func (u Usecase) GetPlaceByName(ctx context.Context, name string) (models.Place, models.Status) {
@@ -54,6 +68,18 @@ func (u Usecase) getPlaces(ctx context.Context, request models.GetPlacesRequest)
 	if status.Code != models.OK {
 		log.Error("Failed to get places ", status)
 		return nil, status
+	}
+
+	// transform all photo references to signed urls
+	for _, place := range places {
+		if place.GoogleMapsInfo != nil && len(place.GoogleMapsInfo.PhotoRefList) != 0 {
+			for i, ref := range place.GoogleMapsInfo.PhotoRefList {
+				place.GoogleMapsInfo.PhotoRefList[i], status = u.storageRepo.GenerateSignedURL(ctx, ref)
+				if status.Code != models.OK {
+					log.Error("Failed to generate signed URL ", status)
+				}
+			}
+		}
 	}
 
 	if len(places) == 0 {
