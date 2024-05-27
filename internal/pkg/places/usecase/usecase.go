@@ -75,13 +75,13 @@ func (u Usecase) getPlaces(ctx context.Context, request models.GetPlacesRequest)
 	start := time.Now()
 	wg := sync.WaitGroup{}
 	// transform all photo references to signed urls
-	for _, place := range places {
-		if place.GoogleMapsInfo != nil && len(place.GoogleMapsInfo.PhotoRefList) != 0 {
-			for i, ref := range place.GoogleMapsInfo.PhotoRefList {
+	for i := range places {
+		if places[i].GoogleMapsInfo != nil && len(places[i].GoogleMapsInfo.PhotoRefList) != 0 {
+			for i, ref := range places[i].GoogleMapsInfo.PhotoRefList {
 				wg.Add(1)
 				go func(i int, ref string) {
 					defer wg.Done()
-					place.GoogleMapsInfo.PhotoRefList[i], status = u.storageRepo.GenerateSignedURL(ctx, ref)
+					places[i].GoogleMapsInfo.PhotoRefList[i], status = u.storageRepo.GenerateSignedURL(ctx, ref)
 					if status.Code != models.OK {
 						log.Error("Failed to generate signed URL ", status)
 					}
