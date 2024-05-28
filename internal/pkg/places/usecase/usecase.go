@@ -210,3 +210,7 @@ func (u Usecase) GeneratePaymentLink(ctx context.Context, userEmail string, purc
 	}
 	return link.URL, models.Status{models.OK, "OK"}
 }
+
+func (u Usecase) SaveReport(ctx context.Context, report models.Report) models.Status {
+	return u.repo.SaveReport(ctx, report)
+}

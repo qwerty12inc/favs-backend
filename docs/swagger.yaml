@@ -76,6 +76,8 @@ definitions:
         $ref: '#/definitions/models.GoogleMapsInfo'
       id:
         type: string
+      imagePreview:
+        type: string
       instagram:
         type: string
       labels:
@@ -292,6 +294,29 @@ paths:
       summary: Get place photos
       tags:
       - places
+  /reports:
+    post:
+      description: Save report
+      parameters:
+      - description: Authentication header
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: text
+        "400":
+          description: Invalid request
+        "500":
+          description: Internal server error
+      summary: Save report
+      tags:
+      - reports
   /tg/cities:
     get:
       consumes:

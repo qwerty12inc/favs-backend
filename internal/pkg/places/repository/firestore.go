@@ -237,3 +237,11 @@ func (r Repository) SaveUserPurchase(ctx context.Context, userEmail string, purc
 	}
 	return models.Status{models.OK, "OK"}
 }
+
+func (r Repository) SaveReport(ctx context.Context, report models.Report) models.Status {
+	_, err := r.cl.Collection("reports").Doc(report.ID).Set(ctx, report)
+	if err != nil {
+		return models.Status{Code: models.InternalError, Message: err.Error()}
+	}
+	return models.Status{Code: models.OK, Message: "OK"}
+}

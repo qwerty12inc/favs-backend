@@ -297,3 +297,25 @@ func (h Handler) GeneratePaymentLink(c echo.Context) error {
 	link, status := h.usecase.GeneratePaymentLink(c.Request().Context(), userEmail, purchase)
 	return utils.HandleResponse(c, status, link)
 }
+
+// SaveReport godoc
+// @Summary Save report
+// @Description Save report
+// @Tags reports
+// @Produce json
+//
+//	@Param			Authorization	header		string	true	"Authentication header"
+//
+// @Success 200 {text} string
+// @Failure 400 "Invalid request"
+// @Failure 500 "Internal server error"
+// @Router /reports [post]
+func (h Handler) SaveReport(c echo.Context) error {
+	report := models.Report{}
+	err := c.Bind(&report)
+	if err != nil {
+		return c.JSON(400, "Invalid request")
+	}
+	status := h.usecase.SaveReport(c.Request().Context(), report)
+	return utils.HandleResponse(c, status, "OK")
+}
