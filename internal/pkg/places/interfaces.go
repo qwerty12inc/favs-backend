@@ -18,6 +18,7 @@ type Repository interface {
 	GetUserPurchases(ctx context.Context, userEmail string) (models.UserPurchases, models.Status)
 	SaveUserPurchase(ctx context.Context, userEmail string, purchase models.PurchaseObject) models.Status
 	SaveReport(ctx context.Context, report models.Report) models.Status
+	GetReports(ctx context.Context) ([]models.Report, models.Status)
 }
 
 type Usecase interface {
@@ -32,6 +33,7 @@ type Usecase interface {
 	GeneratePaymentLink(ctx context.Context, userEmail string, purchase models.PurchaseObject) (string, models.Status)
 	TelegramGetPlaces(ctx context.Context, request models.GetPlacesRequest) ([]models.Place, models.Status)
 	SaveReport(ctx context.Context, report models.Report) models.Status
+	GetReports(ctx context.Context) ([]models.Report, models.Status)
 }
 
 type StorageRepository interface {

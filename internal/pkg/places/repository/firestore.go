@@ -245,3 +245,25 @@ func (r Repository) SaveReport(ctx context.Context, report models.Report) models
 	}
 	return models.Status{Code: models.OK, Message: "OK"}
 }
+
+func (r Repository) GetReports(ctx context.Context) ([]models.Report, models.Status) {
+	iter := r.cl.Collection("reports").Documents(ctx)
+
+	var reports []models.Report
+	for {
+		doc, err := iter.Next()
+		if errors.Is(err, iterator.Done) {
+			break
+		}
+		if err != nil {
+			return nil, models.Status{Code: models.InternalError, Message: err.Error()}
+		}
+		var report models.Report
+		err = doc.DataTo(&report)
+		if err != nil {
+			return nil, models.Status{Code: models.InternalError, Message: err.Error()}
+		}
+		reports = append(reports, report)
+	}
+	return reports, models.Status{Code: models.OK, Message: "OK"}
+}
