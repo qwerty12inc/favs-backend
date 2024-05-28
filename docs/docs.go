@@ -282,7 +282,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/reports": {
+        "/places/{id}/reports": {
             "post": {
                 "description": "Save report",
                 "produces": [
@@ -298,6 +298,13 @@ const docTemplate = `{
                         "description": "Authentication header",
                         "name": "Authorization",
                         "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Place ID",
+                        "name": "id",
+                        "in": "path",
                         "required": true
                     }
                 ],
