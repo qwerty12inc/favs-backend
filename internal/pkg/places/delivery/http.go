@@ -306,16 +306,18 @@ func (h Handler) GeneratePaymentLink(c echo.Context) error {
 //
 //	@Param			Authorization	header		string	true	"Authentication header"
 //
+// @Param id path string true "Place ID"
 // @Success 200 {text} string
 // @Failure 400 "Invalid request"
 // @Failure 500 "Internal server error"
-// @Router /reports [post]
+// @Router /places/{id}/reports [post]
 func (h Handler) SaveReport(c echo.Context) error {
 	report := models.Report{}
 	err := c.Bind(&report)
 	if err != nil {
 		return c.JSON(400, "Invalid request")
 	}
+	report.PlaceID = c.Param("id")
 	status := h.usecase.SaveReport(c.Request().Context(), report)
 	return utils.HandleResponse(c, status, "OK")
 }

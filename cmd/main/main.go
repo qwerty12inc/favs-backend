@@ -164,6 +164,7 @@ func run() error {
 		tgPlaceGroup.GET("", placeHandler.TelegramGetPlaces)
 		tgPlaceGroup.GET("/:id", placeHandler.TelegramGetPlace)
 		tgPlaceGroup.GET("/:id/photos", placeHandler.GetPlacePhotos)
+		tgPlaceGroup.POST("/:id/reports", placeHandler.SaveReport)
 	}
 	tgPlaceGroup.GET("/cities", placeHandler.TelegramGetCities, tgMiddleware.Auth)
 
