@@ -213,7 +213,7 @@ func (u Usecase) GeneratePaymentLink(ctx context.Context, userEmail string, purc
 
 func (u Usecase) SaveReport(ctx context.Context, report models.Report) models.Status {
 	report.ReportedAt = time.Now().Unix()
-	report.ID = fmt.Sprintf("%s-%s-%d", report.PlaceID, report.ReportedBy, report.ReportedAt)
+	report.ID = fmt.Sprintf("%s-ts-%d", report.ReportedBy, report.ReportedAt)
 	return u.repo.SaveReport(ctx, report)
 }
 
