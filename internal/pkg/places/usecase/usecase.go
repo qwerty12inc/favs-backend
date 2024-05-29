@@ -220,3 +220,9 @@ func (u Usecase) SaveReport(ctx context.Context, report models.Report) models.St
 func (u Usecase) GetReports(ctx context.Context) ([]models.Report, models.Status) {
 	return u.repo.GetReports(ctx)
 }
+
+func (u Usecase) AddUserPlace(ctx context.Context, request models.AddPlaceRequest) models.Status {
+	request.AddedAt = time.Now().Unix()
+	request.ID = fmt.Sprintf("%s-ts-%d", request.AddedBy, request.AddedAt)
+	return u.repo.AddUserPlace(ctx, request)
+}

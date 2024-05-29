@@ -267,3 +267,11 @@ func (r Repository) GetReports(ctx context.Context) ([]models.Report, models.Sta
 	}
 	return reports, models.Status{Code: models.OK, Message: "OK"}
 }
+
+func (r Repository) AddUserPlace(ctx context.Context, request models.AddPlaceRequest) models.Status {
+	_, err := r.cl.Collection("user_places").Doc(request.ID).Set(ctx, request)
+	if err != nil {
+		return models.Status{Code: models.InternalError, Message: err.Error()}
+	}
+	return models.Status{Code: models.OK, Message: "OK"}
+}

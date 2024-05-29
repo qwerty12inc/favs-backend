@@ -298,7 +298,7 @@ func (h Handler) GeneratePaymentLink(c echo.Context) error {
 	return utils.HandleResponse(c, status, link)
 }
 
-// SaveReport godoc
+// TelegramSaveReport godoc
 // @Summary Save report
 // @Description Save report
 // @Tags reports
@@ -310,8 +310,8 @@ func (h Handler) GeneratePaymentLink(c echo.Context) error {
 // @Success 200 {text} string
 // @Failure 400 "Invalid request"
 // @Failure 500 "Internal server error"
-// @Router /places/{id}/reports [post]
-func (h Handler) SaveReport(c echo.Context) error {
+// @Router /tg/places/{id}/reports [post]
+func (h Handler) TelegramSaveReport(c echo.Context) error {
 	report := models.Report{}
 	err := c.Bind(&report)
 	if err != nil {
@@ -319,5 +319,27 @@ func (h Handler) SaveReport(c echo.Context) error {
 	}
 	report.PlaceID = c.Param("id")
 	status := h.usecase.SaveReport(c.Request().Context(), report)
+	return utils.HandleResponse(c, status, "OK")
+}
+
+// TelegramAddUserPlace godoc
+// @Summary Add user place
+// @Description Add user place
+// @Tags places
+// @Produce json
+//
+//	@Param			Authorization	header		string	true	"Authentication header"
+//
+// @Success 200 {text} string
+// @Failure 400 "Invalid request"
+// @Failure 500 "Internal server error"
+// @Router /tg/places [post]
+func (h Handler) TelegramAddUserPlace(c echo.Context) error {
+	request := models.AddPlaceRequest{}
+	err := c.Bind(&request)
+	if err != nil {
+		return c.JSON(400, "Invalid request")
+	}
+	status := h.usecase.AddUserPlace(c.Request().Context(), request)
 	return utils.HandleResponse(c, status, "OK")
 }

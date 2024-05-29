@@ -85,3 +85,11 @@ type GetPlacesRequest struct {
 type GetFiltersRequest struct {
 	City string `json:"city,omitempty"`
 }
+
+type AddPlaceRequest struct {
+	ID      string   `json:"id,omitempty"`
+	Link    string   `json:"link,omitempty"`
+	Labels  []string `json:"labels,omitempty"`
+	AddedBy string   `json:"added_by,omitempty"`
+	AddedAt int64    `json:"added_at"`
+}

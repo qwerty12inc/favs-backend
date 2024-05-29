@@ -294,34 +294,6 @@ paths:
       summary: Get place photos
       tags:
       - places
-  /places/{id}/reports:
-    post:
-      description: Save report
-      parameters:
-      - description: Authentication header
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Place ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            type: text
-        "400":
-          description: Invalid request
-        "500":
-          description: Internal server error
-      summary: Save report
-      tags:
-      - reports
   /tg/cities:
     get:
       consumes:
@@ -451,6 +423,28 @@ paths:
       summary: Get places
       tags:
       - places
+    post:
+      description: Add user place
+      parameters:
+      - description: Authentication header
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: text
+        "400":
+          description: Invalid request
+        "500":
+          description: Internal server error
+      summary: Add user place
+      tags:
+      - places
   /tg/places/{id}:
     get:
       consumes:
@@ -486,6 +480,34 @@ paths:
       summary: Get place
       tags:
       - places
+  /tg/places/{id}/reports:
+    post:
+      description: Save report
+      parameters:
+      - description: Authentication header
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Place ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: text
+        "400":
+          description: Invalid request
+        "500":
+          description: Internal server error
+      summary: Save report
+      tags:
+      - reports
 securityDefinitions:
   ApiKeyAuth:
     type: basic
