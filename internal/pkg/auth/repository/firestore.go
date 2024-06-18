@@ -2,9 +2,9 @@ package repository
 
 import (
 	"context"
+	"log"
 
 	"cloud.google.com/go/firestore"
-	"github.com/labstack/gommon/log"
 	"gitlab.com/v.rianov/favs-backend/internal/models"
 )
 
@@ -22,7 +22,7 @@ func (r *AuthRepositoryImpl) StoreToken(ctx context.Context, telegramID, token s
 			Token: token,
 		})
 	if err != nil {
-		log.Error("Failed to store token ", err)
+		log.Println("Failed to store token ", err)
 		return models.Status{
 			Code: models.InternalError,
 		}
@@ -33,17 +33,17 @@ func (r *AuthRepositoryImpl) StoreToken(ctx context.Context, telegramID, token s
 }
 
 func (r *AuthRepositoryImpl) GetToken(ctx context.Context, telegramID string) (string, models.Status) {
-	log.Info("Getting token for ", telegramID)
+	log.Println("Getting token for ", telegramID)
 	doc, err := r.cl.Collection("tokens").Doc(telegramID).Get(ctx)
 	if err != nil {
-		log.Error("Failed to get token ", err)
+		log.Println("Failed to get token ", err)
 		return "", models.Status{
 			Code: models.NotFound,
 		}
 	}
 	var token models.Token
 	if err := doc.DataTo(&token); err != nil {
-		log.Error("Failed to parse token ", err)
+		log.Println("Failed to parse token ", err)
 		return "", models.Status{
 			Code: models.InternalError,
 		}
