@@ -80,6 +80,8 @@ definitions:
         type: string
       instagram:
         type: string
+      isOpen:
+        type: boolean
       labels:
         items:
           type: string

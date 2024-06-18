@@ -723,6 +723,9 @@ const docTemplate = `{
                 "instagram": {
                     "type": "string"
                 },
+                "isOpen": {
+                    "type": "boolean"
+                },
                 "labels": {
                     "type": "array",
                     "items": {
