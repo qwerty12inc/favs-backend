@@ -33,14 +33,17 @@ func (r *AuthRepositoryImpl) StoreToken(ctx context.Context, telegramID, token s
 }
 
 func (r *AuthRepositoryImpl) GetToken(ctx context.Context, telegramID string) (string, models.Status) {
+	log.Info("Getting token for ", telegramID)
 	doc, err := r.cl.Collection("tokens").Doc(telegramID).Get(ctx)
 	if err != nil {
+		log.Error("Failed to get token ", err)
 		return "", models.Status{
 			Code: models.NotFound,
 		}
 	}
 	var token models.Token
 	if err := doc.DataTo(&token); err != nil {
+		log.Error("Failed to parse token ", err)
 		return "", models.Status{
 			Code: models.InternalError,
 		}
