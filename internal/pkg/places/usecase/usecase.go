@@ -58,6 +58,9 @@ func (u Usecase) GetPlace(ctx context.Context, id string) (models.Place, models.
 			}
 		}
 	}
+
+	place.IsOpen = place.IsOpenNow()
+
 	return place, models.Status{Code: models.OK, Message: "OK"}
 }
 
@@ -97,6 +100,10 @@ func (u Usecase) getPlaces(ctx context.Context, request models.GetPlacesRequest)
 			places[i].GoogleMapsInfo != nil &&
 			len(places[i].GoogleMapsInfo.PhotoRefList) != 0 {
 			places[i].ImagePreview = places[i].GoogleMapsInfo.PhotoRefList[0]
+		}
+		// define whether the place is open now
+		if places[i].GoogleMapsInfo != nil && places[i].GoogleMapsInfo.OpeningInfo != nil {
+			places[i].IsOpen = places[i].IsOpenNow()
 		}
 	}
 

@@ -1,5 +1,7 @@
 package models
 
+import "time"
+
 type Place struct {
 	ID             string          `firestore:"id" json:"id"`
 	Name           string          `firestore:"name" json:"name"`
@@ -19,6 +21,24 @@ type Place struct {
 	Serving        []string        `firestore:"serving" json:"serving"`
 	Services       []string        `firestore:"services" json:"services"`
 	OpeningInfo    []string        `firestore:"opening_info" json:"openingInfo"`
+	IsOpen         bool            `firestore:"is_open" json:"isOpen"`
+}
+
+func (p Place) IsOpenNow() bool {
+	now := time.Now()
+	for _, info := range p.OpeningInfo {
+		if now.Weekday().String() == info[:3] {
+			if info[4:6] == "24" {
+				return true
+			}
+			openAt, _ := time.Parse("15:04", info[4:9])
+			closedAt, _ := time.Parse("15:04", info[10:])
+			if now.After(openAt) && now.Before(closedAt) {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 type GoogleMapsInfo struct {
