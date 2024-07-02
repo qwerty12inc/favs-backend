@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"context"
+	"os"
 	"strings"
 
 	"firebase.google.com/go/auth"
@@ -29,10 +30,10 @@ func (h AuthMiddlewareHandler) Auth(next echo.HandlerFunc) echo.HandlerFunc {
 			return c.JSON(401, "Unauthorized")
 		}
 
-		if token == "test" {
+		if token == os.Getenv("SERVICE_TOKEN") {
 			user := models.User{
-				UID:   "test",
-				Email: "test@test.com",
+				UID:   "openapp",
+				Email: "openapp@openapp.com",
 			}
 			c.Set("user", user)
 			c.Set("token", token)

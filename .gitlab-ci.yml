@@ -74,6 +74,7 @@ deploy:
         - ssh -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_SERVER "echo 'SPREADSHEET_ID=$SPREADSHEET_ID' >> .env"
         - ssh -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_SERVER "echo 'MAPS_API_KEY=$MAPS_API_KEY' >> .env"
         - ssh -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_SERVER "echo 'PLACES_BUCKET_ID=$PLACES_BUCKET_ID' >> .env"
+        - ssh -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_SERVER "echo 'SERVICE_TOKEN=$SERVICE_TOKEN' >> .env"
         - echo $SPREADSHEET_ID
         - ssh -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_SERVER "echo 'STRIPE_SECRET_KEY=$STRIPE_SECRET_KEY' >> .env"
         - ssh -i ~/.ssh/id_rsa $DEPLOY_USER@$DEPLOY_SERVER "echo 'FIRESTORE_PROJECT_ID=$FIRESTORE_PROJECT_ID' >> .env"
