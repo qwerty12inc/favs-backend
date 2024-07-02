@@ -30,6 +30,8 @@ func (h AuthMiddlewareHandler) Auth(next echo.HandlerFunc) echo.HandlerFunc {
 			return c.JSON(401, "Unauthorized")
 		}
 
+		log.Debug("Service token: ", os.Getenv("SERVICE_TOKEN"))
+
 		if token == os.Getenv("SERVICE_TOKEN") {
 			user := models.User{
 				UID:   "openapp",
