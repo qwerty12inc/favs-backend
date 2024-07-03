@@ -93,7 +93,6 @@ func run() error {
 	}
 
 	authMiddleware := middleware2.NewAuthMiddlewareHandler(authClient)
-
 	apiV1Group := e.Group("/api/v1")
 
 	apiV1Group.GET("/swagger/*", echoSwagger.WrapHandler)
